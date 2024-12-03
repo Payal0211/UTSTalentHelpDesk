@@ -1,0 +1,9 @@
+using UTSTalentHelpDesk.Models.Generic;
+using UTSTalentHelpDesk.Models.Models;
+namespace UTSTalentHelpDesk.Repositories.Infrastructure.Repositories
+{
+public class PrgClientHappinessSurveyFeedbackQuestionRepository : GenericRepository<PrgClientHappinessSurveyFeedbackQuestion>, IPrgClientHappinessSurveyFeedbackQuestionRepository
+{
+public PrgClientHappinessSurveyFeedbackQuestionRepository(UTSTalentHelpDeskDBConnection dbContext) : base(dbContext){}
+}
+}

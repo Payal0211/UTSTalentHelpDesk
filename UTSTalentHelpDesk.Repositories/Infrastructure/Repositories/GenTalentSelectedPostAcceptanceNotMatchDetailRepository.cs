@@ -1,0 +1,9 @@
+using UTSTalentHelpDesk.Models.Generic;
+using UTSTalentHelpDesk.Models.Models;
+namespace UTSTalentHelpDesk.Repositories.Infrastructure.Repositories
+{
+public class GenTalentSelectedPostAcceptanceNotMatchDetailRepository : GenericRepository<GenTalentSelectedPostAcceptanceNotMatchDetail>, IGenTalentSelectedPostAcceptanceNotMatchDetailRepository
+{
+public GenTalentSelectedPostAcceptanceNotMatchDetailRepository(UTSTalentHelpDeskDBConnection dbContext) : base(dbContext){}
+}
+}

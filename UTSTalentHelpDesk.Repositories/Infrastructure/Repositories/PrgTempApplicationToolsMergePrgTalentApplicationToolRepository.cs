@@ -1,0 +1,9 @@
+using UTSTalentHelpDesk.Models.Generic;
+using UTSTalentHelpDesk.Models.Models;
+namespace UTSTalentHelpDesk.Repositories.Infrastructure.Repositories
+{
+public class PrgTempApplicationToolsMergePrgTalentApplicationToolRepository : GenericRepository<PrgTempApplicationToolsMergePrgTalentApplicationTool>, IPrgTempApplicationToolsMergePrgTalentApplicationToolRepository
+{
+public PrgTempApplicationToolsMergePrgTalentApplicationToolRepository(UTSTalentHelpDeskDBConnection dbContext) : base(dbContext){}
+}
+}

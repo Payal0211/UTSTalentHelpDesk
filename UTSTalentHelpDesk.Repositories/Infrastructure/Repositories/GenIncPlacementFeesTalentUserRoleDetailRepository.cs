@@ -1,0 +1,9 @@
+using UTSTalentHelpDesk.Models.Generic;
+using UTSTalentHelpDesk.Models.Models;
+namespace UTSTalentHelpDesk.Repositories.Infrastructure.Repositories
+{
+public class GenIncPlacementFeesTalentUserRoleDetailRepository : GenericRepository<GenIncPlacementFeesTalentUserRoleDetail>, IGenIncPlacementFeesTalentUserRoleDetailRepository
+{
+public GenIncPlacementFeesTalentUserRoleDetailRepository(UTSTalentHelpDeskDBConnection dbContext) : base(dbContext){}
+}
+}

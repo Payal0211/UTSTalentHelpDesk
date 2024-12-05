@@ -63,6 +63,12 @@
             public static string Sproc_Add_Company_Transactions_With_ATS = "Sproc_Add_Company_Transactions_With_ATS";
             #endregion
 
+            #region Ticket
+            public static string sp_GetToken = "sp_GetToken";
+            public static string sp_SaveTokens = "sp_SaveTokens";
+            public static string sp_UpdateToken = "sp_UpdateToken";
+            #endregion
+
             //#region Schedular
             //public static string Sproc_Get_ListOfHR_For_NewCandidate_Added_Email_ClientPortal = "Sproc_Get_ListOfHR_For_NewCandidate_Added_Email_ClientPortal";
             //public static string Sproc_Get_Credit_Expiry_Email_Notification_ClientPortal = "Sproc_Get_Credit_Expiry_Email_Notification_ClientPortal";
@@ -88,7 +94,7 @@
             //public static string sproc_GetClientHappynessSurveyFeedbackDetailForEmail = "sproc_GetClientHappynessSurveyFeedbackDetailForEmail";
             //public static string sproc_UTS_GetAutoCompleteHubSpotCompanies = "sproc_UTS_GetAutoCompleteHubSpotCompanies";
             //public static string sproc_UTS_GetCompanyDetails = "sproc_UTS_GetCompanyDetails";
-            
+
             //public static string sproc_UTS_GetCompanyDetailsForEdit = "sproc_UTS_GetCompanyDetailsForEditClient";
             //public static string Sproc_AM_Change_For_Company = "Sproc_AM_Change_For_Company";
             //public static string Sp_UTS_PreviewJobPost_ClientPortal = "sp_UTS_PreviewJobPost_ClientPortal";
@@ -447,7 +453,7 @@
             //public static string Sproc_GET_ALL_HR_Details_For_PHP_API = "Sproc_GET_ALL_HR_Details_For_PHP_API";
             //public static string sproc_GetSkillsAndProficiencyBasedonHR_ForPHPAPI = "sproc_GetSkillsAndProficiencyBasedonHR_ForPHPAPI";
             //#endregion
-             
+
             //#region Talentreplacement
             //public static string Sproc_Get_Hierarchy_For_Email = "Sproc_Get_Hierarchy_For_Email";
             //public static string Sproc_Get_Engagemetns_For_Replacement_BasedOn_LWD_Option = "Sproc_Get_Engagemetns_For_Replacement_BasedOn_LWD_Option";
@@ -628,7 +634,7 @@
             //public static string Sproc_Get_TrackingLead_Details_for_ClientSource = "Sproc_Get_TrackingLead_Details_for_ClientSource";
             //public static string Sproc_Get_JobPostCount_For_UTM_Tracking_Lead = "Sproc_Get_JobPostCount_For_UTM_Tracking_Lead";
             //public static string Sproc_GET_CreditPlanDetails_ClientPortal = "Sproc_GET_CreditPlanDetails_ClientPortal";
-            
+
 
             //#endregion
 

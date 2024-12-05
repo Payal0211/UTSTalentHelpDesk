@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
+using UTSTalentHelpDesk.Repositories.Interfaces;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -16,11 +19,15 @@ namespace UTSTalentHelpDesk.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfigurationSection zohoConfig;
+        private readonly ITicket _iTicket;
 
-        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory,ITicket iTicket)
         {
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            zohoConfig = _configuration.GetSection("Zoho");
+            _iTicket = iTicket;
         }
 
         // OAuth Callback to Exchange Authorization Code for Access and Refresh Tokens
@@ -32,7 +39,7 @@ namespace UTSTalentHelpDesk.Controllers
                 return BadRequest("Authorization code is missing.");
             }
 
-            var zohoConfig = _configuration.GetSection("Zoho");
+            //var zohoConfig = _configuration.GetSection("Zoho");
             string tokenEndpoint = zohoConfig["TokenEndpoint"];
             string clientId = zohoConfig["ClientId"];
             string clientSecret = zohoConfig["ClientSecret"];
@@ -73,7 +80,7 @@ namespace UTSTalentHelpDesk.Controllers
                 return StatusCode(500, "Failed to generate access token.");
             }
 
-            var zohoConfig = _configuration.GetSection("Zoho");
+            //var zohoConfig = _configuration.GetSection("Zoho");
             var baseUrl = zohoConfig["BaseUrl"];
             var url = $"{baseUrl}/tickets";
 
@@ -120,7 +127,7 @@ namespace UTSTalentHelpDesk.Controllers
             }
 
             // Refresh the access token
-            var zohoConfig = _configuration.GetSection("Zoho");
+            //var zohoConfig = _configuration.GetSection("Zoho");
             string clientId = zohoConfig["ClientId"];
             string clientSecret = zohoConfig["ClientSecret"];
             string tokenEndpoint = zohoConfig["TokenEndpoint"];
@@ -149,64 +156,111 @@ namespace UTSTalentHelpDesk.Controllers
         // Save Tokens to the Database
         private async Task SaveTokensToDatabase(string tokenName, string accessToken, string refreshToken)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                using (var command = new SqlCommand("sp_SaveTokens", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+                object[] param = new object[] {
+                tokenName,accessToken,refreshToken};
 
-                    command.Parameters.AddWithValue("@TokenName", tokenName);
-                    command.Parameters.AddWithValue("@AccessToken", accessToken);
-                    command.Parameters.AddWithValue("@RefreshToken", refreshToken);
-                    command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
+                string paramasString = CommonLogic.ConvertToParamString(param);
 
-                    connection.Open();
-                    await command.ExecuteNonQueryAsync();
-                }
+                _iTicket.CreateTicket(paramasString);
+
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            //using (var connection = new SqlConnection(connectionString))
+            //{
+            //    using (var command = new SqlCommand("sp_SaveTokens", connection))
+            //    {
+            //        command.CommandType = CommandType.StoredProcedure;
+
+            //        command.Parameters.AddWithValue("@TokenName", tokenName);
+            //        command.Parameters.AddWithValue("@AccessToken", accessToken);
+            //        command.Parameters.AddWithValue("@RefreshToken", refreshToken);
+            //        command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
+
+            //        connection.Open();
+            //        await command.ExecuteNonQueryAsync();
+            //    }
+            //}
         }
 
         // Get Token from the Database
         private async Task<string> GetTokenFromDatabase(string tokenName, string column)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                using (var command = new SqlCommand("sp_GetToken", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@TokenName", tokenName);
-                    command.Parameters.AddWithValue("@Column", column);
+                object[] param = new object[] {
+                tokenName,column};
 
-                    connection.Open();
-                    var result = await command.ExecuteScalarAsync();
-                    return result?.ToString();
-                }
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                sp_GetToken_Result companyListData = await _iTicket.GetTokenList(paramasString).ConfigureAwait(false);
+                return companyListData.ToString();
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            //using (var connection = new SqlConnection(connectionString))
+            //{
+            //    using (var command = new SqlCommand("sp_GetToken", connection))
+            //    {
+            //        command.CommandType = CommandType.StoredProcedure;
+            //        command.Parameters.AddWithValue("@TokenName", tokenName);
+            //        command.Parameters.AddWithValue("@Column", column);
+
+            //        connection.Open();
+            //        var result = await command.ExecuteScalarAsync();
+            //        return result?.ToString();
+            //    }
+            //}
         }
 
         // Update Access Token in the Database
         private async Task UpdateTokenInDatabase(string tokenName, string newAccessToken)
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            using (var connection = new SqlConnection(connectionString))
+            try
             {
-                using (var command = new SqlCommand("sp_UpdateToken", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+                object[] param = new object[] {
+                tokenName,newAccessToken};
 
-                    command.Parameters.AddWithValue("@TokenName", tokenName);
-                    command.Parameters.AddWithValue("@TokenValue", newAccessToken);
-                    command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
+                string paramasString = CommonLogic.ConvertToParamString(param);
 
-                    connection.Open();
-                    await command.ExecuteNonQueryAsync();
-                }
+                _iTicket.UpdateTicket(paramasString);
+
             }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
+
+            //using (var connection = new SqlConnection(connectionString))
+            //{
+            //    using (var command = new SqlCommand("sp_UpdateToken", connection))
+            //    {
+            //        command.CommandType = CommandType.StoredProcedure;
+
+            //        command.Parameters.AddWithValue("@TokenName", tokenName);
+            //        command.Parameters.AddWithValue("@TokenValue", newAccessToken);
+            //        command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
+
+            //        connection.Open();
+            //        await command.ExecuteNonQueryAsync();
+            //    }
+            //}
         }
     }
 }

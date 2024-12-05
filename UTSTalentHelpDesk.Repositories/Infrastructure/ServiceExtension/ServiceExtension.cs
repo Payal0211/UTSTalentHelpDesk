@@ -31,6 +31,7 @@ namespace UTSTalentHelpDesk.Repositories.Infrastructure.ServiceExtension
             
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUsrUserRepository, UsrUserRepository>();
+            services.AddScoped<ITicket, TicketRepository>();
 
             //services.AddScoped<ICustomExceptionRepository, CustomExceptionRepository>();
             //services.AddScoped<IGenAibasedHrtalentMatchMakingRepository, GenAibasedHrtalentMatchMakingRepository>();

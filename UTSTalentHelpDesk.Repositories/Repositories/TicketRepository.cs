@@ -32,9 +32,19 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             return db.Set<sp_GetToken_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sp_GetToken, strparams)).AsEnumerable().FirstOrDefault();
         }
 
+        public void SaveAllTickets(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.Sproc_SaveAllTicketData, param));
+        }
+        public void SaveTickets(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sproc_SaveTicket, param));
+        }
         public void UpdateTicket(string param)
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sp_UpdateToken, param));
         }
+
+
     }
 }

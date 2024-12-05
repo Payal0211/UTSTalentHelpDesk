@@ -11,6 +11,8 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
     {
         void CreateTicket(string param);
         void UpdateTicket(string param);
+        void SaveAllTickets(string param);
+        void SaveTickets(string param);
         Task<sp_GetToken_Result> GetTokenList(string strparams);
     }
 }

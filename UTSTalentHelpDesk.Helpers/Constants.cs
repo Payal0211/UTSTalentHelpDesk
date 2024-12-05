@@ -67,6 +67,8 @@
             public static string sp_GetToken = "sp_GetToken";
             public static string sp_SaveTokens = "sp_SaveTokens";
             public static string sp_UpdateToken = "sp_UpdateToken";
+            public static string Sproc_SaveAllTicketData = "Sproc_SaveAllTicketData";
+            public static string sproc_SaveTicket = "sproc_SaveTicket";
             #endregion
 
             //#region Schedular

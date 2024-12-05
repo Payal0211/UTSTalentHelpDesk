@@ -32,8 +32,10 @@ namespace UTSTalentHelpDesk.Controllers
             _iTicket = iTicket;
         }
 
+        #region Token Generation
         // OAuth Callback to Exchange Authorization Code for Access and Refresh Tokens
         [HttpGet("callback")]
+        [AllowAnonymous]
         public async Task<IActionResult> OAuthCallback([FromQuery] string code)
         {
             try
@@ -85,58 +87,6 @@ namespace UTSTalentHelpDesk.Controllers
             }
         }
 
-        // Create a Ticket
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateTicket([FromBody] TicketRequest request)
-        {
-            try
-            {
-                string accessToken = await GetAccessTokenAsync();
-
-                if (string.IsNullOrEmpty(accessToken))
-                {
-                    //return StatusCode(500, "Failed to generate access token.");
-                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseObject() { statusCode = StatusCodes.Status500InternalServerError, Message = "Failed to generate access token." });
-                }
-
-                //var zohoConfig = _configuration.GetSection("Zoho");
-                var baseUrl = zohoConfig["BaseUrl"];
-                var url = $"{baseUrl}/tickets";
-
-                var payload = new
-                {
-                    subject = request.Subject,
-                    departmentId = request.DepartmentId,
-                    description = request.Description,
-                    email = request.Email
-                };
-
-                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-                var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
-
-                var response = await client.PostAsync(url, content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var result = await response.Content.ReadAsStringAsync();
-                    //return Ok(JsonConvert.DeserializeObject(result));
-                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created Successfully.",Details = JsonConvert.DeserializeObject(result) });
-                }
-
-                var error = await response.Content.ReadAsStringAsync();
-                //return StatusCode((int)response.StatusCode, error);
-                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = error });
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }           
-        }
-
         // Retrieve Access Token, Refresh if Expired
         private async Task<string> GetAccessTokenAsync()
         {
@@ -186,7 +136,7 @@ namespace UTSTalentHelpDesk.Controllers
             {
 
                 throw;
-            }           
+            }
         }
 
         // Save Tokens to the Database
@@ -208,23 +158,6 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
 
-            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            //using (var connection = new SqlConnection(connectionString))
-            //{
-            //    using (var command = new SqlCommand("sp_SaveTokens", connection))
-            //    {
-            //        command.CommandType = CommandType.StoredProcedure;
-
-            //        command.Parameters.AddWithValue("@TokenName", tokenName);
-            //        command.Parameters.AddWithValue("@AccessToken", accessToken);
-            //        command.Parameters.AddWithValue("@RefreshToken", refreshToken);
-            //        command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
-
-            //        connection.Open();
-            //        await command.ExecuteNonQueryAsync();
-            //    }
-            //}
         }
 
         // Get Token from the Database
@@ -245,22 +178,6 @@ namespace UTSTalentHelpDesk.Controllers
 
                 throw;
             }
-
-            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            //using (var connection = new SqlConnection(connectionString))
-            //{
-            //    using (var command = new SqlCommand("sp_GetToken", connection))
-            //    {
-            //        command.CommandType = CommandType.StoredProcedure;
-            //        command.Parameters.AddWithValue("@TokenName", tokenName);
-            //        command.Parameters.AddWithValue("@Column", column);
-
-            //        connection.Open();
-            //        var result = await command.ExecuteScalarAsync();
-            //        return result?.ToString();
-            //    }
-            //}
         }
 
         // Update Access Token in the Database
@@ -281,22 +198,151 @@ namespace UTSTalentHelpDesk.Controllers
 
                 throw;
             }
-            //var connectionString = _configuration.GetConnectionString("DefaultConnection");
-
-            //using (var connection = new SqlConnection(connectionString))
-            //{
-            //    using (var command = new SqlCommand("sp_UpdateToken", connection))
-            //    {
-            //        command.CommandType = CommandType.StoredProcedure;
-
-            //        command.Parameters.AddWithValue("@TokenName", tokenName);
-            //        command.Parameters.AddWithValue("@TokenValue", newAccessToken);
-            //        command.Parameters.AddWithValue("@LastUpdated", DateTime.UtcNow);
-
-            //        connection.Open();
-            //        await command.ExecuteNonQueryAsync();
-            //    }
-            //}
+            
         }
+        #endregion
+
+        #region Create New Ticket in Zoho
+        // Create a Ticket
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateTicket([FromBody] TicketRequest request)
+        {
+            try
+            {
+                string accessToken = await GetAccessTokenAsync();
+
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseObject() { statusCode = StatusCodes.Status500InternalServerError, Message = "Failed to generate access token." });
+                }
+
+                //var zohoConfig = _configuration.GetSection("Zoho");
+                var baseUrl = zohoConfig["BaseUrl"];
+                var url = $"{baseUrl}/tickets";
+
+                var payload = new
+                {
+                    subject = request.Subject,
+                    departmentId = request.DepartmentId,
+                    description = request.Description,
+                    email = request.Email
+                };
+
+                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+
+                var response = await client.PostAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    var ticketResponse = JsonConvert.DeserializeObject<ZohoTicketResponse>(result);
+
+                    // Call stored procedure to save ticket in the local database
+                    await SaveTicketToDatabaseAsync(ticketResponse.TicketNumber, request.Subject, request.Description, request.Email);
+
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject()
+                    {
+                        statusCode = StatusCodes.Status200OK,
+                        Message = "Ticket Created Successfully.",
+                        Details = ticketResponse
+                    });
+                }
+
+                var error = await response.Content.ReadAsStringAsync();
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = error });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private async Task SaveTicketToDatabaseAsync(string ticketNumber, string subject, string description, string email)
+        {
+            try
+            {
+                object[] param = new object[] {
+                    ticketNumber,
+                    subject,
+                    description,
+                    email
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                _iTicket.SaveTickets(paramasString);
+            }
+            catch (Exception ex)
+            {
+                throw;
+                // Log the exception (if required)
+                //throw new Exception($"Error saving ticket to database: {ex.Message}", ex);
+            }
+        }
+        #endregion
+
+
+        #region Save All Tickets into db from Zoho
+        [HttpPost("SaveTickets")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SaveTickets([FromBody] TicketResponse ticketResponse)
+        {
+            try
+            {
+                if (ticketResponse?.Data == null || !ticketResponse.Data.Any())
+                    return BadRequest("Invalid data");
+
+                foreach (var ticket in ticketResponse.Data)
+                {
+                    object[] param = new object[] {
+                    ticket.TicketNumber,
+                    ticket.SubCategory,
+                    ticket.Subject,
+                    ticket.DueDate,
+                    ticket.DepartmentId,
+                    ticket.Channel,
+                    ticket.OnholdTime,
+                    ticket.Source?.Type,
+                    ticket.ClosedTime,
+                    ticket.SharedCount,
+                    ticket.ResponseDueDate,
+                    ticket.Contact?.FirstName,
+                    ticket.Contact?.LastName,
+                    ticket.Contact?.Phone,
+                    ticket.Contact?.Mobile,
+                    ticket.Contact?.Id,
+                    ticket.Contact?.Email,
+                    ticket.Contact?.Account?.AccountName,
+                    ticket.Contact?.Account?.Id,
+                    ticket.CreatedTime,
+                    ticket.Id,
+                    ticket.Email,
+                    ticket.ChannelCode,
+                    ticket.CustomerResponseTime,
+                    ticket.Priority,
+                    ticket.Assignee?.FirstName,
+                    ticket.Assignee?.LastName,
+                    ticket.Assignee?.Email,
+                    ticket.Status
+                };
+
+                    string paramasString = CommonLogic.ConvertToParamString(param);
+
+                    _iTicket.SaveAllTickets(paramasString);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All Tickets saved." });
+        }
+        #endregion
+
     }
 }

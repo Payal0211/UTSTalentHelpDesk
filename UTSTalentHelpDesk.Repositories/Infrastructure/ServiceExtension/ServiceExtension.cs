@@ -28,11 +28,12 @@ namespace UTSTalentHelpDesk.Repositories.Infrastructure.ServiceExtension
 
             services.AddDbContext<UTSTalentHelpDeskDBConnection>(ServiceLifetime.Transient);
             services.AddDbContext<InMemoryDbContext>(ServiceLifetime.Scoped,ServiceLifetime.Scoped);
-            
+            services.AddScoped<IAccount, AccountRepository>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUsrUserRepository, UsrUserRepository>();
             services.AddScoped<ITicket, TicketRepository>();
-
+            services.AddScoped<IEmail, EmailRepository>();
+            services.AddScoped<IDashboard, DashBoardRepository>();
             //services.AddScoped<ICustomExceptionRepository, CustomExceptionRepository>();
             //services.AddScoped<IGenAibasedHrtalentMatchMakingRepository, GenAibasedHrtalentMatchMakingRepository>();
             //services.AddScoped<IGenAibasedHrtalentMatchMakingDetailRepository, GenAibasedHrtalentMatchMakingDetailRepository>();

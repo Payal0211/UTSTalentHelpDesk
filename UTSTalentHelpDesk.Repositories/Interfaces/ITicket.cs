@@ -13,6 +13,8 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         void UpdateTicket(string param);
         void SaveAllTickets(string param);
         void SaveTickets(string param);
+        void SaveZohoTickets(string param);
+        void deleteZohoTickets(string param);
         Task<sp_GetToken_Result> GetTokenList(string strparams);
     }
 }

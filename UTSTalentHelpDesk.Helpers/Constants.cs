@@ -69,6 +69,8 @@
             public static string sp_UpdateToken = "sp_UpdateToken";
             public static string Sproc_SaveAllTicketData = "Sproc_SaveAllTicketData";
             public static string sproc_SaveTicket = "sproc_SaveTicket";
+            public static string Sproc_SaveZohoTicket = "Sproc_SaveZohoTicket";
+            public static string Sproc_deleteZohoTicket = "Sproc_deleteZohoTicket";
             #endregion
 
             //#region Schedular

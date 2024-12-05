@@ -90,7 +90,7 @@ namespace UTSTalentHelpDesk.Controllers
                         string paramString = CommonLogic.ConvertToParamString(param);
                      
                         string strQueryData = CommonLogic.Encrypt($"{DateTime.Now.AddDays(1).Ticks}#{genTalent.Id}");
-                        result.ClientDashboardUrl = $"{_iConfiguration.GetValue("TalentHelpDeskPortalURL", "")}TalentHelpDesk/TalentHelpDeskLoginFromReact?data={strQueryData}";
+                        result.TalentDashboardUrl = $"{_iConfiguration.GetValue("TalentHelpDeskPortalURL", "")}TalentHelpDesk/TalentHelpDeskLoginFromReact?data={strQueryData}";
 
                         result.IsEmailVerified = true;
 

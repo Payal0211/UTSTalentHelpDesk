@@ -10,9 +10,11 @@ using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
 using UTSTalentHelpDesk.Repositories.Interfaces;
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace UTSTalentHelpDesk.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TicketsController : ControllerBase

@@ -173,19 +173,20 @@ namespace UTSTalentHelpDesk.Helpers.Common
         /// <param name="employeeId">The employee identifier.</param>
         /// <param name="secret">The secret.</param>
         /// <returns></returns>
-        public static string CreateToken(UsrUser user, IConfiguration _iConfiguration)
+        public static string CreateToken(GenTalent genTalent, IConfiguration _iConfiguration, SessionValuesObject sessionValues)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.TokenLifetimeInMinutes = 1440;
             var tokenKey = Encoding.UTF8.GetBytes(_iConfiguration["JWT:Key"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
-              {
-                   new Claim(ClaimTypes.Email, user.EmployeeId),
-                   new Claim("LoginUserId", Convert.ToString(user.Id)),
-                   new Claim("LoginUserTypeId", Convert.ToString(user.UserTypeId)),
-              }),
-                //Expires = DateTime.UtcNow.AddHours(10),
+                {
+                   new Claim(ClaimTypes.Email, genTalent.EmailId),
+                   new Claim(ClaimTypes.NameIdentifier, Convert.ToString(genTalent.Id)),
+                   new Claim("IsFromAdminLogin", Convert.ToString(sessionValues.LoggedInFromAdmin)),
+                   new Claim("SSOLoggedInUserId", Convert.ToString(sessionValues.SSOUserID))
+                }),
                 Expires = DateTime.UtcNow.AddHours(24),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };

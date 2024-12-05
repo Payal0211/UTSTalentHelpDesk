@@ -22,7 +22,7 @@ namespace UTSTalentHelpDesk.Controllers
         private readonly IConfigurationSection zohoConfig;
         private readonly ITicket _iTicket;
 
-        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory,ITicket iTicket)
+        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory, ITicket iTicket)
         {
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
@@ -34,19 +34,22 @@ namespace UTSTalentHelpDesk.Controllers
         [HttpGet("callback")]
         public async Task<IActionResult> OAuthCallback([FromQuery] string code)
         {
-            if (string.IsNullOrEmpty(code))
+            try
             {
-                return BadRequest("Authorization code is missing.");
-            }
+                if (string.IsNullOrEmpty(code))
+                {
+                    //return BadRequest("Authorization code is missing.");
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Authorization code is missing." });
+                }
 
-            //var zohoConfig = _configuration.GetSection("Zoho");
-            string tokenEndpoint = zohoConfig["TokenEndpoint"];
-            string clientId = zohoConfig["ClientId"];
-            string clientSecret = zohoConfig["ClientSecret"];
-            string redirectUri = zohoConfig["RedirectUri"];
+                //var zohoConfig = _configuration.GetSection("Zoho");
+                string tokenEndpoint = zohoConfig["TokenEndpoint"];
+                string clientId = zohoConfig["ClientId"];
+                string clientSecret = zohoConfig["ClientSecret"];
+                string redirectUri = zohoConfig["RedirectUri"];
 
-            var payload = new FormUrlEncodedContent(new[]
-            {
+                var payload = new FormUrlEncodedContent(new[]
+                {
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
                 new KeyValuePair<string, string>("client_id", clientId),
                 new KeyValuePair<string, string>("client_secret", clientSecret),
@@ -54,103 +57,134 @@ namespace UTSTalentHelpDesk.Controllers
                 new KeyValuePair<string, string>("code", code)
             });
 
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync(tokenEndpoint, payload);
+                var client = _httpClientFactory.CreateClient();
+                var response = await client.PostAsync(tokenEndpoint, payload);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
-                await SaveTokensToDatabase("ZohoAccessToken", tokenResponse.AccessToken, tokenResponse.RefreshToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
+                    if (tokenResponse != null)
+                    {
+                        await SaveTokensToDatabase("ZohoAccessToken", tokenResponse.AccessToken, tokenResponse.RefreshToken);
+                        //return Ok(new { message = "Tokens saved successfully!", tokenResponse });
+                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Tokens saved successfully!", Details = tokenResponse });
+                    }
+                }
 
-                return Ok(new { message = "Tokens saved successfully!", tokenResponse });
+                var error = await response.Content.ReadAsStringAsync();
+                //return StatusCode((int)response.StatusCode, error);
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = error });
+
             }
+            catch (Exception)
+            {
 
-            var error = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, error);
+                throw;
+            }
         }
 
         // Create a Ticket
         [HttpPost("create")]
         public async Task<IActionResult> CreateTicket([FromBody] TicketRequest request)
         {
-            string accessToken = await GetAccessTokenAsync();
-
-            if (string.IsNullOrEmpty(accessToken))
+            try
             {
-                return StatusCode(500, "Failed to generate access token.");
+                string accessToken = await GetAccessTokenAsync();
+
+                if (string.IsNullOrEmpty(accessToken))
+                {
+                    //return StatusCode(500, "Failed to generate access token.");
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseObject() { statusCode = StatusCodes.Status500InternalServerError, Message = "Failed to generate access token." });
+                }
+
+                //var zohoConfig = _configuration.GetSection("Zoho");
+                var baseUrl = zohoConfig["BaseUrl"];
+                var url = $"{baseUrl}/tickets";
+
+                var payload = new
+                {
+                    subject = request.Subject,
+                    departmentId = request.DepartmentId,
+                    description = request.Description,
+                    email = request.Email
+                };
+
+                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+
+                var response = await client.PostAsync(url, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    //return Ok(JsonConvert.DeserializeObject(result));
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created Successfully.",Details = JsonConvert.DeserializeObject(result) });
+                }
+
+                var error = await response.Content.ReadAsStringAsync();
+                //return StatusCode((int)response.StatusCode, error);
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = error });
             }
-
-            //var zohoConfig = _configuration.GetSection("Zoho");
-            var baseUrl = zohoConfig["BaseUrl"];
-            var url = $"{baseUrl}/tickets";
-
-            var payload = new
+            catch (Exception)
             {
-                subject = request.Subject,
-                departmentId = request.DepartmentId,
-                description = request.Description,
-                email = request.Email
-            };
 
-            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
-
-            var response = await client.PostAsync(url, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadAsStringAsync();
-                return Ok(JsonConvert.DeserializeObject(result));
-            }
-
-            var error = await response.Content.ReadAsStringAsync();
-            return StatusCode((int)response.StatusCode, error);
+                throw;
+            }           
         }
 
         // Retrieve Access Token, Refresh if Expired
         private async Task<string> GetAccessTokenAsync()
         {
-            string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
-            string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
-
-            if (!string.IsNullOrEmpty(accessToken))
+            try
             {
-                return accessToken;
+                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
+
+                if (!string.IsNullOrEmpty(accessToken))
+                {
+                    return accessToken;
+                }
+
+                if (string.IsNullOrEmpty(refreshToken))
+                {
+                    //throw new Exception("Refresh token is missing. Re-authentication is required.");
+                    return null;
+                }
+
+                // Refresh the access token
+                //var zohoConfig = _configuration.GetSection("Zoho");
+                string clientId = zohoConfig["ClientId"];
+                string clientSecret = zohoConfig["ClientSecret"];
+                string tokenEndpoint = zohoConfig["TokenEndpoint"];
+
+                var payload = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("refresh_token", refreshToken),
+                    new KeyValuePair<string, string>("client_id", clientId),
+                    new KeyValuePair<string, string>("client_secret", clientSecret),
+                    new KeyValuePair<string, string>("grant_type", "refresh_token")
+                });
+
+                var client = _httpClientFactory.CreateClient();
+                var response = await client.PostAsync(tokenEndpoint, payload);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
+                    await UpdateTokenInDatabase("ZohoAccessToken", tokenResponse.AccessToken);
+                    return tokenResponse.AccessToken;
+                }
+
+                return null;
             }
-
-            if (string.IsNullOrEmpty(refreshToken))
+            catch (Exception)
             {
-                throw new Exception("Refresh token is missing. Re-authentication is required.");
-            }
 
-            // Refresh the access token
-            //var zohoConfig = _configuration.GetSection("Zoho");
-            string clientId = zohoConfig["ClientId"];
-            string clientSecret = zohoConfig["ClientSecret"];
-            string tokenEndpoint = zohoConfig["TokenEndpoint"];
-
-            var payload = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("refresh_token", refreshToken),
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("client_secret", clientSecret),
-                new KeyValuePair<string, string>("grant_type", "refresh_token")
-            });
-
-            var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync(tokenEndpoint, payload);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var tokenResponse = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
-                await UpdateTokenInDatabase("ZohoAccessToken", tokenResponse.AccessToken);
-                return tokenResponse.AccessToken;
-            }
-
-            return null;
+                throw;
+            }           
         }
 
         // Save Tokens to the Database

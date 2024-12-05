@@ -32,4 +32,10 @@
     <ProjectReference Include="..\UTSTalentHelpDesk.Models\UTSTalentHelpDesk.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="UTSTalentHelpDesk.Repositories">
+      <HintPath>..\UTSTalentHelpDesk.Repositories\bin\Debug\net6.0\UTSTalentHelpDesk.Repositories.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

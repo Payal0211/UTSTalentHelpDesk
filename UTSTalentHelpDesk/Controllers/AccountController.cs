@@ -14,7 +14,7 @@ namespace UTSTalentHelpDesk.Controllers
 {
     [Route("Account/", Name = "Login Signup")]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         #region Variables
         private readonly IAccount _iAccounts;

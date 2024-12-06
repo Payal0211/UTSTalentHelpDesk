@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Dynamic;
 using UTSTalentHelpDesk.Models.Models;
-using UTSTalentHelpDesk.Repositories.Interfaces;
 using Newtonsoft.Json;
 using UTSTalentHelpDesk.Helpers.Common;
 using UTSTalentHelpDesk.Models.ViewModels;
@@ -12,7 +11,7 @@ namespace UTSTalentHelpDesk
     {
         private static string workingDirectory = Environment.CurrentDirectory;
 
-        public static dynamic LoginResponse(GenTalent genTalent, IConfiguration _iConfiguration, IAccount _iAccount,
+        public static dynamic LoginResponse(GenTalent genTalent, IConfiguration _iConfiguration,string SSOUserName, string SSOUserEmailId,
                                              bool isRefresh = false, bool isFromAdmin = false, long ssoUserId = 0)
         {
             dynamic responseObject = new ExpandoObject();
@@ -23,17 +22,8 @@ namespace UTSTalentHelpDesk
             responseObject.IsFromAdminLogin = isFromAdmin;
             responseObject.SSOLoggedInUserId = ssoUserId;
             responseObject.SSOUserName = string.Empty;
-
-            // UTS-7509: Fetch the SSO user name.
-            if (ssoUserId > 0)
-            {
-                UsrUser user = _iAccount.UserDetails(ssoUserId).Result;
-                if (user != null)
-                {
-                    responseObject.SSOUserName = user.FullName;
-                    responseObject.SSOUserEmailId = user.EmailId;
-                }
-            }
+            responseObject.SSOUserName = SSOUserName;
+            responseObject.SSOUserEmailId = SSOUserEmailId;
 
             // If the call is for refresh then do not generate the tokens again and make an entry in history
             if (!isRefresh)

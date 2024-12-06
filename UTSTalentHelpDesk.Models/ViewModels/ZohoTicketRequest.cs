@@ -10,7 +10,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
     {
         public List<string> EntitySkills { get; set; }
         public string SubCategory { get; set; }
-        public CustomFields Cf { get; set; }
+        public RequestCustomFields Cf { get; set; }
         public string ProductId { get; set; }
         public string ContactId { get; set; }
         public string Subject { get; set; }
@@ -27,7 +27,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Email { get; set; }
         public string Status { get; set; }
     }
-    public class CustomFields
+    public class RequestCustomFields
     {
         public string Cf_PermanentAddress { get; set; }
         public string Cf_DateOfPurchase { get; set; }
@@ -70,7 +70,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Email { get; set; }
         public object ChannelCode { get; set; }
         public DateTime CustomerResponseTime { get; set; }
-        public CustomFields Cf { get; set; }
+        public RequestCustomFields Cf { get; set; }
         public object ProductId { get; set; }
         public string ContactId { get; set; }
         public string ThreadCount { get; set; }

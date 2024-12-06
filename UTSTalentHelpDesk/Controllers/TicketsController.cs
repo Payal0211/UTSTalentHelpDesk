@@ -20,7 +20,7 @@ namespace UTSTalentHelpDesk.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("Tickets/", Name = "Ticket")]
     public class TicketsController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -177,7 +177,7 @@ namespace UTSTalentHelpDesk.Controllers
                 string paramasString = CommonLogic.ConvertToParamString(param);
 
                 sp_GetToken_Result companyListData = await _iTicket.GetTokenList(paramasString).ConfigureAwait(false);
-                return companyListData.ToString();
+                return companyListData.Column.ToString();
             }
             catch (Exception)
             {
@@ -294,7 +294,7 @@ namespace UTSTalentHelpDesk.Controllers
         // Create a Ticket
         #endregion
 
-
+        [AllowAnonymous]
         [HttpPost("create")]
         public async Task<IActionResult> CreateTicketAsync(ZohoTicketRequest request)
         {
@@ -321,15 +321,7 @@ namespace UTSTalentHelpDesk.Controllers
             var ticketResponse = await response.Content.ReadFromJsonAsync<ZohoTicketResponse>();
 
             // Save ticket response to database
-            SaveTicketResponseAsync(ticketResponse);
-
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created.",Details = ticketResponse });
-            //return ticketResponse;
-
-        }
-
-        public async Task SaveTicketResponseAsync(ZohoTicketResponse ticketResponse)
-        {
+            //SaveTicketResponseAsync(ticketResponse);
             try
             {
                 object[] param = new object[] {
@@ -401,7 +393,16 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
 
+            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created.",Details = ticketResponse });
+            //return ticketResponse;
+
         }
+
+        //private async Task SaveTicketResponseAsync(ZohoTicketResponse ticketResponse)
+        //{
+            
+
+        //}
         #endregion
 
 
@@ -464,9 +465,9 @@ namespace UTSTalentHelpDesk.Controllers
         #endregion
 
         #region When New Ticket Create in Zoho it will call below API through webhook
-        [HttpPost("SaveZohoTicket")]
+        [HttpPost("SaveToZohoTicket")]
         [AllowAnonymous]
-        public async Task<IActionResult> SaveZohoTicket([FromBody] ZohoWebhookPayload webhookPayload)
+        public async Task<IActionResult> SaveToZohoTicket([FromBody] ZohoWebhookPayload webhookPayload)
         {
             try
             {
@@ -533,10 +534,9 @@ namespace UTSTalentHelpDesk.Controllers
                 payload.LayoutDetails?.Id ?? string.Empty,
                 payload.LayoutDetails?.LayoutName ?? string.Empty,
                 // Custom Fields                
-                    decimal.TryParse(payload.CustomFields?.SeverityPercentage ?? "0", out decimal severity)
-                        ? severity : 0,
-                payload.CustomFields?.DateOfPurchase,
-                payload.CustomFields?.Url ?? string.Empty,
+                decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
+                payload.CustomField?.DateOfPurchase,
+                payload.CustomField?.Url ?? string.Empty,
                 // Webhook Details
                 webhookPayload.EventTime,
                 webhookPayload.EventType,
@@ -630,10 +630,10 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.LayoutDetails?.Id ?? string.Empty,
                     payload.LayoutDetails?.LayoutName ?? string.Empty,
                     // Custom Fields                
-                    decimal.TryParse(payload.CustomFields?.SeverityPercentage ?? "0", out decimal severity)
+                    decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity)
                         ? severity : 0,
-                    payload.CustomFields?.DateOfPurchase,
-                    payload.CustomFields?.Url ?? string.Empty,
+                    payload.CustomField?.DateOfPurchase,
+                    payload.CustomField?.Url ?? string.Empty,
                     // Webhook Details
                     webhookPayload.EventTime,
                     webhookPayload.EventType,
@@ -653,9 +653,9 @@ namespace UTSTalentHelpDesk.Controllers
         #endregion
 
         #region delete ticket in zoho webhook
-        [HttpPost("UpdateZohoTicket")]
+        [HttpPost("DeleteZohoTicket")]
         [AllowAnonymous]
-        public async Task<IActionResult> deleteZohoTicket([FromBody] ZohoWebhookDeleteTicket webhookPayload)
+        public async Task<IActionResult> DeleteZohoTicket([FromBody] ZohoWebhookDeleteTicket webhookPayload)
         {
             try
             {

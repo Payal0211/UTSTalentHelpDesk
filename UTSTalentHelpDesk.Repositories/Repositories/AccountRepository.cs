@@ -172,5 +172,20 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             var user = await _unitOfWork.usrUsers.GetSingleByCondition(x => x.Id == id);
             return user;
         }
+
+        public async Task<GenTalent> TalentDetails(string emailId, long id = 0)
+        {
+            GenTalent genTalent = new GenTalent();
+            if (string.IsNullOrEmpty(emailId))
+            {
+                genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.Id == id);
+
+            }
+            else
+            {
+                genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.EmailId.ToLower().Equals(emailId.ToLower()));
+            }
+            return genTalent;
+        }
     }
 }

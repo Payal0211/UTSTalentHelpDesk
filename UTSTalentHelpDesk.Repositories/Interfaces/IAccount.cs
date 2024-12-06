@@ -18,8 +18,8 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         Task<bool> TalentDetailIsPasswordChanged(long Id);
         Task<GenTalent> GetGenTalentByUserName(string userName);
         Task<UsrUser> UserDetails(long id = 0);
-        Task<GenTalent> LoginUserFromAdmin(string username);       
-        
-        
+        Task<GenTalent> LoginUserFromAdmin(string username);
+        Task<GenTalent> TalentDetails(string emailId, long id = 0);
+
     }
 }

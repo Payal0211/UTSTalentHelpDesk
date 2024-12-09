@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UTSTalentHelpDesk.Helpers;
+using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Generic;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Repositories.Interfaces;
@@ -30,6 +33,11 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         public void DashBoardCount()
         {
             
+        }
+
+        public Task<List<TS_Sproc_Get_DashBoradCounts_Result>> GetDashBoradCounts(string strparams)
+        {
+            return _dbcontext.Set<TS_Sproc_Get_DashBoradCounts_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_DashBoradCounts, strparams)).ToListAsync();
         }
     }
 }

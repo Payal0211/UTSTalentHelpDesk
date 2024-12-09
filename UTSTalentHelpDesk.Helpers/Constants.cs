@@ -24,6 +24,9 @@
             public static string TS_Sproc_Get_engagement_PRDetails_MonthWise = "TS_Sproc_Get_engagement_PRDetails_MonthWise";
             #endregion
 
+            #region Dashboard
+            public static string TS_Sproc_Get_DashBoradCounts = "TS_Sproc_Get_DashBoradCounts";
+            #endregion
         }
     }
 }

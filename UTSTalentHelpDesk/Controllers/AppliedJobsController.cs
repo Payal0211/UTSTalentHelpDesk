@@ -105,5 +105,39 @@ namespace UTSTalentHelpDesk.Controllers
         }
         #endregion
 
+        #region Get Engagement PR Details Month Wise
+        [HttpGet("GetEngagementPRDetailsMonthWise")]
+        public async Task<IActionResult> GetEngagementPRDetailsMonthWise(long onBoardId)
+        {
+            try
+            {
+                #region Pre-Validation
+                if (onBoardId == 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide engagement" });
+                #endregion
+
+                object[] param = new object[] {
+                    onBoardId
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                List<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> listEngagementPRDetails = await _iappliedjobs.GetEngagementPRDetailsMonthWiseResult(paramasString);
+                if (listEngagementPRDetails.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = listEngagementPRDetails });
+                }
+                else
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
+
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
     }
 }

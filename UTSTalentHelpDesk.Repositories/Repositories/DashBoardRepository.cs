@@ -35,9 +35,9 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             
         }
 
-        public Task<List<TS_Sproc_Get_DashBoradCounts_Result>> GetDashBoradCounts(string strparams)
+        public async Task<List<TS_Sproc_Get_DashBoradCounts_Result>> GetDashBoradCounts(string strparams)
         {
-            return _dbcontext.Set<TS_Sproc_Get_DashBoradCounts_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_DashBoradCounts, strparams)).ToListAsync();
+            return await _db.Set<TS_Sproc_Get_DashBoradCounts_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_DashBoradCounts, strparams)).ToListAsync();
         }
     }
 }

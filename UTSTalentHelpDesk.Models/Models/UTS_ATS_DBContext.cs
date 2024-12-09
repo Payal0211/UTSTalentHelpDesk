@@ -384,7 +384,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<UsrUserTypeKeyoutcome> UsrUserTypeKeyoutcomes { get; set; } = null!;
 
         #region All Complex Types
-        public virtual DbSet<sp_GetToken_Result> sp_GetToken_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetClose_EngagementList_Result> TS_Sproc_GetClose_EngagementList_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetActive_EngagementList_Result> TS_Sproc_GetActive_EngagementList_Result { get; set; } = null!;
+        public virtual DbSet<TS_sproc_GetToken_Result> TS_sproc_GetToken_Result { get; set; } = null!;
         public virtual DbSet<Sproc_Update_Basic_CompanyDetails_Result> Sproc_Update_Basic_CompanyDetails_Result { get; set; } = null!;
         public virtual DbSet<sproc_UTS_UpdateContactDetails_Result> sproc_UTS_UpdateContactDetails_Result { get; set; } = null!;
         public virtual DbSet<Sproc_Add_Company_Transactions_With_ATS_Result> Sproc_Add_Company_Transactions_With_ATS_Result { get; set; } = null!;

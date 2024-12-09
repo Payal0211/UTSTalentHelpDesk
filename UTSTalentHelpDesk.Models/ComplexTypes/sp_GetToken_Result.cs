@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace UTSTalentHelpDesk.Models.ComplexTypes
 {
     [Keyless]
-    public class sp_GetToken_Result
+    public class TS_sproc_GetToken_Result
     {
         public string? Column { get; set; }
     }

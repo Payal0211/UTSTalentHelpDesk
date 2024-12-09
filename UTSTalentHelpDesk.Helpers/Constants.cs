@@ -64,13 +64,15 @@
             #endregion
 
             #region Ticket
-            public static string sp_GetToken = "sp_GetToken";
-            public static string sp_SaveTokens = "sp_SaveTokens";
-            public static string sp_UpdateToken = "sp_UpdateToken";
-            public static string Sproc_SaveAllTicketData = "Sproc_SaveAllTicketData";
-            public static string sproc_SaveTicket = "sproc_SaveTicket";
-            public static string Sproc_SaveZohoTicket = "Sproc_SaveZohoTicket";
-            public static string Sproc_deleteZohoTicket = "Sproc_deleteZohoTicket";
+            public static string TS_sproc_GetToken = "TS_sproc_GetToken";
+            public static string TS_sproc_SaveTokens = "TS_sproc_SaveTokens";
+            public static string TS_sproc_UpdateToken = "TS_sproc_UpdateToken";
+            public static string TS_Sproc_SaveAllTicketData = "TS_Sproc_SaveAllTicketData";
+            public static string TS_sproc_SaveTicket = "TS_sproc_SaveTicket";
+            public static string TS_Sproc_SaveZohoTicket = "TS_Sproc_SaveZohoTicket";
+            public static string TS_Sproc_deleteZohoTicket = "TS_Sproc_deleteZohoTicket";
+            public static string TS_Sproc_GetActive_EngagementList = "TS_Sproc_GetActive_EngagementList";
+            public static string TS_Sproc_GetClose_EngagementList = "TS_Sproc_GetClose_EngagementList";
             #endregion
 
             //#region Schedular

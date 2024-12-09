@@ -24,34 +24,34 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         #endregion
         public void CreateTicket(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sp_SaveTokens, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_sproc_SaveTokens, param));
         }
 
-        public async Task<sp_GetToken_Result> GetTokenList(string strparams)
+        public async Task<TS_sproc_GetToken_Result> GetTokenList(string strparams)
         {
-            return db.Set<sp_GetToken_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sp_GetToken, strparams)).AsEnumerable().FirstOrDefault();
+            return db.Set<TS_sproc_GetToken_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_sproc_GetToken, strparams)).AsEnumerable().FirstOrDefault();
         }
 
         public void SaveAllTickets(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.Sproc_SaveAllTicketData, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveAllTicketData, param));
         }
         public void SaveTickets(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sproc_SaveTicket, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_sproc_SaveTicket, param));
         }
         public void UpdateTicket(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.sp_UpdateToken, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_sproc_UpdateToken, param));
         }
 
         public void SaveZohoTickets(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.Sproc_SaveZohoTicket, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveZohoTicket, param));
         }
         public void deleteZohoTickets(string param)
         {
-            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.Sproc_deleteZohoTicket, param));
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_deleteZohoTicket, param));
         }
     }
 }

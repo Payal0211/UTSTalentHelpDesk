@@ -176,7 +176,7 @@ namespace UTSTalentHelpDesk.Controllers
 
                 string paramasString = CommonLogic.ConvertToParamString(param);
 
-                sp_GetToken_Result companyListData = await _iTicket.GetTokenList(paramasString).ConfigureAwait(false);
+                TS_sproc_GetToken_Result companyListData = await _iTicket.GetTokenList(paramasString).ConfigureAwait(false);
                 return companyListData.Column.ToString();
             }
             catch (Exception)

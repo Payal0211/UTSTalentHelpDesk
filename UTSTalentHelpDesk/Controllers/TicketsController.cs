@@ -101,16 +101,16 @@ namespace UTSTalentHelpDesk.Controllers
                 string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
                 string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
 
-                if (!string.IsNullOrEmpty(accessToken))
-                {
-                    return accessToken;
-                }
+                //if (!string.IsNullOrEmpty(accessToken))
+                //{
+                //    return accessToken;
+                //}
 
-                if (string.IsNullOrEmpty(refreshToken))
-                {
-                    //throw new Exception("Refresh token is missing. Re-authentication is required.");
-                    return null;
-                }
+                //if (string.IsNullOrEmpty(refreshToken))
+                //{
+                //    //throw new Exception("Refresh token is missing. Re-authentication is required.");
+                //    return null;
+                //}
 
                 // Refresh the access token
                 //var zohoConfig = _configuration.GetSection("Zoho");

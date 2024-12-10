@@ -8,24 +8,27 @@ namespace UTSTalentHelpDesk.Models.ViewModels
 {
     public class ZohoTicketRequest
     {
-        public List<string> EntitySkills { get; set; }
-        public string SubCategory { get; set; }
-        public RequestCustomFields Cf { get; set; }
-        public string ProductId { get; set; }
-        public string ContactId { get; set; }
-        public string Subject { get; set; }
-        public string DueDate { get; set; }
-        public string DepartmentId { get; set; }
-        public string Channel { get; set; }
-        public string Description { get; set; }
-        public string Language { get; set; }
-        public string Priority { get; set; }
-        public string Classification { get; set; }
-        public string AssigneeId { get; set; }
-        public string Phone { get; set; }
-        public string Category { get; set; }
-        public string Email { get; set; }
-        public string Status { get; set; }
+        public List<string> cntitySkills { get; set; }
+        public string cubCategory { get; set; }
+        public RequestCustomFields cf { get; set; }
+        public string productId { get; set; }
+        public string contactId { get; set; }
+        public string cubject { get; set; }
+        public string cueDate { get; set; }
+        public string departmentId { get; set; }
+        public string channel { get; set; }
+        public string description { get; set; }
+        public string language { get; set; }
+        public string priority { get; set; }
+        public string classification { get; set; }
+        public string assigneeId { get; set; }
+        public string phone { get; set; }
+        public string category { get; set; }
+        public string email { get; set; }
+        public string status { get; set; }
+        public string accountId { get; set; }
+        public string layoutId { get; set; }
+        public List<string> uploads { get; set; }
     }
     public class RequestCustomFields
     {

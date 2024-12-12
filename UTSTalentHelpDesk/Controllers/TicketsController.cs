@@ -687,5 +687,45 @@ namespace UTSTalentHelpDesk.Controllers
             }
         }
         #endregion
+
+
+        #region Save All contacts into db from Zoho
+        [HttpPost("SaveContacts")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SaveContacts([FromBody] ZohoContactsResponse contactResponse)
+        {
+            try
+            {
+                if (contactResponse?.Data == null || !contactResponse.Data.Any())
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
+
+                foreach (var contacts in contactResponse.Data)
+                {
+                    object[] param = new object[] {                    
+                    contacts?.FirstName,
+                    contacts?.LastName,
+                    contacts?.Phone,
+                    contacts?.Mobile,
+                    contacts?.Id,
+                    contacts?.Email,
+                    contacts?.CreatedTime.ToString(),
+                    contacts?.OwnerId,
+                    contacts?.AccountId,
+                    contacts?.webUrl
+                };
+
+                    string paramasString = CommonLogic.ConvertToParamString(param);
+
+                    _iTicket.saveContacts(paramasString);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All contacts saved." });
+        }
+        #endregion
     }
 }

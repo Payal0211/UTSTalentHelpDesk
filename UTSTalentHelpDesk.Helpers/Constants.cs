@@ -15,7 +15,7 @@
             public static string TS_sproc_SaveTicket = "TS_sproc_SaveTicket";
             public static string TS_Sproc_SaveZohoTicket = "TS_Sproc_SaveZohoTicket";
             public static string TS_Sproc_deleteZohoTicket = "TS_Sproc_deleteZohoTicket";
-
+            public static string TS_Sproc_SaveZohoContacts = "TS_Sproc_SaveZohoContacts";
             #endregion
 
             #region Engagements
@@ -24,6 +24,9 @@
             public static string TS_Sproc_Get_engagement_PRDetails_MonthWise = "TS_Sproc_Get_engagement_PRDetails_MonthWise";
             #endregion
 
+            #region Dashboard
+            public static string TS_Sproc_Get_DashBoradCounts = "TS_Sproc_Get_DashBoradCounts";
+            #endregion
         }
     }
 }

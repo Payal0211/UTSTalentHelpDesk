@@ -53,5 +53,10 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_deleteZohoTicket, param));
         }
+
+        public void saveContacts(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveZohoContacts, param));
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Repositories.Interfaces;
 
@@ -37,7 +38,21 @@ namespace UTSTalentHelpDesk.Controllers
             #endregion
 
 
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success." });
+            object[] param = new object[] {
+                talentId
+                };
+
+
+            string paramasString = CommonLogic.ConvertToParamString(param);
+
+            List<TS_Sproc_Get_DashBoradCounts_Result> dashBoradCounts = await _iDashboard.GetDashBoradCounts(paramasString);
+            if (dashBoradCounts.Any())
+            {
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = dashBoradCounts });
+            }
+            else
+                return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Count" });
+
         }
 
     }

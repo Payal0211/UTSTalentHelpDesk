@@ -16,6 +16,11 @@ namespace UTSTalentHelpDesk.Models.ViewModels
 
     public class ZohoTicketsRequest
     {
+        public List<ZohoTicketsRequestDetails> Data { get; set; }
+    }
+
+    public class ZohoTicketsRequestDetails
+    {
         public string? id { get; set; }
         public string? ticketNumber { get; set; }
         public string? layoutId { get; set; }

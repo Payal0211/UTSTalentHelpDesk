@@ -690,14 +690,14 @@ namespace UTSTalentHelpDesk.Controllers
         #region Save tickets from zoho api in one go
         [HttpPost("SaveZohoTicketinOneGo")]
         [AllowAnonymous]
-        public async Task<IActionResult> SaveZohoTicketinOneGo([FromBody] List<ZohoTicketsRequest> webhookPayload)
+        public async Task<IActionResult> SaveZohoTicketinOneGo([FromBody] ZohoTicketsRequest webhookPayload)
         {
             try
             {
                 if (webhookPayload == null)
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
 
-                foreach (var payload in webhookPayload)
+                foreach (var payload in webhookPayload.Data)
                 {
                     object[] param = new object[]
                     {

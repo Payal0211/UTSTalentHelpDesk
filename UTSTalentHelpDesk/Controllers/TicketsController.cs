@@ -393,14 +393,14 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
 
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created.",Details = ticketResponse });
+            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Created.", Details = ticketResponse });
             //return ticketResponse;
 
         }
 
         //private async Task SaveTicketResponseAsync(ZohoTicketResponse ticketResponse)
         //{
-            
+
 
         //}
         #endregion
@@ -697,7 +697,7 @@ namespace UTSTalentHelpDesk.Controllers
                 if (webhookPayload == null)
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
 
-                foreach (var payload in webhookPayload) 
+                foreach (var payload in webhookPayload)
                 {
                     object[] param = new object[]
                     {
@@ -713,7 +713,7 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.createdTime,
                     payload.dueDate,
                     payload.closedTime,
-                    payload.customerResponseTime,                    
+                    payload.customerResponseTime,
                     payload.email,
                     payload.phone,
                     payload.contactId,
@@ -732,11 +732,11 @@ namespace UTSTalentHelpDesk.Controllers
                 return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket saved." });
             }
             catch (Exception ex)
-            {  
+            {
                 throw ex;
             }
-            
-          #endregion
+        }
+        #endregion
 
         #region Save All contacts into db from Zoho
         [HttpPost("SaveContacts")]
@@ -750,7 +750,7 @@ namespace UTSTalentHelpDesk.Controllers
 
                 foreach (var contacts in contactResponse.Data)
                 {
-                    object[] param = new object[] {                    
+                    object[] param = new object[] {
                     contacts?.FirstName,
                     contacts?.LastName,
                     contacts?.Phone,
@@ -775,7 +775,7 @@ namespace UTSTalentHelpDesk.Controllers
 
             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All contacts saved." });
 
-        }     
-          #endregion
+        }
+        #endregion
     }
 }

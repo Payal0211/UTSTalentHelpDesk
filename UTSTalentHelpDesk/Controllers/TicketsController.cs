@@ -405,7 +405,6 @@ namespace UTSTalentHelpDesk.Controllers
         //}
         #endregion
 
-
         #region Save All Tickets into db from Zoho
         [HttpPost("SaveTickets")]
         [AllowAnonymous]
@@ -688,6 +687,56 @@ namespace UTSTalentHelpDesk.Controllers
         }
         #endregion
 
+        #region Save tickets from zoho api in one go
+        [HttpPost("SaveZohoTicketinOneGo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SaveZohoTicketinOneGo([FromBody] List<ZohoTicketsRequest> webhookPayload)
+        {
+            try
+            {
+                if (webhookPayload == null)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
+
+                foreach (var payload in webhookPayload) 
+                {
+                    object[] param = new object[]
+                    {
+                    payload.id,
+                    payload.ticketNumber,
+                    payload.subject,
+                    "",
+                    payload.status,
+                    payload.statusType,
+                    payload.priority,
+                    payload.category,
+                    payload.subCategory,
+                    payload.createdTime,
+                    payload.dueDate,
+                    payload.closedTime,
+                    payload.customerResponseTime,                    
+                    payload.email,
+                    payload.phone,
+                    payload.contactId,
+                    payload.assigneeId,
+                    payload.departmentId,
+                    payload.channel,
+                    payload.webUrl,
+                    payload.isSpam,
+                    payload.isArchived
+                    };
+
+                    string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+
+                    _iTicket.SaveZohoTickets(paramasString);
+                }
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket saved." });
+            }
+            catch (Exception ex)
+            {  
+                throw ex;
+            }
+            
+          #endregion
 
         #region Save All contacts into db from Zoho
         [HttpPost("SaveContacts")]
@@ -725,7 +774,8 @@ namespace UTSTalentHelpDesk.Controllers
             }
 
             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All contacts saved." });
-        }
-        #endregion
+
+        }     
+          #endregion
     }
 }

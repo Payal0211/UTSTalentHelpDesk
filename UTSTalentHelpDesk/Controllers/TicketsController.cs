@@ -477,8 +477,12 @@ namespace UTSTalentHelpDesk.Controllers
                 PayloadDetails payload = new PayloadDetails();
                 using (StreamReader reader = new StreamReader(Request.Body))
                 {
-                    reader.BaseStream.Seek(0, SeekOrigin.Begin);
                     string xxjson = await reader.ReadToEndAsync();
+
+                    if (string.IsNullOrEmpty(xxjson))
+                    {
+                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "No request body." });
+                    }
 
                     long Id = await SaveZohoWebHookLogs(xxjson);
                     webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
@@ -496,7 +500,8 @@ namespace UTSTalentHelpDesk.Controllers
                         string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
 
                         _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
-                    }                    
+                    }
+
                 }
 
                 object[] param = new object[] {

@@ -56,5 +56,8 @@ namespace UTSTalentHelpDesk.Models.Models
         public decimal? CreditAmount { get; set; }
         public string? CreditCurrency { get; set; }
         public int? HiringTypePricingId { get; set; }
+        public int? AppActionDoneBy { get; set; }
+        public DateTime? HistoryDate { get; set; }
+        public string? CompanyLogoAwsUrl { get; set; }
     }
 }

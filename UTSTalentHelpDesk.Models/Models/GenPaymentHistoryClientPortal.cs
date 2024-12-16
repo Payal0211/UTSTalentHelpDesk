@@ -29,5 +29,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? RazorPayPaymentStatus { get; set; }
         public long? CompanyId { get; set; }
         public string? OrderId { get; set; }
+        public string? InvoiceUrl { get; set; }
+        public string? InvoiceName { get; set; }
     }
 }

@@ -27,5 +27,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public decimal? UtilizedCreditAmount { get; set; }
         public string? UtilizedCreditCurreny { get; set; }
         public decimal? CreditUsed { get; set; }
+        public string? CreditTransactionNumber { get; set; }
+        public int? AppActionDoneBy { get; set; }
     }
 }

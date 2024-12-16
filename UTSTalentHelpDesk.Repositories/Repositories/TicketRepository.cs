@@ -58,5 +58,26 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveZohoContacts, param));
         }
+
+        public void saveZohoWebHookEvent(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_WebHook_History_Manage, param));
+        }
+
+        public async Task<long> InsertZohoWebHookLogs(TsGenZohoTicketsWebhookEvent genZohoTicketsWebhookEvent)
+        {
+            TsGenZohoTicketsWebhookEvent zohoTicketsWebhookEvent = new TsGenZohoTicketsWebhookEvent();
+
+            zohoTicketsWebhookEvent.Payload = genZohoTicketsWebhookEvent.Payload;
+            await db.TsGenZohoTicketsWebhookEvents.AddAsync(zohoTicketsWebhookEvent);
+            db.SaveChanges();
+
+            return zohoTicketsWebhookEvent.Id;
+        }
+
+        public void SaveZohoWebHookTickets(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveZohoTicket_Webhook, param));
+        }
     }
 }

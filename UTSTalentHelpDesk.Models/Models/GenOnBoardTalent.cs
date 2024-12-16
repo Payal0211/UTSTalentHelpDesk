@@ -71,5 +71,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public int? ModeOfworkingId { get; set; }
         public string? City { get; set; }
         public int? StateId { get; set; }
+        public string? UplersfeesAmount { get; set; }
+        public int? WorkOptionId { get; set; }
     }
 }

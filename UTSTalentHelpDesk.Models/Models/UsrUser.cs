@@ -38,5 +38,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? TeamId { get; set; }
         public long? LevelId { get; set; }
         public int? AnotherUserTypeId { get; set; }
+        public string? WhatsappNumber { get; set; }
     }
 }

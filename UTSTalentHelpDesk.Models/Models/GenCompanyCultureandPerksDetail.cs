@@ -12,5 +12,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public DateTime? CreatedDateTime { get; set; }
         public long? ModifiedById { get; set; }
         public DateTime? ModifiedDateTime { get; set; }
+        public string? CultureImageAwsUrl { get; set; }
     }
 }

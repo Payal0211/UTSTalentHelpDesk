@@ -80,5 +80,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public DateTime? JobExpiryDate { get; set; }
         public bool? ShowHrpocdetailsToTalents { get; set; }
         public int? JobTypeId { get; set; }
+        public int? AppActionDoneBy { get; set; }
+        public string? JdFileAwsUrl { get; set; }
     }
 }

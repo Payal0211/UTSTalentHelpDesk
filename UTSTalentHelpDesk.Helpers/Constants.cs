@@ -16,6 +16,8 @@
             public static string TS_Sproc_SaveZohoTicket = "TS_Sproc_SaveZohoTicket";
             public static string TS_Sproc_deleteZohoTicket = "TS_Sproc_deleteZohoTicket";
             public static string TS_Sproc_SaveZohoContacts = "TS_Sproc_SaveZohoContacts";
+            public static string TS_Sproc_WebHook_History_Manage = "TS_Sproc_WebHook_History_Manage";
+            public static string TS_Sproc_SaveZohoTicket_Webhook = "TS_Sproc_SaveZohoTicket_Webhook";
             #endregion
 
             #region Engagements

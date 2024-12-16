@@ -135,7 +135,7 @@ builder.Services
 
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Talent Connect Client", Version = "v1" });
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Talent Help Desk", Version = "v1" });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,

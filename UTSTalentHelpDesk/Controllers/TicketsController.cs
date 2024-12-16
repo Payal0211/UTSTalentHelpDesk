@@ -535,7 +535,7 @@ namespace UTSTalentHelpDesk.Controllers
                 // Ticket Flags
                 payload.IsOverDue,
                 payload.IsTrashed,
-                payload.IsResponseOverDue,
+                payload.IsResponseOverdue,
                 payload.IsSpam,
                 payload.IsArchived,
                 payload.IsDeleted,
@@ -547,7 +547,7 @@ namespace UTSTalentHelpDesk.Controllers
                 payload.ClosedTime,
                 payload.CustomerResponseTime,
                 payload.ResponseDueDate,
-                payload.LastActivityTime,
+                null,
                 // Counts
                 int.Parse(payload.ThreadCount ?? "0"),
                 int.Parse(payload.CommentCount ?? "0"),
@@ -562,9 +562,9 @@ namespace UTSTalentHelpDesk.Controllers
                 payload.LayoutDetails?.Id ?? string.Empty,
                 payload.LayoutDetails?.LayoutName ?? string.Empty,
                 // Custom Fields                
-                decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
-                payload.CustomField?.DateOfPurchase,
-                payload.CustomField?.Url ?? string.Empty,
+                decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
+                payload.Cf?.DateOfPurchase,
+                payload.Cf?.Url ?? string.Empty,
                 // Webhook Details
                 webhookPayload.EventTime,
                 webhookPayload.EventType,
@@ -650,7 +650,7 @@ namespace UTSTalentHelpDesk.Controllers
                     // Ticket Flags
                     payload.IsOverDue,
                     payload.IsTrashed,
-                    payload.IsResponseOverDue,
+                    payload.IsResponseOverdue,
                     payload.IsSpam,
                     payload.IsArchived,
                     payload.IsDeleted,
@@ -662,7 +662,7 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.ClosedTime,
                     payload.CustomerResponseTime,
                     payload.ResponseDueDate,
-                    payload.LastActivityTime,
+                    null,
                     // Counts
                     int.Parse(payload.ThreadCount ?? "0"),
                     int.Parse(payload.CommentCount ?? "0"),
@@ -677,10 +677,10 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.LayoutDetails?.Id ?? string.Empty,
                     payload.LayoutDetails?.LayoutName ?? string.Empty,
                     // Custom Fields                
-                    decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity)
+                    decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity)
                         ? severity : 0,
-                    payload.CustomField?.DateOfPurchase,
-                    payload.CustomField?.Url ?? string.Empty,
+                    payload.Cf?.DateOfPurchase,
+                    payload.Cf?.Url ?? string.Empty,
                     // Webhook Details
                     webhookPayload.EventTime,
                     webhookPayload.EventType,

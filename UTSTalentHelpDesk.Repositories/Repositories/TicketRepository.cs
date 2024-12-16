@@ -69,7 +69,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             TsGenZohoTicketsWebhookEvent zohoTicketsWebhookEvent = new TsGenZohoTicketsWebhookEvent();
 
             zohoTicketsWebhookEvent.Payload = genZohoTicketsWebhookEvent.Payload;
-            await db.TsGenZohoTicketsWebhookEvents.AddAsync(zohoTicketsWebhookEvent);
+             db.TsGenZohoTicketsWebhookEvents.AddAsync(zohoTicketsWebhookEvent);
             db.SaveChanges();
 
             return zohoTicketsWebhookEvent.Id;

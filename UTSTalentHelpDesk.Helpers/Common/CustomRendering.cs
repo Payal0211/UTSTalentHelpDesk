@@ -1,26 +1,60 @@
-﻿namespace UTSTalentHelpDesk.Helpers.Common
-{
-    using Microsoft.Extensions.Configuration;
-    using System.Dynamic;
-    using UTSTalentHelpDesk.Models.Models ;
-    using UTSTalentHelpDesk.Models.ComplexTypes;
+﻿using Microsoft.Extensions.Configuration;
+using System.Dynamic;
+using UTSTalentHelpDesk.Models.Models;
+using Newtonsoft.Json;
+using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.ViewModels;
 
+namespace UTSTalentHelpDesk
+{
     public static class CustomRendering
     {
         private static string workingDirectory = Environment.CurrentDirectory;
-        public static dynamic AdminLoginResponse(UsrUser usrUser, IConfiguration _iConfiguration)
+
+        public static dynamic LoginResponse(GenTalent genTalent, IConfiguration _iConfiguration,string SSOUserName, string SSOUserEmailId,
+                                             bool isRefresh = false, bool isFromAdmin = false, long ssoUserId = 0)
         {
             dynamic responseObject = new ExpandoObject();
-            responseObject.Token = CommonLogic.CreateToken(usrUser, _iConfiguration);
-            //responseObject.Token = Helpers.CommonLogic.CreateToken(usrUser.EmployeeId, _iConfiguration["JWT:Key"], _iConfiguration["JWT:Issuer"]);
-            responseObject.LoggedInUserNameTC = usrUser.Username;
-            responseObject.LoggedInUserProfilePic = usrUser.ProfilePic;
-            responseObject.LoggedInUserTypeID = usrUser.UserTypeId;
-            responseObject.FullName = usrUser.FullName;
-            responseObject.EmployeeID = usrUser.EmployeeId ?? "";
-            responseObject.Designation = usrUser.Designation ?? "";
+            responseObject.LoggedInUserNameTC = genTalent.EmailId;
+            responseObject.FullName = genTalent.Name;
+            responseObject.LoggedInUserID = genTalent.Id;
+            responseObject.UserRoleID = 1;
+            responseObject.IsFromAdminLogin = isFromAdmin;
+            responseObject.SSOLoggedInUserId = ssoUserId;
+            responseObject.SSOUserName = string.Empty;
+            responseObject.SSOUserName = SSOUserName;
+            responseObject.SSOUserEmailId = SSOUserEmailId;
+
+            // If the call is for refresh then do not generate the tokens again and make an entry in history
+            if (!isRefresh)
+            {
+                
+                SessionValuesObject sessionValues = new SessionValuesObject()
+                {
+                    SSOUserID = ssoUserId,
+                    LoggedInFromAdmin = isFromAdmin
+                };
+
+                responseObject.Token = CommonLogic.CreateToken(genTalent, _iConfiguration, sessionValues);
+                
+            }
+
             return responseObject;
         }
+
+        //public static dynamic AdminLoginResponse(UsrUser usrUser, IConfiguration _iConfiguration)
+        //{
+        //    dynamic responseObject = new ExpandoObject();
+        //    responseObject.Token = CommonLogic.CreateToken(usrUser, _iConfiguration);
+        //    //responseObject.Token = Helpers.CommonLogic.CreateToken(usrUser.EmployeeId, _iConfiguration["JWT:Key"], _iConfiguration["JWT:Issuer"]);
+        //    responseObject.LoggedInUserNameTC = usrUser.Username;
+        //    responseObject.LoggedInUserProfilePic = usrUser.ProfilePic;
+        //    responseObject.LoggedInUserTypeID = usrUser.UserTypeId;
+        //    responseObject.FullName = usrUser.FullName;
+        //    responseObject.EmployeeID = usrUser.EmployeeId ?? "";
+        //    responseObject.Designation = usrUser.Designation ?? "";
+        //    return responseObject;
+        //}
         public static string ForgotPasswordTemplate(string link)
         {
             string path = string.Format(@"{0}\{1}\{2}\{3}.html", workingDirectory,"Templates","ForgotPassword","forgotpwd");
@@ -73,5 +107,7 @@
             responseObject.rows = modelList;
             return responseObject;
         }
+
+        
     }
 }

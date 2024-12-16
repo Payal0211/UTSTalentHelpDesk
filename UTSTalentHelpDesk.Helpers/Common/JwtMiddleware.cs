@@ -69,11 +69,15 @@
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var userId = jwtToken.Claims.First(x => x.Type == "email").Value;
-                var loginUserId = jwtToken.Claims.First(x => x.Type == "LoginUserId").Value;
-                var loginUserTypeId = jwtToken.Claims.First(x => x.Type == "LoginUserTypeId").Value;
 
-                SessionValues.LoginUserId = Convert.ToInt64(loginUserId);
-                SessionValues.LoginUserTypeId = Convert.ToInt32(loginUserTypeId);
+                // var loginUserId = jwtToken.Claims.First(x => x.Type == "LoginUserId").Value;
+                var loginUserId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
+
+                var IsFromAdminLogin = jwtToken.Claims.First(x => x.Type == "IsFromAdminLogin").Value;
+                var SSOLoggedInUserId = jwtToken.Claims.First(x => x.Type == "SSOLoggedInUserId").Value;
+
+                SessionValues.LoginUserId = Convert.ToInt64(loginUserId);                
+                SessionValues.SSOLoggedInUserId = Convert.ToInt64(SSOLoggedInUserId);
 
                 // attach user to context on successful jwt validation
                 context.Items["User"] = userId;

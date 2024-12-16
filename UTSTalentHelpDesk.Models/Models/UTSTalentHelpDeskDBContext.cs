@@ -384,21 +384,14 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<UsrUserTypeKeyoutcome> UsrUserTypeKeyoutcomes { get; set; } = null!;
 
         #region All Complex Types
-        public virtual DbSet<Sproc_Update_Basic_CompanyDetails_Result> Sproc_Update_Basic_CompanyDetails_Result { get; set; } = null!;
-        public virtual DbSet<sproc_UTS_UpdateContactDetails_Result> sproc_UTS_UpdateContactDetails_Result { get; set; } = null!;
-        public virtual DbSet<Sproc_Add_Company_Transactions_With_ATS_Result> Sproc_Add_Company_Transactions_With_ATS_Result { get; set; } = null!;
-        public virtual DbSet<Sproc_UTS_AddEdit_ATSHR_Result> Sproc_UTS_AddEdit_ATSHR_Result { get; set; } = null!;
+        
+        public virtual DbSet<TS_Sproc_Get_DashBoradCounts_Result> TS_Sproc_Get_DashBoradCounts_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetClose_EngagementList_Result> TS_Sproc_GetClose_EngagementList_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetActive_EngagementList_Result> TS_Sproc_GetActive_EngagementList_Result { get; set; } = null!;
+        public virtual DbSet<TS_sproc_GetToken_Result> TS_sproc_GetToken_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> TS_Sproc_Get_engagement_PRDetails_MonthWise_Result { get; set; } = null!;   
 
-        //public virtual DbSet<sproc_ViewAllUnAssignedHRs_Result> Sproc_ViewAllUnAssignedHRs_Results { get; set; } = null!;
-
-        //public virtual DbSet<sproc_UTS_InsertContactTalentPriority> sproc_UTS_InsertContactTalentPriority { get; set; } = null!;
-
-        //public virtual DbSet<Sproc_Get_UTS_TrackingLeadDetails_Result> Sproc_Get_UTS_TrackingLeadDetails_Result { get; set; } = null!;
-        //public virtual DbSet<Sproc_Get_TrackingLead_Details_for_ClientSource_Result> Sproc_Get_TrackingLead_Details_for_ClientSource_Result { get; set; } = null!;
-
-        //public virtual DbSet<Sproc_HR_POC_ClientPortal_Result> Sproc_HR_POC_ClientPortal_Result { get; set; } = null!;
-
-        #endregion
+         #endregion
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

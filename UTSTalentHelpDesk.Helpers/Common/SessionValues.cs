@@ -16,6 +16,7 @@
         /// <value>
         /// The login user type identifier.
         /// </value>
-        public static int LoginUserTypeId { get; set; }       
+        public static int LoginUserTypeId { get; set; }
+        public static long? SSOLoggedInUserId { get; set; }
     }
 }

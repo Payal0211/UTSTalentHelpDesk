@@ -151,7 +151,8 @@ var app = builder.Build();
 //}
 
 //app.UseMiddleware<RequestLoggingMiddleware>();
-app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<ApiKeyMiddleware>();
+//app.UseMiddleware<JwtMiddleware>();
 app.UseCookiePolicy();
 app.UseCors(builder =>
 {

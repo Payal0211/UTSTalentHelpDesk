@@ -16,6 +16,7 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         void SaveTickets(string param);
         void SaveZohoTickets(string param);
         void SaveZohoWebHookTickets(string param);
+        void SaveZohoWebHookPrevTickets(string param);
         void deleteZohoTickets(string param);
         void saveContacts(string param);
            

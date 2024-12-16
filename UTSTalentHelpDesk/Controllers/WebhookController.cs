@@ -55,76 +55,93 @@ namespace UTSTalentHelpDesk.Controllers
 
                 if (payload != null)
                 {
-                    object[] param = new object[] {
-                // Ticket Main Details
-                payload.Id,
-                payload.TicketNumber,
-                payload.Subject,
-                payload.Description,
-                payload.Status,
-                payload.StatusType,
-                payload.Priority ?? string.Empty,
-                payload.Category,
-                payload.SubCategory ?? string.Empty,
-                // Channel Information
-                payload.Channel,
-                payload.ChannelCode ?? string.Empty,
-                payload.Source?.Type ?? string.Empty,
-                payload.Source?.AppName ?? string.Empty,
-                // Contact Details
-                payload.ContactId,
-                payload.Contact?.FirstName ?? string.Empty,
-                payload.Contact?.LastName ?? string.Empty,
-                payload.Contact?.Email ?? string.Empty,
-                payload.Contact?.Phone ?? string.Empty,
-                payload.Contact?.Mobile ?? string.Empty,
-                // Assignee Details
-                payload.AssigneeId,
-                payload.Assignee?.FirstName ?? string.Empty,
-                payload.Assignee?.LastName ?? string.Empty,
-                payload.Assignee?.Email ?? string.Empty,
-                // Ticket Flags
-                payload.IsOverDue,
-                payload.IsTrashed,
-                payload.IsResponseOverdue,
-                payload.IsSpam,
-                payload.IsArchived,
-                payload.IsDeleted,
-                payload.IsEscalated,
-                // Dates and Times
-                payload.CreatedTime,
-                payload.ModifiedTime,
-                payload.DueDate,
-                payload.ClosedTime,
-                payload.CustomerResponseTime,
-                payload.ResponseDueDate,
-                null,
-                // Counts
-                int.Parse(payload.ThreadCount ?? "0"),
-                int.Parse(payload.CommentCount ?? "0"),
-                int.Parse(payload.TaskCount ?? "0"),
-                int.Parse(payload.ApprovalCount ?? "0"),
-                int.Parse(payload.AttachmentCount ?? "0"),
-                // Additional Details
-                payload.DepartmentId ?? string.Empty,
-                payload.TeamId ?? string.Empty,
-                payload.ProductId ?? string.Empty,
-                payload.AccountId ?? string.Empty,
-                payload.LayoutDetails?.Id ?? string.Empty,
-                payload.LayoutDetails?.LayoutName ?? string.Empty,
-                // Custom Fields                
-                decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
-                payload.Cf?.DateOfPurchase,
-                payload.Cf?.Url ?? string.Empty,
-                // Webhook Details
-                webhookPayload[0].EventTime,
-                webhookPayload[0].EventType,
-                webhookPayload[0].OrgId
-            };
+                    if(webhookPayload?[0].EventType == "Ticket_Add" || webhookPayload?[0].EventType == "Ticket_Update")
+                    {
+                        object[] param = new object[] {
+                        // Ticket Main Details
+                        payload.Id,
+                        payload.TicketNumber,
+                        payload.Subject,
+                        payload.Description,
+                        payload.Status,
+                        payload.StatusType,
+                        payload.Priority ?? string.Empty,
+                        payload.Category,
+                        payload.SubCategory ?? string.Empty,
+                        // Channel Information
+                        payload.Channel,
+                        payload.ChannelCode ?? string.Empty,
+                        payload.Source?.Type ?? string.Empty,
+                        payload.Source?.AppName ?? string.Empty,
+                        // Contact Details
+                        payload.ContactId,
+                        payload.Contact?.FirstName ?? string.Empty,
+                        payload.Contact?.LastName ?? string.Empty,
+                        payload.Contact?.Email ?? string.Empty,
+                        payload.Contact?.Phone ?? string.Empty,
+                        payload.Contact?.Mobile ?? string.Empty,
+                        // Assignee Details
+                        payload.AssigneeId,
+                        payload.Assignee?.FirstName ?? string.Empty,
+                        payload.Assignee?.LastName ?? string.Empty,
+                        payload.Assignee?.Email ?? string.Empty,
+                        // Ticket Flags
+                        payload.IsOverDue,
+                        payload.IsTrashed,
+                        payload.IsResponseOverdue,
+                        payload.IsSpam,
+                        payload.IsArchived,
+                        payload.IsDeleted,
+                        payload.IsEscalated,
+                        // Dates and Times
+                        payload.CreatedTime,
+                        payload.ModifiedTime,
+                        payload.DueDate,
+                        payload.ClosedTime,
+                        payload.CustomerResponseTime,
+                        payload.ResponseDueDate,
+                        null,
+                        // Counts
+                        int.Parse(payload.ThreadCount ?? "0"),
+                        int.Parse(payload.CommentCount ?? "0"),
+                        int.Parse(payload.TaskCount ?? "0"),
+                        int.Parse(payload.ApprovalCount ?? "0"),
+                        int.Parse(payload.AttachmentCount ?? "0"),
+                        // Additional Details
+                        payload.DepartmentId ?? string.Empty,
+                        payload.TeamId ?? string.Empty,
+                        payload.ProductId ?? string.Empty,
+                        payload.AccountId ?? string.Empty,
+                        payload.LayoutDetails?.Id ?? string.Empty,
+                        payload.LayoutDetails?.LayoutName ?? string.Empty,
+                        // Custom Fields                
+                        decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
+                        payload.Cf?.DateOfPurchase,
+                        payload.Cf?.Url ?? string.Empty,
+                        // Webhook Details
+                        webhookPayload[0].EventTime,
+                        webhookPayload[0].EventType,
+                        webhookPayload[0].OrgId
+                    };
+                        string paramasString = CommonLogic.ConvertToParamString(param);
 
-                    string paramasString = CommonLogic.ConvertToParamString(param);
+                        _iTicket.SaveZohoWebHookTickets(paramasString);
+                    }
+                    else if(webhookPayload?[0].EventType == "Ticket_Delete")
+                    {
+                        object[] param = new object[] {
+                            // Ticket Main Details
+                            payload.Id,                    
+                            // Webhook Details
+                            webhookPayload[0].EventTime,
+                            webhookPayload[0].EventType,
+                            webhookPayload[0].OrgId
+                        };
+                        string paramasString = CommonLogic.ConvertToParamString(param);
 
-                    _iTicket.SaveZohoWebHookTickets(paramasString);
+                        // Call update method
+                        _iTicket.deleteZohoTickets(paramasString);
+                    }                   
                 }
 
             }

@@ -98,40 +98,69 @@ builder.Services
             o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
         .AddCookie();
-        //.AddGoogleOpenIdConnect(options =>
-        //{
-        //    options.ClientId = configuration["GoogleAppClientID"];
-        //    options.ClientSecret = configuration["GoogleAppClientSecret"];
-        //});
+//.AddGoogleOpenIdConnect(options =>
+//{
+//    options.ClientId = configuration["GoogleAppClientID"];
+//    options.ClientSecret = configuration["GoogleAppClientSecret"];
+//});
 
-builder.Services.AddSwaggerGen(x =>
+//builder.Services.AddSwaggerGen(x =>
+//{
+//    x.SwaggerDoc("v1", new OpenApiInfo { Title = "UTS - ATS sync", Version = "v1" });
+//    x.AddSecurityDefinition("X-API-KEY", new OpenApiSecurityScheme
+//    {
+//        Name = "X-API-KEY",
+//        Type = SecuritySchemeType.ApiKey,
+//        Scheme = "ApiKeyScheme",
+//        In = ParameterLocation.Header,
+//        Description = "ApiKey must appear in header"
+//    });
+
+//    x.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type = ReferenceType.SecurityScheme,
+//                    Id = "X-API-KEY"
+//                },
+//                In = ParameterLocation.Header
+//            },
+//            new string[]{}
+//        }
+//    });
+//});
+
+builder.Services.AddSwaggerGen(opt =>
 {
-    x.SwaggerDoc("v1", new OpenApiInfo { Title = "UTS - ATS sync", Version = "v1" });
-    x.AddSecurityDefinition("X-API-KEY", new OpenApiSecurityScheme
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "Talent Connect Client", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name = "X-API-KEY",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "ApiKeyScheme",
         In = ParameterLocation.Header,
-        Description = "ApiKey must appear in header"
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
     });
-
-    x.AddSecurityRequirement(new OpenApiSecurityRequirement
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
                 Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "X-API-KEY"
-                },
-                In = ParameterLocation.Header
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
             },
             new string[]{}
         }
     });
 });
+
 
 var app = builder.Build();
 
@@ -140,15 +169,15 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-//if (!app.Environment.IsProduction())
-//{
+if (!app.Environment.IsProduction())
+{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.ValidatorUrl(null);
     });
     app.UseDeveloperExceptionPage();
-//}
+}
 
 //app.UseMiddleware<RequestLoggingMiddleware>();
 //app.UseMiddleware<ApiKeyMiddleware>();
@@ -161,7 +190,25 @@ app.UseCors(builder =>
     .AllowAnyMethod()
     .AllowAnyHeader();
 });
-//app.UseHttpsRedirection();
+app.UseHsts();
+app.UseHttpsRedirection();
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' https://apis.google.com; style-src 'self' https://fonts.googleapis.com; img-src 'self' https://images.example.com data:; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'");
+    await next();
+});
+// Middleware to remove headers that may expose server information
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers.Remove("Server");
+        context.Response.Headers.Remove("X-Powered-By");
+        // Remove other custom headers if necessary
+        return Task.CompletedTask;
+    });
+    await next();
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseElmah();

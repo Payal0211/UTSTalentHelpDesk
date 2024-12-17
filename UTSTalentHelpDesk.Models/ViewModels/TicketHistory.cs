@@ -9,6 +9,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
     public class Change
     {
         public string newValue { get; set; }
+        public string oldValue { get; set; }
         public string field { get; set; }
     }
 
@@ -24,6 +25,12 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public List<Change> changes { get; set; }
         public string agentId { get; set; }
         public string agentName { get; set; }
+    }
+
+    public class TicketHistoryResponse
+    {
+        public DateTime? EventDate { get; set; }
+        public List<TicketHistory>? TicketHistory { get; set; }
     }
 
 }

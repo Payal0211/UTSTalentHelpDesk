@@ -970,6 +970,10 @@ namespace UTSTalentHelpDesk.Controllers
                     ticketHistories = JsonConvert.DeserializeObject<List<TicketHistory>>(jsonResponse);
                 }
             }
+            else
+            {
+                ticketHistories = null;
+            }
 
             return ticketHistories; // Return null if ticket history could not be fetched or token expired
         }
@@ -994,10 +998,10 @@ namespace UTSTalentHelpDesk.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonResponse = await response.Content.ReadAsStringAsync();
-                    JsonElement tokenData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(jsonResponse);
-                    if (tokenData.GetArrayLength() > 0)
+                    dynamic? tokenData = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                    if (tokenData != null)
                     {
-                        string? newAccessToken = tokenData.GetProperty("access_token").GetString();
+                        string? newAccessToken = tokenData.access_token;
 
                         return newAccessToken; // Return new access and refresh tokens
                     }

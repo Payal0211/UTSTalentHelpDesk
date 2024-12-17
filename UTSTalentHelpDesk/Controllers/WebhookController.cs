@@ -29,7 +29,7 @@ namespace UTSTalentHelpDesk.Controllers
             {
                 string xxjson = await reader.ReadToEndAsync();
 
-                if (string.IsNullOrEmpty(xxjson))
+                if (string.IsNullOrEmpty(xxjson) || xxjson.Trim() == "{}")
                 {
                     return Ok(new { status = "success" });
                     // return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "No request body." });

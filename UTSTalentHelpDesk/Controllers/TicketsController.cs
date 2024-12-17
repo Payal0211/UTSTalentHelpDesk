@@ -18,6 +18,7 @@ using static UTSTalentHelpDesk.Config.HubSpotResponseUTSAdmin;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Collections;
 using static UTSTalentHelpDesk.Models.ViewModels.ZohoWebhookPayload;
+using System.Text.Json;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -861,6 +862,120 @@ namespace UTSTalentHelpDesk.Controllers
                 return 0;
             }
         }
+        #endregion
+
+
+        #region Ticket History
+        [HttpGet("GetTicketHistoryAsync")]
+        [AllowAnonymous]
+        public async Task<string> GetTicketHistoryAsync(string ticketNumber)
+        {
+            try
+            {
+                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
+
+                // Step 1: Make the API request to fetch ticket history
+                var ticketHistoryResponse = await GetTicketHistory(ticketNumber, accessToken);
+                if (ticketHistoryResponse != null)
+                {
+                    return ticketHistoryResponse; // Return the ticket history if successful
+                }
+
+                // Step 2: If the access token is expired, refresh the token
+                var newTokens = await RefreshAccessToken(refreshToken);
+                if (!string.IsNullOrEmpty(newTokens))
+                {
+                    // Save the new tokens in the database
+                    await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
+
+                    // Retry fetching ticket history with the new access token
+                    ticketHistoryResponse = await GetTicketHistory(ticketNumber, newTokens);
+                    return ticketHistoryResponse;
+                }
+
+                return "Failed to refresh access token.";
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (log, rethrow, etc.)
+                throw new Exception("Error fetching ticket history.", ex);
+            }
+        }
+
+        private async Task<string> GetTicketHistory(string ticketNumber, string accessToken)
+        {
+            try
+            {
+                var url = $"https://desk.zoho.com/api/v1/tickets/{ticketNumber}/history";
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                request.Headers.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+
+                List<TicketHistory>? ticketHistories = new List<TicketHistory>();
+
+                var response = await _httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    ticketHistories = System.Text.Json.JsonSerializer.Deserialize<List<TicketHistory>>(jsonResponse);
+
+                    // Check if ticket history is found
+                    if (ticketHistories.Count > 0)
+                    {
+                        return jsonResponse; // Return the full ticket history response
+                    }
+                }
+
+                return null; // Return null if ticket history could not be fetched or token expired
+            }
+            catch (Exception ex)
+            {
+                // Handle error in making request
+                throw new Exception("Error fetching ticket history from Zoho.", ex);
+            }
+        }
+
+        private async Task<string> RefreshAccessToken(string refreshToken)
+        {
+            try
+            {
+                //var zohoConfig = _configuration.GetSection("Zoho");
+                string tokenEndpoint = zohoConfig["TokenEndpoint"];
+                string clientId = zohoConfig["ClientId"];
+                string clientSecret = zohoConfig["ClientSecret"];
+                string redirectUri = zohoConfig["RedirectUri"];
+
+                var url = "https://accounts.zoho.com/oauth/v2/token";
+                var requestData = new FormUrlEncodedContent(new[]
+                {
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("client_id", clientId), // Replace with your client ID
+                new KeyValuePair<string, string>("client_secret", clientSecret), // Replace with your client secret
+                new KeyValuePair<string, string>("refresh_token", refreshToken)
+            });
+
+                var response = await _httpClient.PostAsync(url, requestData);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var tokenData = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(jsonResponse);
+
+                    string newAccessToken = tokenData.GetProperty("access_token").GetString();
+                    //string newRefreshToken = tokenData.GetProperty("refresh_token").GetString();
+
+                    return (newAccessToken); // Return new access and refresh tokens
+                }
+
+                return (null); // Return null if the refresh token failed
+            }
+            catch (Exception ex)
+            {
+                // Handle error in refreshing token
+                throw new Exception("Error refreshing access token.", ex);
+            }
+        }
+
+        
         #endregion
     }
 }

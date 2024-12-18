@@ -9,6 +9,8 @@
         {
             #region Document
             public static string TS_Sproc_Add_Talent_Document = "TS_Sproc_Add_Talent_Document";
+            public static string TS_Sproc_Get_Talent_DocumentList = "TS_Sproc_Get_Talent_DocumentList";
+            public static string TS_Sproc_Verify_Talent_Document = "TS_Sproc_Verify_Talent_Document";
             #endregion
 
             #region Ticket

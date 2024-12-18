@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Dynamic;
 using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
 using UTSTalentHelpDesk.Repositories.Interfaces;
@@ -157,5 +158,69 @@ namespace UTSTalentHelpDesk.Controllers
         }
         #endregion
 
+        #region Get Talent Document List
+        [HttpGet("GetTalentDocumentList")]
+        public async Task<IActionResult> GetTalentDocumentList(long TalentID)
+        {
+            try
+            {
+                #region Pre-Validation
+                if (TalentID == 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent" });
+                #endregion
+
+                object[] param = new object[] {
+                    TalentID
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                List<TS_Sproc_Get_Talent_DocumentList_Result> documentlist = await _idocument.Get_Talent_DocumentList(paramasString);
+                if (documentlist.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = documentlist });
+                }
+                else
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
+
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
+        #region Verify Document
+        [HttpPost("VerifyTalentDocument")]
+        public IActionResult VerifyTalentDocument(long TalentDocumentID)
+        {
+            try
+            {
+                #region Pre-Validation
+                if (TalentDocumentID == 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent Document" });
+                #endregion
+                long LoggedInUserId = SessionValues.LoginUserId;
+
+                object[] param = new object[] {
+                    TalentDocumentID,
+                    LoggedInUserId
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                _idocument.VerifyDocument(paramasString);
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
     }
 }

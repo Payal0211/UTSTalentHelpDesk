@@ -38,16 +38,16 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string CreatedTime { get; set; }
         public string Id { get; set; }
         public bool IsResponseOverdue { get; set; }
-        public object FirstThread { get; set; }
+        //public object FirstThread { get; set; }
         public string CustomerResponseTime { get; set; }
-        public object ProductId { get; set; }
+        //public object ProductId { get; set; }
         public string ContactId { get; set; }
         public string ThreadCount { get; set; }
-        public List<object> SecondaryContacts { get; set; }
+        //public List<object> SecondaryContacts { get; set; }
         public string Priority { get; set; }
         public string Classification { get; set; }
         public string CommentCount { get; set; }
-        public object AccountId { get; set; }
+        //public object AccountId { get; set; }
         public string TaskCount { get; set; }
         public string Phone { get; set; }
         public string WebUrl { get; set; }
@@ -60,9 +60,9 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public object Sentiment { get; set; }
         public bool IsArchived { get; set; }
         public customFields CustomFields { get; set; }
-        public object Description { get; set; }
+        //public object Description { get; set; }
         public string TimeEntryCount { get; set; }
-        public object ChannelRelatedInfo { get; set; }
+        //public object ChannelRelatedInfo { get; set; }
         public string ResponseDueDate { get; set; }
         public bool IsDeleted { get; set; }
         public string ModifiedBy { get; set; }
@@ -75,7 +75,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string AssigneeId { get; set; }
         public string LayoutId { get; set; }
         public string CreatedBy { get; set; }
-        public object TeamId { get; set; }
+        //public object TeamId { get; set; }
         public string TagCount { get; set; }
         public bool IsEscalated { get; set; }
         public string AttachmentCount { get; set; }
@@ -107,7 +107,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Id { get; set; }
         public bool IsResponseOverdue { get; set; }
         public string CustomerResponseTime { get; set; }
-        public string FirstThread { get; set; }
+        //public string FirstThread { get; set; }
         public string ProductId { get; set; }
         public string ContactId { get; set; }
         public string ThreadCount { get; set; }

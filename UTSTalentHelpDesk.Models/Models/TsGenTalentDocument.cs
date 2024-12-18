@@ -8,6 +8,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public long Id { get; set; }
         public int? DocumentTypeId { get; set; }
         public long? TalentId { get; set; }
+        public string? DocumentName { get; set; }
         public DateTime? CreatedDateTime { get; set; }
         public bool? IsActive { get; set; }
         public bool? IsApproved { get; set; }

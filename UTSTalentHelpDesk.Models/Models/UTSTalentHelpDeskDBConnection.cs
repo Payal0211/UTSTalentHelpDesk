@@ -9,6 +9,7 @@ namespace UTSTalentHelpDesk.Models.Models
     public partial class UTSTalentHelpDeskDBConnection : DbContext
     {
        
+
         public UTSTalentHelpDeskDBConnection(DbContextOptions<UTSTalentHelpDeskDBConnection> options)
             : base(options)
         {
@@ -395,6 +396,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<StoreApiurl> StoreApiurls { get; set; } = null!;
         public virtual DbSet<Testtable> Testtables { get; set; } = null!;
         public virtual DbSet<TsGenTalentDocument> TsGenTalentDocuments { get; set; } = null!;
+        public virtual DbSet<TsGenZohoAssignee> TsGenZohoAssignees { get; set; } = null!;
         public virtual DbSet<TsGenZohoContact> TsGenZohoContacts { get; set; } = null!;
         public virtual DbSet<TsGenZohoTicket> TsGenZohoTickets { get; set; } = null!;
         public virtual DbSet<TsGenZohoTicketHistory> TsGenZohoTicketHistories { get; set; } = null!;
@@ -420,7 +422,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> TS_Sproc_Get_engagement_PRDetails_MonthWise_Result { get; set; } = null!;
 
         #endregion
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -10536,9 +10537,27 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
 
+                entity.Property(e => e.DocumentName).HasMaxLength(500);
+
                 entity.Property(e => e.DocumentTypeId).HasColumnName("DocumentTypeID");
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
+            });
+
+            modelBuilder.Entity<TsGenZohoAssignee>(entity =>
+            {
+                entity.ToTable("TS_Gen_Zoho_Assignees");
+
+                entity.HasIndex(e => e.AssigneeId, "UQ__TS_Gen_Z__4A7C3321FA06DC6C")
+                    .IsUnique();
+
+                entity.Property(e => e.AssigneeId).HasMaxLength(50);
+
+                entity.Property(e => e.Email).HasMaxLength(200);
+
+                entity.Property(e => e.FirstName).HasMaxLength(100);
+
+                entity.Property(e => e.LastName).HasMaxLength(100);
             });
 
             modelBuilder.Entity<TsGenZohoContact>(entity =>

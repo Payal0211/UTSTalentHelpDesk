@@ -7,6 +7,10 @@
         /// </summary>
         public static class ProcConstant
         {
+            #region Document
+            public static string TS_Sproc_Add_Talent_Document = "TS_Sproc_Add_Talent_Document";
+            #endregion
+
             #region Ticket
             public static string TS_sproc_GetToken = "TS_sproc_GetToken";
             public static string TS_sproc_SaveTokens = "TS_sproc_SaveTokens";

@@ -121,7 +121,8 @@ namespace UTSTalentHelpDesk.Controllers
                         // Webhook Details
                         webhookPayload[0].EventTime,
                         webhookPayload[0].EventType,
-                        webhookPayload[0].OrgId
+                        webhookPayload[0].OrgId,
+                        payload.WebUrl
                     };
                         string paramasString = CommonLogic.ConvertToParamString(param);
 

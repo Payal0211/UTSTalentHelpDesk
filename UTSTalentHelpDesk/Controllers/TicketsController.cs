@@ -1002,7 +1002,6 @@ namespace UTSTalentHelpDesk.Controllers
                     if (tokenData != null)
                     {
                         string? newAccessToken = tokenData.access_token;
-
                         return newAccessToken; // Return new access and refresh tokens
                     }
                 }

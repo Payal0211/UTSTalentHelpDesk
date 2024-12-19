@@ -421,6 +421,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TS_Sproc_GetActive_EngagementList_Result> TS_Sproc_GetActive_EngagementList_Result { get; set; } = null!;
         public virtual DbSet<TS_sproc_GetToken_Result> TS_sproc_GetToken_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> TS_Sproc_Get_engagement_PRDetails_MonthWise_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetTalentLeaves_Result> TS_Sproc_GetTalentLeaves_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result> TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_Get_Talent_Contact_Details_Result> TS_Sproc_Get_Talent_Contact_Details_Result { get; set; } = null!;
 
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

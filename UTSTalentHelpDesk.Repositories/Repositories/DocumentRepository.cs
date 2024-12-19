@@ -36,5 +36,10 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Verify_Talent_Document, param));
         }
+
+        public void RemoveDocument(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Remove_Talent_Document, param));
+        }
     }
 }

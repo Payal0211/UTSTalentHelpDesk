@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections;
 using System.Dynamic;
 using UTSTalentHelpDesk.Helpers.Common;
 using UTSTalentHelpDesk.Models.ComplexTypes;
@@ -36,6 +37,27 @@ namespace UTSTalentHelpDesk.Controllers
         {
             try
             {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
                 DocumentFilters documentFilters = new DocumentFilters();
 
                 documentFilters.DocumentType = _connection.TsPrgDocumentTypes.Where(x => x.IsActive == true).ToList().Select(x => new SelectListItem
@@ -59,6 +81,27 @@ namespace UTSTalentHelpDesk.Controllers
         {
             try
             {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
                 if (files == null || files.Files.Count == 0)
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
@@ -117,7 +160,7 @@ namespace UTSTalentHelpDesk.Controllers
                     #endregion
 
                     #region Save File
-                    string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
+                    string uniqueFileName = file.FileName + "#" + System.DateTime.Now.ToString("ddmmyyyyhh:mm") + fileExtension;
                     string fullPath = Path.Combine(uploadPath, uniqueFileName);
 
                     using (var fileStream = new FileStream(fullPath, FileMode.Create))
@@ -129,7 +172,8 @@ namespace UTSTalentHelpDesk.Controllers
                                 files.DocumentTypeID,
                                 files.TalentID,
                                 file.FileName,
-                                files.TalentID
+                                files.TalentID,
+                                uniqueFileName
                             };
                     string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
 
@@ -164,6 +208,27 @@ namespace UTSTalentHelpDesk.Controllers
         {
             try
             {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
                 #region Pre-Validation
                 if (TalentID == 0)
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent" });
@@ -198,6 +263,27 @@ namespace UTSTalentHelpDesk.Controllers
         {
             try
             {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
                 #region Pre-Validation
                 if (TalentDocumentID == 0)
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent Document" });
@@ -212,6 +298,58 @@ namespace UTSTalentHelpDesk.Controllers
                 string paramasString = CommonLogic.ConvertToParamString(param);
 
                 _idocument.VerifyDocument(paramasString);
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
+        #region Remove Document
+        [HttpPost("RemoveTalentDocument")]
+        public IActionResult RemoveTalentDocument(long TalentDocumentID)
+        {
+            try
+            {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
+                #region Pre-Validation
+                if (TalentDocumentID == 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent Document" });
+                #endregion
+                long LoggedInUserId = SessionValues.LoginUserId;
+
+                object[] param = new object[] {
+                    TalentDocumentID,
+                    LoggedInUserId
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                _idocument.RemoveDocument(paramasString);
 
                 return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
 

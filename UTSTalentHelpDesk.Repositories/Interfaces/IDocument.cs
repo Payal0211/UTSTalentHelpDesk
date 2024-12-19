@@ -11,6 +11,7 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
     {
         void CreateDocument(string param);
         void VerifyDocument(string param);
+        void RemoveDocument(string param);
         Task<List<TS_Sproc_Get_Talent_DocumentList_Result>> Get_Talent_DocumentList(string param);
     }
 }

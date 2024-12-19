@@ -58,5 +58,10 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? BillingCompanyName { get; set; }
         public int? HiringTypePricingId { get; set; }
         public string? CompanySizeRangeorAdhoc { get; set; }
+        public int? AppActionDoneBy { get; set; }
+        public string? CompanyNumber { get; set; }
+        public decimal? HiringTypePercentage { get; set; }
+        public string? CompanyLogoAwsUrl { get; set; }
+        public bool? IsCompanyConfidential { get; set; }
     }
 }

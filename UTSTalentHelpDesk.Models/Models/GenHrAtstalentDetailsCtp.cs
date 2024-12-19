@@ -23,5 +23,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? TalentCurrentFeeYearly { get; set; }
         public int? CreatedById { get; set; }
         public DateTime? CreatedByDatetime { get; set; }
+        public string? Aisummary { get; set; }
+        public string? IsVideoResume { get; set; }
+        public string? VideoVetting { get; set; }
+        public string? TalentResume { get; set; }
     }
 }

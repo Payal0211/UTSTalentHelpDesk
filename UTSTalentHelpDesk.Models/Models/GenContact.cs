@@ -49,5 +49,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public int? ForgotEmailAttemptCount { get; set; }
         public long? RoleId { get; set; }
         public string? EncryptedPassword { get; set; }
+        public bool? IsGmailAccount { get; set; }
     }
 }

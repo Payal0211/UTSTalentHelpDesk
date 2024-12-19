@@ -11,5 +11,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? GroupName { get; set; }
         public long? CreatedById { get; set; }
         public DateTime? CreatedByDateTime { get; set; }
+        public string? GroupLink { get; set; }
     }
 }

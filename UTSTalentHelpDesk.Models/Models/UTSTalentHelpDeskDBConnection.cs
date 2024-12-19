@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using UTSTalentHelpDesk.Models.ComplexTypes;
-using UTSTalentHelpDesk.Models.ViewModels;
 
 namespace UTSTalentHelpDesk.Models.Models
 {
     public partial class UTSTalentHelpDeskDBConnection : DbContext
     {
+       
 
         public UTSTalentHelpDeskDBConnection(DbContextOptions<UTSTalentHelpDeskDBConnection> options)
             : base(options)
@@ -24,6 +24,11 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenAssessmentWiseTalentDetail> GenAssessmentWiseTalentDetails { get; set; } = null!;
         public virtual DbSet<GenAtsHrstatusDetail> GenAtsHrstatusDetails { get; set; } = null!;
         public virtual DbSet<GenAtsHrstatusTalentDetail> GenAtsHrstatusTalentDetails { get; set; } = null!;
+        public virtual DbSet<GenAtsTalentEducationDetail> GenAtsTalentEducationDetails { get; set; } = null!;
+        public virtual DbSet<GenAtsTalentEducationDetail1> GenAtsTalentEducationDetails1 { get; set; } = null!;
+        public virtual DbSet<GenAtsTalentEducationDetails211124> GenAtsTalentEducationDetails211124s { get; set; } = null!;
+        public virtual DbSet<GenAtsTalentEducationDetailsClone> GenAtsTalentEducationDetailsClones { get; set; } = null!;
+        public virtual DbSet<GenAtsTalentEducationDetailsMismatchcluster> GenAtsTalentEducationDetailsMismatchclusters { get; set; } = null!;
         public virtual DbSet<GenAtscompanyContactDataSend> GenAtscompanyContactDataSends { get; set; } = null!;
         public virtual DbSet<GenAtsupscreenApiRecordsClientPortal> GenAtsupscreenApiRecordsClientPortals { get; set; } = null!;
         public virtual DbSet<GenAvailableClientInHubSpotClientPortal> GenAvailableClientInHubSpotClientPortals { get; set; } = null!;
@@ -41,6 +46,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenClientAmAssignment> GenClientAmAssignments { get; set; } = null!;
         public virtual DbSet<GenClientAmAssignmentHistory> GenClientAmAssignmentHistories { get; set; } = null!;
         public virtual DbSet<GenClientCalendarEvent> GenClientCalendarEvents { get; set; } = null!;
+        public virtual DbSet<GenClientCalendarToken> GenClientCalendarTokens { get; set; } = null!;
         public virtual DbSet<GenClientHappinessSurvey> GenClientHappinessSurveys { get; set; } = null!;
         public virtual DbSet<GenClientHappinessSurveyOption> GenClientHappinessSurveyOptions { get; set; } = null!;
         public virtual DbSet<GenClientHappinessSurveyQuestion> GenClientHappinessSurveyQuestions { get; set; } = null!;
@@ -49,14 +55,20 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenClientenquiryDatum> GenClientenquiryData { get; set; } = null!;
         public virtual DbSet<GenCompany> GenCompanies { get; set; } = null!;
         public virtual DbSet<GenCompanyAmMappingHistory> GenCompanyAmMappingHistories { get; set; } = null!;
+        public virtual DbSet<GenCompanyApplyUrldetail> GenCompanyApplyUrldetails { get; set; } = null!;
+        public virtual DbSet<GenCompanyConfidentialAlias> GenCompanyConfidentialAliases { get; set; } = null!;
         public virtual DbSet<GenCompanyContractDetail> GenCompanyContractDetails { get; set; } = null!;
+        public virtual DbSet<GenCompanyCreditTransactionsViaAt> GenCompanyCreditTransactionsViaAts { get; set; } = null!;
         public virtual DbSet<GenCompanyCultureandPerksDetail> GenCompanyCultureandPerksDetails { get; set; } = null!;
         public virtual DbSet<GenCompanyDetail> GenCompanyDetails { get; set; } = null!;
         public virtual DbSet<GenCompanyFundingDetail> GenCompanyFundingDetails { get; set; } = null!;
+        public virtual DbSet<GenCompanyHiringTypePricing> GenCompanyHiringTypePricings { get; set; } = null!;
         public virtual DbSet<GenCompanyHistory> GenCompanyHistories { get; set; } = null!;
         public virtual DbSet<GenCompanyLeadTypeUserDetail> GenCompanyLeadTypeUserDetails { get; set; } = null!;
         public virtual DbSet<GenCompanyLegalInfo> GenCompanyLegalInfos { get; set; } = null!;
         public virtual DbSet<GenCompanyPerkDetail> GenCompanyPerkDetails { get; set; } = null!;
+        public virtual DbSet<GenCompanyScrapHistory> GenCompanyScrapHistories { get; set; } = null!;
+        public virtual DbSet<GenCompanyScrapInfo> GenCompanyScrapInfos { get; set; } = null!;
         public virtual DbSet<GenCompanyUpdate> GenCompanyUpdates { get; set; } = null!;
         public virtual DbSet<GenCompanyWeightedAverageCriterion> GenCompanyWeightedAverageCriteria { get; set; } = null!;
         public virtual DbSet<GenCompanyWhatsappDetail> GenCompanyWhatsappDetails { get; set; } = null!;
@@ -110,6 +122,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenJobPostSubscriptionHistoryClientPortal> GenJobPostSubscriptionHistoryClientPortals { get; set; } = null!;
         public virtual DbSet<GenJobPostTransactionHistoryClientPortal> GenJobPostTransactionHistoryClientPortals { get; set; } = null!;
         public virtual DbSet<GenJobPostVitalInfoClientPortal> GenJobPostVitalInfoClientPortals { get; set; } = null!;
+        public virtual DbSet<GenJobScrappingException> GenJobScrappingExceptions { get; set; } = null!;
         public virtual DbSet<GenManageNotificationEmailsHistory> GenManageNotificationEmailsHistories { get; set; } = null!;
         public virtual DbSet<GenManageNotificationEmailsHistoryForMonday> GenManageNotificationEmailsHistoryForMondays { get; set; } = null!;
         public virtual DbSet<GenManagedTalent> GenManagedTalents { get; set; } = null!;
@@ -156,6 +169,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenSalesHrTrupdatedDetail> GenSalesHrTrupdatedDetails { get; set; } = null!;
         public virtual DbSet<GenSalesHrwiseContactIdforAt> GenSalesHrwiseContactIdforAts { get; set; } = null!;
         public virtual DbSet<GenSchedularHistory> GenSchedularHistories { get; set; } = null!;
+        public virtual DbSet<GenScrapCompanyAt> GenScrapCompanyAts { get; set; } = null!;
+        public virtual DbSet<GenScrappedJob> GenScrappedJobs { get; set; } = null!;
+        public virtual DbSet<GenScrappingGptpromptLog> GenScrappingGptpromptLogs { get; set; } = null!;
         public virtual DbSet<GenShortistedTalentUnlockDetailClientPortal> GenShortistedTalentUnlockDetailClientPortals { get; set; } = null!;
         public virtual DbSet<GenShortlistedTalent> GenShortlistedTalents { get; set; } = null!;
         public virtual DbSet<GenShortlistedTalentInterviewDetail> GenShortlistedTalentInterviewDetails { get; set; } = null!;
@@ -209,11 +225,12 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenUnicornRoleWithTalentDetailClientPortal> GenUnicornRoleWithTalentDetailClientPortals { get; set; } = null!;
         public virtual DbSet<GenUserHistory> GenUserHistories { get; set; } = null!;
         public virtual DbSet<GenUtsAssignmentHistory> GenUtsAssignmentHistories { get; set; } = null!;
-        public virtual DbSet<GenUTSTalentHelpDeskRecord> GenUTSTalentHelpDeskRecords { get; set; } = null!;
+        public virtual DbSet<GenUtsAtsApiRecord> GenUtsAtsApiRecords { get; set; } = null!;
         public virtual DbSet<GenUtsOnBoardLineItem> GenUtsOnBoardLineItems { get; set; } = null!;
         public virtual DbSet<GenUtsadminReactPayload> GenUtsadminReactPayloads { get; set; } = null!;
-        public virtual DbSet<GenUTSTalentHelpDeskQueue> GenUTSTalentHelpDeskQueues { get; set; } = null!;
+        public virtual DbSet<GenUtsatsapiQueue> GenUtsatsapiQueues { get; set; } = null!;
         public virtual DbSet<GenUtsreactApiRecord> GenUtsreactApiRecords { get; set; } = null!;
+        public virtual DbSet<GenZohoToken> GenZohoTokens { get; set; } = null!;
         public virtual DbSet<HubSpotEventType> HubSpotEventTypes { get; set; } = null!;
         public virtual DbSet<HubspotWebhookNotification> HubspotWebhookNotifications { get; set; } = null!;
         public virtual DbSet<PrgAchievementWithUplersReason> PrgAchievementWithUplersReasons { get; set; } = null!;
@@ -280,6 +297,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<PrgIncContractsSlab> PrgIncContractsSlabs { get; set; } = null!;
         public virtual DbSet<PrgIncPlacementFeesSlab> PrgIncPlacementFeesSlabs { get; set; } = null!;
         public virtual DbSet<PrgIncSalgoalSlab> PrgIncSalgoalSlabs { get; set; } = null!;
+        public virtual DbSet<PrgInstitutesCollege> PrgInstitutesColleges { get; set; } = null!;
         public virtual DbSet<PrgInterviewStatus> PrgInterviewStatuses { get; set; } = null!;
         public virtual DbSet<PrgJobPostStageMessage> PrgJobPostStageMessages { get; set; } = null!;
         public virtual DbSet<PrgJobStatusClientPortal> PrgJobStatusClientPortals { get; set; } = null!;
@@ -361,6 +379,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<PrgTimeZoneCostPreference> PrgTimeZoneCostPreferences { get; set; } = null!;
         public virtual DbSet<PrgTimeZonePreference> PrgTimeZonePreferences { get; set; } = null!;
         public virtual DbSet<PrgUnicornRolesClientPortal> PrgUnicornRolesClientPortals { get; set; } = null!;
+        public virtual DbSet<PrgUniversitiesUt> PrgUniversitiesUts { get; set; } = null!;
+        public virtual DbSet<PrgUniversity> PrgUniversities { get; set; } = null!;
+        public virtual DbSet<PrgUniversityCollegeTemp> PrgUniversityCollegeTemps { get; set; } = null!;
         public virtual DbSet<PrgUserRoleClientPortal> PrgUserRoleClientPortals { get; set; } = null!;
         public virtual DbSet<PrgUtmCampaign> PrgUtmCampaigns { get; set; } = null!;
         public virtual DbSet<PrgUtmContent> PrgUtmContents { get; set; } = null!;
@@ -368,13 +389,23 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<PrgUtmPlacement> PrgUtmPlacements { get; set; } = null!;
         public virtual DbSet<PrgUtmSource> PrgUtmSources { get; set; } = null!;
         public virtual DbSet<PrgUtmTerm> PrgUtmTerms { get; set; } = null!;
+        public virtual DbSet<PrgUtsInstitutesCollege> PrgUtsInstitutesColleges { get; set; } = null!;
+        public virtual DbSet<PrgWorkOption> PrgWorkOptions { get; set; } = null!;
         public virtual DbSet<RestoreChannel> RestoreChannels { get; set; } = null!;
         public virtual DbSet<SkillRole1> SkillRole1s { get; set; } = null!;
         public virtual DbSet<StoreApiurl> StoreApiurls { get; set; } = null!;
         public virtual DbSet<Testtable> Testtables { get; set; } = null!;
+        public virtual DbSet<TsGenTalentDocument> TsGenTalentDocuments { get; set; } = null!;
+        public virtual DbSet<TsGenZohoAssignee> TsGenZohoAssignees { get; set; } = null!;
+        public virtual DbSet<TsGenZohoContact> TsGenZohoContacts { get; set; } = null!;
+        public virtual DbSet<TsGenZohoTicket> TsGenZohoTickets { get; set; } = null!;
+        public virtual DbSet<TsGenZohoTicketHistory> TsGenZohoTicketHistories { get; set; } = null!;
+        public virtual DbSet<TsGenZohoTicketsWebhookEvent> TsGenZohoTicketsWebhookEvents { get; set; } = null!;
+        public virtual DbSet<TsPrgDocumentType> TsPrgDocumentTypes { get; set; } = null!;
         public virtual DbSet<UsrUser> UsrUsers { get; set; } = null!;
         public virtual DbSet<UsrUserGeoDetail> UsrUserGeoDetails { get; set; } = null!;
         public virtual DbSet<UsrUserHierarchy> UsrUserHierarchies { get; set; } = null!;
+        public virtual DbSet<UsrUserHierarchyHrlist> UsrUserHierarchyHrlists { get; set; } = null!;
         public virtual DbSet<UsrUserPriorityCountLog> UsrUserPriorityCountLogs { get; set; } = null!;
         public virtual DbSet<UsrUserRole> UsrUserRoles { get; set; } = null!;
         public virtual DbSet<UsrUserRoleDetail> UsrUserRoleDetails { get; set; } = null!;
@@ -384,21 +415,20 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<UsrUserTypeKeyoutcome> UsrUserTypeKeyoutcomes { get; set; } = null!;
 
         #region All Complex Types
-        
+        public virtual DbSet<TS_Sproc_Get_Talent_DocumentList_Result> TS_Sproc_Get_Talent_DocumentList_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_DashBoradCounts_Result> TS_Sproc_Get_DashBoradCounts_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_GetClose_EngagementList_Result> TS_Sproc_GetClose_EngagementList_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_GetActive_EngagementList_Result> TS_Sproc_GetActive_EngagementList_Result { get; set; } = null!;
         public virtual DbSet<TS_sproc_GetToken_Result> TS_sproc_GetToken_Result { get; set; } = null!;
-        public virtual DbSet<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> TS_Sproc_Get_engagement_PRDetails_MonthWise_Result { get; set; } = null!;   
+        public virtual DbSet<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> TS_Sproc_Get_engagement_PRDetails_MonthWise_Result { get; set; } = null!;
 
-         #endregion
-
+        #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=27.109.9.66;Database=TalentConnect; user id=himani; password=himani@123");
+                optionsBuilder.UseSqlServer("Server=27.109.9.66;Database=TalentConnect; user id=jimit; password=jimitD04");
             }
         }
 
@@ -640,6 +670,151 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.ModifiedById).HasColumnName("ModifiedByID");
 
                 entity.Property(e => e.StatusId).HasColumnName("StatusID");
+            });
+
+            modelBuilder.Entity<GenAtsTalentEducationDetail>(entity =>
+            {
+                entity.ToTable("gen_ATS_Talent_EducationDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AnotherClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Another_ClusterName");
+
+                entity.Property(e => e.AtsId).HasColumnName("ATS_ID");
+
+                entity.Property(e => e.AtsTalentEducation).HasColumnName("ATS_Talent_Education");
+
+                entity.Property(e => e.AtsTalentId).HasColumnName("ATS_TalentId");
+
+                entity.Property(e => e.ClusterName).HasMaxLength(2000);
+
+                entity.Property(e => e.GroupClusterKey).HasColumnName("Group_ClusterKey");
+
+                entity.Property(e => e.GroupClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Group_ClusterName");
+
+                entity.Property(e => e.NewTalentEducation).HasColumnName("New_Talent_Education");
+
+                entity.Property(e => e.UtsInstituteCollegeId).HasColumnName("UTS_Institute_College_ID");
+            });
+
+            modelBuilder.Entity<GenAtsTalentEducationDetail1>(entity =>
+            {
+                entity.ToTable("gen_ATS_TalentEducation_Details");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AnotherClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Another_ClusterName");
+
+                entity.Property(e => e.AtsId).HasColumnName("ATS_ID");
+
+                entity.Property(e => e.AtsTalentEducation)
+                    .HasMaxLength(2000)
+                    .HasColumnName("ATS_Talent_Education");
+
+                entity.Property(e => e.AtsTalentId).HasColumnName("ATS_TalentId");
+
+                entity.Property(e => e.ClusterName).HasMaxLength(2000);
+
+                entity.Property(e => e.GroupClusterKey).HasColumnName("Group_ClusterKey");
+
+                entity.Property(e => e.GroupClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Group_ClusterName");
+
+                entity.Property(e => e.UtsInstituteCollegeId).HasColumnName("UTS_Institute_College_ID");
+            });
+
+            modelBuilder.Entity<GenAtsTalentEducationDetails211124>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("gen_ATS_Talent_EducationDetails_211124");
+
+                entity.Property(e => e.AnotherClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Another_ClusterName");
+
+                entity.Property(e => e.AtsId).HasColumnName("ATS_ID");
+
+                entity.Property(e => e.AtsTalentEducation).HasColumnName("ATS_Talent_Education");
+
+                entity.Property(e => e.AtsTalentId).HasColumnName("ATS_TalentId");
+
+                entity.Property(e => e.ClusterName).HasMaxLength(2000);
+
+                entity.Property(e => e.GroupClusterKey).HasColumnName("Group_ClusterKey");
+
+                entity.Property(e => e.GroupClusterName)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Group_ClusterName");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.NewTalentEducation).HasColumnName("New_Talent_Education");
+
+                entity.Property(e => e.UtsInstituteCollegeId).HasColumnName("UTS_Institute_College_ID");
+            });
+
+            modelBuilder.Entity<GenAtsTalentEducationDetailsClone>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("gen_ATS_Talent_EducationDetails_Clone");
+
+                entity.Property(e => e.AnotherClusterName).HasMaxLength(500);
+
+                entity.Property(e => e.AnotherClusterNameXray)
+                    .HasMaxLength(4000)
+                    .HasColumnName("AnotherClusterName_Xray");
+
+                entity.Property(e => e.AtsId).HasColumnName("ATS_ID");
+
+                entity.Property(e => e.AtsTalentEducation)
+                    .HasMaxLength(450)
+                    .HasColumnName("ATS_Talent_Education");
+
+                entity.Property(e => e.ClusterName).HasMaxLength(2000);
+
+                entity.Property(e => e.ClusterRank).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.GroupClusterKey).HasColumnName("Group_ClusterKey");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Location).HasMaxLength(2000);
+
+                entity.Property(e => e.UtsInstituteCollegeId).HasColumnName("UTS_Institute_College_ID");
+            });
+
+            modelBuilder.Entity<GenAtsTalentEducationDetailsMismatchcluster>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("gen_ATS_Talent_EducationDetails_mismatchclusters");
+
+                entity.Property(e => e.AtsId).HasColumnName("ATS_ID");
+
+                entity.Property(e => e.AtsTalentEducation).HasColumnName("ATS_Talent_Education");
+
+                entity.Property(e => e.AtsTalentId).HasColumnName("ATS_TalentId");
+
+                entity.Property(e => e.ClusterName).HasMaxLength(2000);
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.NewTalentEducation).HasColumnName("New_Talent_Education");
             });
 
             modelBuilder.Entity<GenAtscompanyContactDataSend>(entity =>
@@ -1023,6 +1198,23 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.ThemeColor).HasMaxLength(10);
             });
 
+            modelBuilder.Entity<GenClientCalendarToken>(entity =>
+            {
+                entity.ToTable("gen_Client_Calendar_Tokens");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CalendarType).HasMaxLength(50);
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.ContactId).HasColumnName("ContactID");
+
+                entity.Property(e => e.CreatedByDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.EmailId).HasMaxLength(500);
+            });
+
             modelBuilder.Entity<GenClientHappinessSurvey>(entity =>
             {
                 entity.ToTable("gen_ClientHappinessSurvey");
@@ -1177,6 +1369,12 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.CompanyLogo).HasMaxLength(200);
 
+                entity.Property(e => e.CompanyLogoAwsUrl)
+                    .HasMaxLength(1000)
+                    .HasColumnName("company_logo_aws_url");
+
+                entity.Property(e => e.CompanyNumber).HasMaxLength(50);
+
                 entity.Property(e => e.CompanySizeRangeorAdhoc)
                     .HasMaxLength(500)
                     .HasColumnName("CompanySize_RangeorAdhoc");
@@ -1208,6 +1406,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Gstnumber)
                     .HasMaxLength(250)
                     .HasColumnName("GSTNumber");
+
+                entity.Property(e => e.HiringTypePercentage).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.HubSpotCompany).HasColumnName("HubSpot_Company");
 
@@ -1283,6 +1483,42 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.OldAmSalesPersonId).HasColumnName("OldAM_SalesPersonID");
             });
 
+            modelBuilder.Entity<GenCompanyApplyUrldetail>(entity =>
+            {
+                entity.ToTable("gen_Company_ApplyURLDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.JobId).HasColumnName("JobID");
+            });
+
+            modelBuilder.Entity<GenCompanyConfidentialAlias>(entity =>
+            {
+                entity.ToTable("gen_Company_ConfidentialAlias");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Company).HasMaxLength(500);
+
+                entity.Property(e => e.CompanyHq)
+                    .HasMaxLength(2000)
+                    .HasColumnName("CompanyHQ");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.CompanyLinkedIn).HasMaxLength(300);
+
+                entity.Property(e => e.CompanyLogo).HasMaxLength(50);
+
+                entity.Property(e => e.CompanyUrl)
+                    .HasMaxLength(200)
+                    .HasColumnName("CompanyURL");
+
+                entity.Property(e => e.LastModifiedbyDate).HasColumnType("datetime");
+            });
+
             modelBuilder.Entity<GenCompanyContractDetail>(entity =>
             {
                 entity.ToTable("gen_CompanyContractDetails");
@@ -1314,6 +1550,93 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.SigningAuthorityName).HasMaxLength(200);
             });
 
+            modelBuilder.Entity<GenCompanyCreditTransactionsViaAt>(entity =>
+            {
+                entity.ToTable("gen_CompanyCredit_Transactions_via_ATS");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ActionType)
+                    .HasMaxLength(50)
+                    .HasColumnName("action_type");
+
+                entity.Property(e => e.AtstalentId).HasColumnName("atstalent_id");
+
+                entity.Property(e => e.BalanceCredit)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("balance_credit");
+
+                entity.Property(e => e.CompanyId).HasColumnName("company_id");
+
+                entity.Property(e => e.ContactId).HasColumnName("contact_id");
+
+                entity.Property(e => e.CreditAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("credit_amount");
+
+                entity.Property(e => e.CreditCurrency)
+                    .HasMaxLength(50)
+                    .HasColumnName("credit_currency");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(50)
+                    .HasColumnName("employee_id");
+
+                entity.Property(e => e.FreecreditUsed)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("freecredit_used");
+
+                entity.Property(e => e.HrId).HasColumnName("hr_id");
+
+                entity.Property(e => e.InvoiceName).HasColumnName("invoice_name");
+
+                entity.Property(e => e.InvoiceUrl).HasColumnName("invoice_url");
+
+                entity.Property(e => e.OrderAmount)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("order_amount");
+
+                entity.Property(e => e.OrderComments).HasColumnName("order_comments");
+
+                entity.Property(e => e.OrderId)
+                    .HasMaxLength(400)
+                    .HasColumnName("order_id");
+
+                entity.Property(e => e.PaidcreditUsed)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasColumnName("paidcredit_used");
+
+                entity.Property(e => e.PayerEmail)
+                    .HasMaxLength(100)
+                    .HasColumnName("payer_email");
+
+                entity.Property(e => e.PayerId)
+                    .HasMaxLength(400)
+                    .HasColumnName("payer_id");
+
+                entity.Property(e => e.PayerName)
+                    .HasMaxLength(200)
+                    .HasColumnName("payer_name");
+
+                entity.Property(e => e.PaymentProvider)
+                    .HasMaxLength(200)
+                    .HasColumnName("payment_provider");
+
+                entity.Property(e => e.PaymentStatus).HasColumnName("payment_status");
+
+                entity.Property(e => e.TransactionDate)
+                    .HasMaxLength(20)
+                    .HasColumnName("transaction_date");
+
+                entity.Property(e => e.TransactionType)
+                    .HasMaxLength(50)
+                    .HasColumnName("transaction_type");
+
+                entity.Property(e => e.Transactiondoneby)
+                    .HasMaxLength(50)
+                    .HasColumnName("transactiondoneby");
+            });
+
             modelBuilder.Entity<GenCompanyCultureandPerksDetail>(entity =>
             {
                 entity.ToTable("gen_Company_CultureandPerksDetails");
@@ -1327,6 +1650,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.CultureImage).HasMaxLength(500);
+
+                entity.Property(e => e.CultureImageAwsUrl)
+                    .HasMaxLength(1000)
+                    .HasColumnName("culture_image_aws_url");
 
                 entity.Property(e => e.ModifiedById).HasColumnName("ModifiedByID");
 
@@ -1387,6 +1714,17 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("YEAR");
             });
 
+            modelBuilder.Entity<GenCompanyHiringTypePricing>(entity =>
+            {
+                entity.ToTable("gen_Company_HiringType_Pricing");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.HiringTypePercentage).HasColumnType("decimal(18, 2)");
+            });
+
             modelBuilder.Entity<GenCompanyHistory>(entity =>
             {
                 entity.HasNoKey();
@@ -1419,6 +1757,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.CompanyLogo).HasMaxLength(200);
 
+                entity.Property(e => e.CompanyLogoAwsUrl)
+                    .HasMaxLength(1000)
+                    .HasColumnName("company_logo_aws_url");
+
                 entity.Property(e => e.CompanyTypeId).HasColumnName("CompanyTypeID");
 
                 entity.Property(e => e.Country)
@@ -1442,6 +1784,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.GeoId).HasColumnName("GEO_ID");
 
                 entity.Property(e => e.GspaceId).HasColumnName("GSpaceID");
+
+                entity.Property(e => e.HistoryDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.HubSpotCompany).HasColumnName("HubSpot_Company");
 
@@ -1569,6 +1915,36 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Perks).HasMaxLength(200);
             });
 
+            modelBuilder.Entity<GenCompanyScrapHistory>(entity =>
+            {
+                entity.ToTable("gen_CompanyScrapHistory");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.ScrapedDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<GenCompanyScrapInfo>(entity =>
+            {
+                entity.ToTable("gen_CompanyScrapInfo");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Atsid).HasColumnName("ATSID");
+
+                entity.Property(e => e.Company).HasMaxLength(255);
+
+                entity.Property(e => e.Location).HasMaxLength(255);
+
+                entity.Property(e => e.Url)
+                    .HasMaxLength(255)
+                    .HasColumnName("URL");
+
+                entity.Property(e => e.Website).HasMaxLength(255);
+            });
+
             modelBuilder.Entity<GenCompanyUpdate>(entity =>
             {
                 entity.ToTable("gen_CompanyUpdates");
@@ -1637,6 +2013,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.Property(e => e.WhatsappDetailId).HasColumnName("WhatsappDetailID");
+
+                entity.Property(e => e.WhatsappNumber).HasMaxLength(50);
             });
 
             modelBuilder.Entity<GenCompanyYouTubeLink>(entity =>
@@ -2694,6 +3072,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.AgreedShift).HasMaxLength(200);
 
+                entity.Property(e => e.Aisummary).HasColumnName("AISummary");
+
                 entity.Property(e => e.AtsTalentId).HasColumnName("ATS_Talent_ID");
 
                 entity.Property(e => e.CreatedByDatetime).HasColumnType("datetime");
@@ -2715,6 +3095,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.HrtypeText)
                     .HasMaxLength(100)
                     .HasColumnName("HRTypeText");
+
+                entity.Property(e => e.IsVideoResume).HasMaxLength(10);
 
                 entity.Property(e => e.NoticePeriod).HasMaxLength(200);
 
@@ -3693,6 +4075,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.CreditOptionId).HasColumnName("CreditOptionID");
 
+                entity.Property(e => e.CreditTransactionNumber).HasMaxLength(50);
+
                 entity.Property(e => e.CreditUsed).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.Hrid).HasColumnName("HRID");
@@ -3729,6 +4113,19 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.ModifiedbyDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.StringSeparator).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<GenJobScrappingException>(entity =>
+            {
+                entity.ToTable("gen_JobScrapping_Exceptions");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.FileName).HasMaxLength(200);
             });
 
             modelBuilder.Entity<GenManageNotificationEmailsHistory>(entity =>
@@ -3954,7 +4351,7 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
 
-                entity.Property(e => e.Hrid).HasColumnName("HRID");
+                entity.Property(e => e.Minimummatchscorenonreviewedcandidates).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.Month).HasColumnName("MONTH");
 
@@ -4369,6 +4766,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.TsceditReason).HasColumnName("TSCEditReason");
 
+                entity.Property(e => e.UplersfeesAmount).HasMaxLength(300);
+
+                entity.Property(e => e.WorkOptionId).HasColumnName("work_option_id");
+
                 entity.Property(e => e.ZoomEndTime).HasColumnName("Zoom_EndTime");
 
                 entity.Property(e => e.ZoomInterviewKitPassword)
@@ -4536,6 +4937,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.InvoiceId)
                     .HasMaxLength(250)
                     .HasColumnName("InvoiceID");
+
+                entity.Property(e => e.InvoiceName).HasColumnName("Invoice_Name");
+
+                entity.Property(e => e.InvoiceUrl).HasColumnName("Invoice_Url");
 
                 entity.Property(e => e.OrderId)
                     .HasMaxLength(250)
@@ -5026,6 +5431,10 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("IsPoolHR")
                     .HasDefaultValueSql("((1))");
 
+                entity.Property(e => e.JdFileAwsUrl)
+                    .HasMaxLength(1000)
+                    .HasColumnName("jd_file_aws_url");
+
                 entity.Property(e => e.JddumpId).HasColumnName("JDDump_ID");
 
                 entity.Property(e => e.Jdfilename)
@@ -5422,6 +5831,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.IsPoolHr).HasColumnName("IsPoolHR");
 
+                entity.Property(e => e.JdFileAwsUrl)
+                    .HasMaxLength(1000)
+                    .HasColumnName("jd_file_aws_url");
+
                 entity.Property(e => e.JddumpId).HasColumnName("JDDump_ID");
 
                 entity.Property(e => e.Jdfilename)
@@ -5742,6 +6155,49 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("SPName");
 
                 entity.Property(e => e.Spprofiler).HasColumnName("SPProfiler");
+            });
+
+            modelBuilder.Entity<GenScrapCompanyAt>(entity =>
+            {
+                entity.ToTable("gen_ScrapCompanyATS");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyAts)
+                    .HasMaxLength(500)
+                    .HasColumnName("CompanyATS");
+            });
+
+            modelBuilder.Entity<GenScrappedJob>(entity =>
+            {
+                entity.ToTable("gen_ScrappedJobs");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ApplyUrl).HasColumnName("ApplyURL");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.JobDetailsUrl).HasColumnName("JobDetailsURL");
+
+                entity.Property(e => e.JobId).HasColumnName("JobID");
+
+                entity.Property(e => e.LastModifiedByDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.ScrappedDateTime).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<GenScrappingGptpromptLog>(entity =>
+            {
+                entity.ToTable("gen_ScrappingGPTPromptLog");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedByDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Gptresponse).HasColumnName("GPTResponse");
+
+                entity.Property(e => e.JobId).HasColumnName("JobID");
             });
 
             modelBuilder.Entity<GenShortistedTalentUnlockDetailClientPortal>(entity =>
@@ -7406,9 +7862,9 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("SalesPerson_EmployeeID");
             });
 
-            modelBuilder.Entity<GenUTSTalentHelpDeskRecord>(entity =>
+            modelBuilder.Entity<GenUtsAtsApiRecord>(entity =>
             {
-                entity.ToTable("gen_UTSTalentHelpDesk_Records");
+                entity.ToTable("gen_UtsAtsApi_Records");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -7528,9 +7984,9 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Hrid).HasColumnName("HRID");
             });
 
-            modelBuilder.Entity<GenUTSTalentHelpDeskQueue>(entity =>
+            modelBuilder.Entity<GenUtsatsapiQueue>(entity =>
             {
-                entity.ToTable("gen_UTSTalentHelpDesk_Queue");
+                entity.ToTable("gen_UTSATSAPI_Queue");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
@@ -7556,6 +8012,17 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.FromApiUrl).HasMaxLength(200);
 
                 entity.Property(e => e.ToApiUrl).HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<GenZohoToken>(entity =>
+            {
+                entity.ToTable("Gen_Zoho_Tokens");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.LastUpdated).HasColumnType("datetime");
+
+                entity.Property(e => e.TokenName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<HubSpotEventType>(entity =>
@@ -8566,6 +9033,30 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("SALGoal");
             });
 
+            modelBuilder.Entity<PrgInstitutesCollege>(entity =>
+            {
+                entity.ToTable("prg_Institutes_Colleges");
+
+                entity.HasIndex(e => e.IntituteCollegeName, "UIX_Intitute_College_Name")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IntituteCollegeName).HasColumnName("Intitute_College_Name");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.RevisedIntituteCollegeName)
+                    .HasMaxLength(4000)
+                    .HasColumnName("Revised_Intitute_College_Name");
+
+                entity.Property(e => e.ShortName).HasMaxLength(200);
+
+                entity.Property(e => e.UniversityId).HasColumnName("University_ID");
+            });
+
             modelBuilder.Entity<PrgInterviewStatus>(entity =>
             {
                 entity.ToTable("prg_InterviewStatus");
@@ -8879,6 +9370,9 @@ namespace UTSTalentHelpDesk.Models.Models
             {
                 entity.ToTable("prg_Skills");
 
+                entity.HasIndex(e => e.Skill, "UIX_prg_Skills_Skill")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CreatedByDatetime).HasColumnType("datetime");
@@ -9039,7 +9533,9 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.HasIndex(e => e.Id, "ui_prg_State_SubDistrict_ID")
                     .IsUnique();
 
-                entity.Property(e => e.Id).HasColumnName("ID");
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("ID");
 
                 entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
             });
@@ -9806,6 +10302,59 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.RoleName).HasMaxLength(200);
             });
 
+            modelBuilder.Entity<PrgUniversitiesUt>(entity =>
+            {
+                entity.ToTable("prg_Universities_UTS");
+
+                entity.HasIndex(e => e.University, "IX_prg_Universities_UTS_University")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.University, "prg_Universities_UTS")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.RevisedUniversity)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Revised_University");
+
+                entity.Property(e => e.ShortName).HasMaxLength(200);
+
+                entity.Property(e => e.University).HasMaxLength(400);
+            });
+
+            modelBuilder.Entity<PrgUniversity>(entity =>
+            {
+                entity.ToTable("prg_Universities");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.RevisedUniversity)
+                    .HasMaxLength(2000)
+                    .HasColumnName("Revised_University");
+
+                entity.Property(e => e.ShortName).HasMaxLength(200);
+
+                entity.Property(e => e.University).HasMaxLength(2000);
+            });
+
+            modelBuilder.Entity<PrgUniversityCollegeTemp>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("PRG_University_College_Temp");
+
+                entity.Property(e => e.UniversityId).HasColumnName("UniversityID");
+            });
+
             modelBuilder.Entity<PrgUserRoleClientPortal>(entity =>
             {
                 entity.ToTable("Prg_UserRole_ClientPortal");
@@ -9875,6 +10424,42 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.UtmTerm).HasColumnName("UTM_Term");
             });
 
+            modelBuilder.Entity<PrgUtsInstitutesCollege>(entity =>
+            {
+                entity.ToTable("prg_UTS_Institutes_Colleges");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IntituteCollegeName)
+                    .HasMaxLength(450)
+                    .HasColumnName("Intitute_College_Name");
+
+                entity.Property(e => e.IsActive)
+                    .IsRequired()
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.RevisedIntituteCollegeName)
+                    .HasMaxLength(4000)
+                    .HasColumnName("Revised_Intitute_College_Name");
+
+                entity.Property(e => e.ShortName).HasMaxLength(200);
+
+                entity.Property(e => e.UniversityId).HasColumnName("University_ID");
+            });
+
+            modelBuilder.Entity<PrgWorkOption>(entity =>
+            {
+                entity.ToTable("prg_work_options");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Isactive).HasColumnName("isactive");
+
+                entity.Property(e => e.WorkOption)
+                    .HasMaxLength(200)
+                    .HasColumnName("work_option");
+            });
+
             modelBuilder.Entity<RestoreChannel>(entity =>
             {
                 entity.HasNoKey();
@@ -9939,6 +10524,171 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.ToTable("TESTTABLE");
 
                 entity.Property(e => e.Name).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<TsGenTalentDocument>(entity =>
+            {
+                entity.ToTable("TS_Gen_Talent_Document");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ApprovedBy).HasMaxLength(300);
+
+                entity.Property(e => e.ApprovedDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.DocumentName).HasMaxLength(500);
+
+                entity.Property(e => e.DocumentTypeId).HasColumnName("DocumentTypeID");
+
+                entity.Property(e => e.TalentId).HasColumnName("TalentID");
+            });
+
+            modelBuilder.Entity<TsGenZohoAssignee>(entity =>
+            {
+                entity.ToTable("TS_Gen_Zoho_Assignees");
+
+                entity.HasIndex(e => e.AssigneeId, "UQ__TS_Gen_Z__4A7C3321FA06DC6C")
+                    .IsUnique();
+
+                entity.Property(e => e.AssigneeId).HasMaxLength(50);
+
+                entity.Property(e => e.Email).HasMaxLength(200);
+
+                entity.Property(e => e.FirstName).HasMaxLength(100);
+
+                entity.Property(e => e.LastName).HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<TsGenZohoContact>(entity =>
+            {
+                entity.ToTable("TS_Gen_Zoho_Contacts");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.AccountId).HasMaxLength(200);
+
+                entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.EmailId)
+                    .HasMaxLength(255)
+                    .HasColumnName("Email_ID");
+
+                entity.Property(e => e.FirstName).HasMaxLength(200);
+
+                entity.Property(e => e.LastName).HasMaxLength(200);
+
+                entity.Property(e => e.MobileNumber)
+                    .HasMaxLength(50)
+                    .HasColumnName("Mobile_Number");
+
+                entity.Property(e => e.OwnerId).HasMaxLength(200);
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasMaxLength(50)
+                    .HasColumnName("Phone_Number");
+
+                entity.Property(e => e.ZohoContactId)
+                    .HasMaxLength(200)
+                    .HasColumnName("Zoho_ContactID");
+            });
+
+            modelBuilder.Entity<TsGenZohoTicket>(entity =>
+            {
+                entity.HasKey(e => e.TicketId)
+                    .HasName("PK__TS_Gen_Z__712CC60779AFD7BE");
+
+                entity.ToTable("TS_Gen_Zoho_Tickets");
+
+                entity.Property(e => e.AssigneeId).HasMaxLength(255);
+
+                entity.Property(e => e.Category).HasMaxLength(255);
+
+                entity.Property(e => e.Channel).HasMaxLength(100);
+
+                entity.Property(e => e.ClosedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.ContactId).HasMaxLength(255);
+
+                entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.CustomerResponseTime).HasColumnType("datetime");
+
+                entity.Property(e => e.DepartmentId).HasMaxLength(255);
+
+                entity.Property(e => e.DueDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Email).HasMaxLength(255);
+
+                entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.Property(e => e.Priority).HasMaxLength(100);
+
+                entity.Property(e => e.Status).HasMaxLength(100);
+
+                entity.Property(e => e.StatusType).HasMaxLength(100);
+
+                entity.Property(e => e.SubCategory).HasMaxLength(255);
+
+                entity.Property(e => e.Subject).HasMaxLength(500);
+
+                entity.Property(e => e.TalentId).HasColumnName("Talent_ID");
+
+                entity.Property(e => e.TicketNumber).HasMaxLength(255);
+
+                entity.Property(e => e.UtsUserId).HasColumnName("UTS_User_ID");
+
+                entity.Property(e => e.ZohoTicketId).HasMaxLength(255);
+            });
+
+            modelBuilder.Entity<TsGenZohoTicketHistory>(entity =>
+            {
+                entity.ToTable("TS_gen_Zoho_TicketHistory");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ActionDetails).HasColumnName("Action_Details");
+
+                entity.Property(e => e.ActionSource).HasColumnName("Action_Source");
+
+                entity.Property(e => e.CreatedByDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedById).HasColumnName("CreatedByID");
+
+                entity.Property(e => e.ModifiedByDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedById).HasColumnName("ModifiedByID");
+
+                entity.Property(e => e.TicketId).HasColumnName("Ticket_ID");
+            });
+
+            modelBuilder.Entity<TsGenZohoTicketsWebhookEvent>(entity =>
+            {
+                entity.ToTable("TS_gen_Zoho_Tickets_WebhookEvents");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.EventTime).HasMaxLength(50);
+
+                entity.Property(e => e.EventType).HasMaxLength(50);
+
+                entity.Property(e => e.OrgId).HasMaxLength(50);
+
+                entity.Property(e => e.TicketUniqueId)
+                    .HasMaxLength(100)
+                    .HasColumnName("Ticket_UniqueID");
+            });
+
+            modelBuilder.Entity<TsPrgDocumentType>(entity =>
+            {
+                entity.ToTable("TS_Prg_DocumentType");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.DocumentType).HasMaxLength(500);
             });
 
             modelBuilder.Entity<UsrUser>(entity =>
@@ -10014,6 +10764,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Utsguid)
                     .HasMaxLength(100)
                     .HasColumnName("UTSGuid");
+
+                entity.Property(e => e.WhatsappNumber).HasMaxLength(50);
             });
 
             modelBuilder.Entity<UsrUserGeoDetail>(entity =>
@@ -10030,6 +10782,25 @@ namespace UTSTalentHelpDesk.Models.Models
             modelBuilder.Entity<UsrUserHierarchy>(entity =>
             {
                 entity.ToTable("usr_UserHierarchy");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedByDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedById).HasColumnName("CreatedByID");
+
+                entity.Property(e => e.ModifiedByDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedById).HasColumnName("ModifiedByID");
+
+                entity.Property(e => e.ParentId).HasColumnName("ParentID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+            });
+
+            modelBuilder.Entity<UsrUserHierarchyHrlist>(entity =>
+            {
+                entity.ToTable("usr_UserHierarchy_HRList");
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 

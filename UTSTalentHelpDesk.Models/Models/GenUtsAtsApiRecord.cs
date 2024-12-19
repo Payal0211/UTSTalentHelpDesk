@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace UTSTalentHelpDesk.Models.Models
 {
-    public partial class GenUTSTalentHelpDeskRecord
+    public partial class GenUtsAtsApiRecord
     {
         public long Id { get; set; }
         public string? FromApiUrl { get; set; }

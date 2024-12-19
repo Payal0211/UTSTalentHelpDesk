@@ -7,6 +7,12 @@
         /// </summary>
         public static class ProcConstant
         {
+            #region Document
+            public static string TS_Sproc_Add_Talent_Document = "TS_Sproc_Add_Talent_Document";
+            public static string TS_Sproc_Get_Talent_DocumentList = "TS_Sproc_Get_Talent_DocumentList";
+            public static string TS_Sproc_Verify_Talent_Document = "TS_Sproc_Verify_Talent_Document";
+            #endregion
+
             #region Ticket
             public static string TS_sproc_GetToken = "TS_sproc_GetToken";
             public static string TS_sproc_SaveTokens = "TS_sproc_SaveTokens";
@@ -16,6 +22,9 @@
             public static string TS_Sproc_SaveZohoTicket = "TS_Sproc_SaveZohoTicket";
             public static string TS_Sproc_deleteZohoTicket = "TS_Sproc_deleteZohoTicket";
             public static string TS_Sproc_SaveZohoContacts = "TS_Sproc_SaveZohoContacts";
+            public static string TS_Sproc_WebHook_History_Manage = "TS_Sproc_WebHook_History_Manage";
+            public static string TS_Sproc_SaveZohoTicket_Webhook = "TS_Sproc_SaveZohoTicket_Webhook";
+            public static string TS_Sproc_SaveZohoPrevTicket_Webhook = "TS_Sproc_SaveZohoPrevTicket_Webhook";
             #endregion
 
             #region Engagements

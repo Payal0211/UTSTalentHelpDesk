@@ -15,6 +15,10 @@ using UTSTalentHelpDesk.Repositories.Interfaces;
 using UTSTalentHelpDesk.Repositories.Repositories;
 using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using static UTSTalentHelpDesk.Config.HubSpotResponseUTSAdmin;
+using Microsoft.AspNetCore.Http.Extensions;
+using System.Collections;
+using static UTSTalentHelpDesk.Models.ViewModels.ZohoWebhookPayload;
+using System.Text.Json;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -466,14 +470,40 @@ namespace UTSTalentHelpDesk.Controllers
         #region When New Ticket Create in Zoho it will call below API through webhook
         [HttpPost("SaveToZohoTicket")]
         [AllowAnonymous]
-        public async Task<IActionResult> SaveToZohoTicket([FromBody] ZohoWebhookPayload webhookPayload)
+        public async Task<IActionResult> SaveToZohoTicket()
         {
             try
             {
-                if (webhookPayload?.Payload == null)
-                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
+                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
+                PayloadDetails payload = new PayloadDetails();
+                using (StreamReader reader = new StreamReader(Request.Body))
+                {
+                    string xxjson = await reader.ReadToEndAsync();
 
-                var payload = webhookPayload.Payload;
+                    if (string.IsNullOrEmpty(xxjson))
+                    {
+                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "No request body." });
+                    }
+
+                    long Id = await SaveZohoWebHookLogs(xxjson);
+                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
+                    payload = webhookPayload?.Payload;
+                    if (Id > 0)
+                    {
+                        object[] paramwebhook = new object[] {
+                                Id,
+                                payload.Id,
+                                webhookPayload.EventTime,
+                                webhookPayload.EventType,
+                                webhookPayload.OrgId,
+                                null
+                            };
+                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
+
+                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                    }
+
+                }
 
                 object[] param = new object[] {
                 // Ticket Main Details
@@ -506,7 +536,7 @@ namespace UTSTalentHelpDesk.Controllers
                 // Ticket Flags
                 payload.IsOverDue,
                 payload.IsTrashed,
-                payload.IsResponseOverDue,
+                payload.IsResponseOverdue,
                 payload.IsSpam,
                 payload.IsArchived,
                 payload.IsDeleted,
@@ -518,7 +548,7 @@ namespace UTSTalentHelpDesk.Controllers
                 payload.ClosedTime,
                 payload.CustomerResponseTime,
                 payload.ResponseDueDate,
-                payload.LastActivityTime,
+                null,
                 // Counts
                 int.Parse(payload.ThreadCount ?? "0"),
                 int.Parse(payload.CommentCount ?? "0"),
@@ -533,9 +563,9 @@ namespace UTSTalentHelpDesk.Controllers
                 payload.LayoutDetails?.Id ?? string.Empty,
                 payload.LayoutDetails?.LayoutName ?? string.Empty,
                 // Custom Fields                
-                decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
-                payload.CustomField?.DateOfPurchase,
-                payload.CustomField?.Url ?? string.Empty,
+                decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
+                payload.Cf?.DateOfPurchase,
+                payload.Cf?.Url ?? string.Empty,
                 // Webhook Details
                 webhookPayload.EventTime,
                 webhookPayload.EventType,
@@ -544,7 +574,7 @@ namespace UTSTalentHelpDesk.Controllers
 
                 string paramasString = CommonLogic.ConvertToParamString(param);
 
-                _iTicket.SaveZohoTickets(paramasString);
+                _iTicket.SaveZohoWebHookTickets(paramasString);
                 return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket saved." });
             }
             catch (Exception ex)
@@ -559,17 +589,36 @@ namespace UTSTalentHelpDesk.Controllers
         #region When Ticket Update in Zoho it will call below API through webhook
         [HttpPost("UpdateZohoTicket")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateZohoTicket([FromBody] ZohoWebhookPayload webhookPayload)
+        public async Task<IActionResult> UpdateZohoTicket()
         {
             try
             {
-                // Validate the payload
-                if (webhookPayload?.Payload == null)
+                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
+                PayloadDetails payload = new PayloadDetails();
+                using (StreamReader reader = new StreamReader(Request.Body))
                 {
-                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
+                    reader.BaseStream.Seek(0, SeekOrigin.Begin);
+                    string xxjson = await reader.ReadToEndAsync();
+
+                    long Id = await SaveZohoWebHookLogs(xxjson);
+                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
+                    payload = webhookPayload?.Payload;
+                    if (Id > 0)
+                    {
+                        object[] paramwebhook = new object[] {
+                                Id,
+                                payload.Id,
+                                webhookPayload.EventTime,
+                                webhookPayload.EventType,
+                                webhookPayload.OrgId,
+                                null
+                            };
+                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
+
+                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                    }
                 }
 
-                var payload = webhookPayload.Payload;
 
                 object[] param = new object[] {
                     // Ticket Main Details
@@ -602,7 +651,7 @@ namespace UTSTalentHelpDesk.Controllers
                     // Ticket Flags
                     payload.IsOverDue,
                     payload.IsTrashed,
-                    payload.IsResponseOverDue,
+                    payload.IsResponseOverdue,
                     payload.IsSpam,
                     payload.IsArchived,
                     payload.IsDeleted,
@@ -614,7 +663,7 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.ClosedTime,
                     payload.CustomerResponseTime,
                     payload.ResponseDueDate,
-                    payload.LastActivityTime,
+                    null,
                     // Counts
                     int.Parse(payload.ThreadCount ?? "0"),
                     int.Parse(payload.CommentCount ?? "0"),
@@ -629,10 +678,10 @@ namespace UTSTalentHelpDesk.Controllers
                     payload.LayoutDetails?.Id ?? string.Empty,
                     payload.LayoutDetails?.LayoutName ?? string.Empty,
                     // Custom Fields                
-                    decimal.TryParse(payload.CustomField?.SeverityPercentage ?? "0", out decimal severity)
+                    decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity)
                         ? severity : 0,
-                    payload.CustomField?.DateOfPurchase,
-                    payload.CustomField?.Url ?? string.Empty,
+                    payload.Cf?.DateOfPurchase,
+                    payload.Cf?.Url ?? string.Empty,
                     // Webhook Details
                     webhookPayload.EventTime,
                     webhookPayload.EventType,
@@ -654,17 +703,35 @@ namespace UTSTalentHelpDesk.Controllers
         #region delete ticket in zoho webhook
         [HttpPost("DeleteZohoTicket")]
         [AllowAnonymous]
-        public async Task<IActionResult> DeleteZohoTicket([FromBody] ZohoWebhookDeleteTicket webhookPayload)
+        public async Task<IActionResult> DeleteZohoTicket()
         {
             try
             {
-                // Validate the payload
-                if (webhookPayload?.Payload == null)
+                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
+                PayloadDetails payload = new PayloadDetails();
+                using (StreamReader reader = new StreamReader(Request.Body))
                 {
-                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
-                }
+                    reader.BaseStream.Seek(0, SeekOrigin.Begin);
+                    string xxjson = await reader.ReadToEndAsync();
 
-                var payload = webhookPayload.Payload;
+                    long Id = await SaveZohoWebHookLogs(xxjson);
+                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
+                    payload = webhookPayload?.Payload;
+                    if (Id > 0)
+                    {
+                        object[] paramwebhook = new object[] {
+                                Id,
+                                payload.Id,
+                                webhookPayload.EventTime,
+                                webhookPayload.EventType,
+                                webhookPayload.OrgId,
+                                null
+                            };
+                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
+
+                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                    }
+                }
 
                 object[] param = new object[] {
                     // Ticket Main Details
@@ -776,6 +843,177 @@ namespace UTSTalentHelpDesk.Controllers
             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All contacts saved." });
 
         }
+        #endregion
+
+        #region Save into ZohoWebHook Event Table
+        private async Task<long> SaveZohoWebHookLogs(string json)
+        {
+            try
+            {
+                TsGenZohoTicketsWebhookEvent genZohoTicketsWebhookEvent = new TsGenZohoTicketsWebhookEvent();
+                genZohoTicketsWebhookEvent.Payload = json;
+
+                long ZohoWebHookInsertedID = await _iTicket.InsertZohoWebHookLogs(genZohoTicketsWebhookEvent);
+
+                return ZohoWebHookInsertedID;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+        #endregion
+
+        #region Ticket History
+        [HttpGet("GetZohoTicketHistory")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetZohoTicketHistory(long ticketNumber)
+        {
+            try
+            {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
+                #region Pre-Validation
+
+                if (ticketNumber == 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide ticket number", Details = null });
+                }
+
+                #endregion
+
+                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");                
+
+                // Step 1: Make the API request to fetch ticket history
+                List<TicketHistory> ticketHistoryResponse = await GetTicketHistoryDetails(ticketNumber, accessToken);
+                if (ticketHistoryResponse == null)
+                {
+                    // Step 2: If the access token is expired, refresh the token
+                    var newTokens = await RefreshAccessToken(refreshToken);
+                    if (!string.IsNullOrEmpty(newTokens))
+                    {
+                        // Save the new tokens in the database
+                        await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
+
+                        // Retry fetching ticket history with the new access token
+                        ticketHistoryResponse = await GetTicketHistoryDetails(ticketNumber, newTokens);
+                    }
+                }
+
+                if (ticketHistoryResponse != null)
+                {
+                    // Grouping the events by EventTime
+                    var groupedEvents = ticketHistoryResponse.GroupBy(e => e.eventTime.Date).ToList();
+
+                    List<TicketHistoryResponse> ticketHistoryResponses = new List<TicketHistoryResponse>();
+
+                    foreach (var group in groupedEvents)
+                    {
+                        TicketHistoryResponse historyResponse = new TicketHistoryResponse();
+                        historyResponse.EventDate = group.Key;
+                        historyResponse.TicketHistory = new List<TicketHistory>();
+
+                        foreach(var item in group)
+                        {
+                            historyResponse.TicketHistory.Add(item);
+                        }
+
+                        ticketHistoryResponses.Add(historyResponse);
+                    }
+
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success.", Details = ticketHistoryResponses });
+                }
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success."});
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (log, rethrow, etc.)
+                throw new Exception("Error fetching ticket history.", ex);
+            }
+        }
+
+        private async Task<List<TicketHistory>> GetTicketHistoryDetails(long ticketNumber, string accessToken)
+        {
+            var url = $"https://desk.zoho.com/api/v1/tickets/{ticketNumber}/history?from=1&limit=50";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+
+            List<TicketHistory>? ticketHistories = new List<TicketHistory>();
+
+            var response = await _httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                if (jsonResponse != null)
+                {
+                    ticketHistories = JsonConvert.DeserializeObject<List<TicketHistory>>(jsonResponse);
+                }
+            }
+            else
+            {
+                ticketHistories = null;
+            }
+
+            return ticketHistories; // Return null if ticket history could not be fetched or token expired
+        }
+
+        private async Task<string> RefreshAccessToken(string refreshToken)
+        {
+            try
+            {             
+                string? tokenEndpoint = zohoConfig["TokenEndpoint"];
+                string? clientId = zohoConfig["ClientId"];
+                string? clientSecret = zohoConfig["ClientSecret"];
+                
+                var requestData = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                    new KeyValuePair<string, string>("client_id", clientId), // Replace with your client ID
+                    new KeyValuePair<string, string>("client_secret", clientSecret), // Replace with your client secret
+                    new KeyValuePair<string, string>("refresh_token", refreshToken)
+                });
+
+                var response = await _httpClient.PostAsync(tokenEndpoint, requestData);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    dynamic? tokenData = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                    if (tokenData != null)
+                    {
+                        string? newAccessToken = tokenData.access_token;
+                        return newAccessToken; // Return new access and refresh tokens
+                    }
+                }
+
+                return null; // Return null if the refresh token failed
+            }
+            catch (Exception ex)
+            {
+                throw; 
+            }
+        }
+        
         #endregion
     }
 }

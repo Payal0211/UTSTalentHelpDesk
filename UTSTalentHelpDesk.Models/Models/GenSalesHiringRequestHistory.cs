@@ -90,5 +90,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? NearByCities { get; set; }
         public long? AtsJobLocationId { get; set; }
         public string? AtsNearByCities { get; set; }
+        public string? JdFileAwsUrl { get; set; }
     }
 }

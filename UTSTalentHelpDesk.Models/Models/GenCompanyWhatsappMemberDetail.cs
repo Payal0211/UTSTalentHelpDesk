@@ -11,5 +11,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public bool? IsAdmin { get; set; }
         public long? CreatedById { get; set; }
         public DateTime? CreatedByDateTime { get; set; }
+        public string? MemberName { get; set; }
+        public string? WhatsappNumber { get; set; }
+        public bool? IsActive { get; set; }
+        public bool? IsInvited { get; set; }
     }
 }

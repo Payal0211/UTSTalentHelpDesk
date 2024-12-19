@@ -9,7 +9,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public long? ClientId { get; set; }
         public long? CompanyId { get; set; }
         public DateTime? CreatedDateTime { get; set; }
-        public long? Hrid { get; set; }
         public int? TotalJobsPosted { get; set; }
         public int? TotalJobsForProfileShared { get; set; }
         public int? TotalJobsExpired { get; set; }
@@ -24,7 +23,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? ApplicantWithHighestJobScore { get; set; }
         public int? AssessmentSharedCount { get; set; }
         public int? ApplicantsNotReviewdPast15Days { get; set; }
-        public int? Minimummatchscorenonreviewedcandidates { get; set; }
+        public decimal? Minimummatchscorenonreviewedcandidates { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
     }

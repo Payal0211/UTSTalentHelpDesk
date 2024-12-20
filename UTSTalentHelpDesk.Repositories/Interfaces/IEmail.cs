@@ -10,6 +10,6 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
 {
     public interface IEmail
     {
-              
+        TS_Sproc_Get_Talent_Contact_Details_Result GetTalentContactDetails(long talentID);
     }
 }

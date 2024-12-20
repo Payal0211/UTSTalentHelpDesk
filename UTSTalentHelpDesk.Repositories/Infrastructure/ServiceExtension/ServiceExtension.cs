@@ -88,6 +88,7 @@ namespace UTSTalentHelpDesk.Repositories.Infrastructure.ServiceExtension
             services.AddScoped<IDashboard, DashBoardRepository>();
             services.AddScoped<IAppliedjobs, AppliedJobsRepository>();
             services.AddScoped<IDocument, DocumentRepository>();
+            services.AddScoped<ILeaveRequest, LeaveRequestRepository>();
         }
     }
 }

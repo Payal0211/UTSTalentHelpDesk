@@ -447,6 +447,11 @@ namespace UTSTalentHelpDesk.Helpers.Common
 
         public static bool IsValidEmail(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                return false;
+            }
+
             string[] IDs = email.Split(',');
             bool isvalid = true;
             for (int i = 0; i < IDs.Length; i++)

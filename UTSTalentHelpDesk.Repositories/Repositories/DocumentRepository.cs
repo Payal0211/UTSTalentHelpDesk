@@ -16,6 +16,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         #region Variables
         private UTSTalentHelpDeskDBConnection db;
         #endregion
+
         #region Constructor
         public DocumentRepository(UTSTalentHelpDeskDBConnection _db)
         {

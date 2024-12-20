@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,16 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             _db = db; 
         }
-        #endregion         
-      
+        #endregion
+
+        #region public API
+        public TS_Sproc_Get_Talent_Contact_Details_Result GetTalentContactDetails(long talentID)
+        {
+            return _db.Set<TS_Sproc_Get_Talent_Contact_Details_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_Talent_Contact_Details, talentID.ToString())).AsEnumerable().FirstOrDefault();
+        }
+
+        #endregion
+
+
     }
 }

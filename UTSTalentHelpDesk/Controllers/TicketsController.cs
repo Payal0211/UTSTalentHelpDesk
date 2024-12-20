@@ -1013,7 +1013,118 @@ namespace UTSTalentHelpDesk.Controllers
                 throw; 
             }
         }
-        
+
+        #endregion
+
+        #region Ticket Conversation
+        [HttpGet("GetZohoTicketConversation")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetZohoTicketConversation(long ticketNumber)
+        {
+            try
+            {
+                #region Authorization
+
+                var headers = Request.Headers;
+                string? token = "";
+
+                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
+                Hashtable htable = new Hashtable(dict);
+                if (!htable.ContainsKey("authorization"))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
+                }
+
+                token = Convert.ToString(htable["authorization"]);
+
+                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
+                }
+
+                #endregion
+
+                #region Pre-Validation
+
+                if (ticketNumber == 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide ticket number", Details = null });
+                }
+
+                #endregion
+
+                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
+
+                // Step 1: Make the API request to fetch ticket history
+                EmailThread ticketconversationsResponse = await GetTicketConversationDetails(ticketNumber, accessToken);
+                if (ticketconversationsResponse == null)
+                {
+                    // Step 2: If the access token is expired, refresh the token
+                    var newTokens = await RefreshAccessToken(refreshToken);
+                    if (!string.IsNullOrEmpty(newTokens))
+                    {
+                        // Save the new tokens in the database
+                        await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
+
+                        // Retry fetching ticket history with the new access token
+                        ticketconversationsResponse = await GetTicketConversationDetails(ticketNumber, newTokens);
+                    }
+                }
+
+                if (ticketconversationsResponse != null)
+                {
+                    // Grouping the events by EventTime
+                    var groupedEvents = ticketconversationsResponse.Data.Select(email => new
+                    {
+                        Summary = email.Summary,
+                        CreatedDateTime = email.CreatedTime,
+                        AuthorName = email.Author?.Name,
+                        From = email.FromEmailAddress,
+                        To = email.To,
+                        CcEmails = email.Cc,
+                        Url = $"https://desk.zoho.com/agent/usplt/talent-support/tickets/details/{ticketNumber}/conversations"
+                    }).ToList();
+
+                    
+
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success.", Details = groupedEvents });
+                }
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success." });
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (log, rethrow, etc.)
+                throw new Exception("Error fetching ticket history.", ex);
+            }
+        }
+
+        private async Task<EmailThread> GetTicketConversationDetails(long ticketNumber, string accessToken)
+        {
+            var url = $"https://desk.zoho.com/api/v1/tickets/{ticketNumber}/conversations?from=1&limit=50";
+            var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+
+            EmailThread? ticketConversations = new EmailThread();
+
+            var response = await _httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                if (jsonResponse != null)
+                {
+                    ticketConversations = JsonConvert.DeserializeObject<EmailThread>(jsonResponse);
+                }
+            }
+            else
+            {
+                ticketConversations = null;
+            }
+
+            return ticketConversations; // Return null if ticket history could not be fetched or token expired
+        }
+
         #endregion
     }
 }

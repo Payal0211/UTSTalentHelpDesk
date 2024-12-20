@@ -80,7 +80,8 @@
                     sbBody.Append("<br/><br/>");
                     sbBody.Append("I hope this message finds you well.");
                     sbBody.Append("<br/><br/>");
-                    if (request.ID > 0)
+
+                    if (!string.IsNullOrEmpty(request.LeaveID))
                     {
                         sbBody.Append($"Please ignore the previous leave request for {contact_Details_Result.TalentName}, below is the updated leave request");
                         sbBody.Append("<br/><br/>");
@@ -112,7 +113,18 @@
                     EmailOperator emailOperator = new EmailOperator(_configuration);
                     #endregion
 
-                    emailOperator.SetToEmailWithComma(ClientEmail, ClientName);
+                    List<string> toEmail = new List<string>
+                    {
+                        ClientEmail
+                    };
+
+                    List<string> toEmailName = new List<string>
+                    {
+                        ClientName
+                    };
+
+                    emailOperator.SetToEmail(toEmail);
+                    emailOperator.SetToEmailName(toEmailName);
                     emailOperator.SetSubject(Subject);
                     emailOperator.SetBody(sbBody.ToString());
 

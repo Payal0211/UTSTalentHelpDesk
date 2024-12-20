@@ -16,6 +16,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string? LeaveReason { get; set; } // Reason for the leave       
         public string? Status { get; set; } // ENUM('Pending', 'Approved', 'Rejected')        
         public int? NoOfDays { get; set; }    
+        public string? LeaveID { get; set; }    
     }
 
     public class LeaveRequestActions

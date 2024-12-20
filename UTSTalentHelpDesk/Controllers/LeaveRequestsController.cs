@@ -43,7 +43,19 @@ namespace UTSTalentHelpDesk.Controllers
                 }
                 #endregion
 
-                string? guid = Guid.NewGuid().ToString();
+
+                string flag = "Add";
+
+                // if we are getting leaveId from payload then 
+                if (!string.IsNullOrEmpty(request.LeaveID))
+                {
+                    flag = "Update";
+                }
+                else
+                {
+                    string? guid = Guid.NewGuid().ToString();
+                    request.LeaveID = guid;
+                }
 
                 for (int i = 0; i < request.NoOfDays; i++) 
                 {
@@ -53,12 +65,15 @@ namespace UTSTalentHelpDesk.Controllers
                         request.LeaveDate.Value.AddDays(i),
                         request.LeaveDuration,
                         request.LeaveReason,
-                        guid
+                        request.LeaveID,
+                        flag
                     };
 
                     string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
 
                     await _iLeaveRequest.InsertUpdateLeaves(paramasString);
+
+                    flag = "Add";
                 }
 
                 // Send email to client that the talent has added a leave request

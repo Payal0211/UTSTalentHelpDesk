@@ -1083,7 +1083,7 @@ namespace UTSTalentHelpDesk.Controllers
                         From = email.FromEmailAddress,
                         To = email.To,
                         CcEmails = email.Cc,
-                        Url = $"https://desk.zoho.com/agent/usplt/talent-support/tickets/details/{ticketNumber}/conversations"
+                        Url = $"https://desk.zoho.com/agent/usplt/talent-support/tickets/details/{ticketNumber}/conversation"
                     }).ToList();
 
                     

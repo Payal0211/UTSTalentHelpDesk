@@ -62,7 +62,7 @@ namespace UTSTalentHelpDesk.Controllers
                     object[] param = new object[]
                     {                        
                         request.TalentID,
-                        request.LeaveDate.Value.AddDays(i),
+                        request.LeaveDate.Value.AddDays(i).ToString("dd/MM/yyyy"),
                         request.LeaveDuration,
                         request.LeaveReason,
                         request.LeaveID,

@@ -101,7 +101,7 @@
                     sbBody.Append("We appreciate your understanding and will keep you updated if there are any changes.");                    
                     sbBody.Append("<br/>");
                     sbBody.Append("<br/>");
-                    sbBody.Append("Kindly click <a style='color:#232323;font-style:normal;font-weight:700;text-transform:uppercase;border:0;background:#FFDA30;padding:0 20px;font-size:14px;display:inline-block;text-align:center;border-radius:27px;line-height:40px;text-decoration:none;' class='link' href='" + reactClientPortalURL + "leavedetails?talentId=" + MyExtensions.Encrypt(request.TalentID?.ToString()) + "&contactId=" + MyExtensions.Encrypt(contact_Details_Result.ToString()) + "' target='_blank'>here</a> to take action.");
+                    sbBody.Append("Kindly click <a style='color:#232323;font-style:normal;font-weight:700;text-transform:uppercase;border:0;background:#FFDA30;padding:0 20px;font-size:14px;display:inline-block;text-align:center;border-radius:27px;line-height:40px;text-decoration:none;' class='link' href='" + reactClientPortalURL + "leavedetails?talentId=" + MyExtensions.Encrypt(request.TalentID?.ToString()) + "&contactId=" + MyExtensions.Encrypt(contact_Details_Result.ID.ToString()) + "' target='_blank'>here</a> to take action.");
                     sbBody.Append("<br/>");
                     sbBody.Append("<br/>");
                     sbBody.Append("Thanks");

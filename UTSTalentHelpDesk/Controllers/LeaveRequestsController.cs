@@ -122,7 +122,7 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpGet("GetTalentLeaves")]
-        public async Task<IActionResult> GetTalentLeaves(long talentID)
+        public async Task<IActionResult> GetTalentLeaves(long talentID, int month, int year)
         {
             try
             {
@@ -132,7 +132,9 @@ namespace UTSTalentHelpDesk.Controllers
                 #endregion
 
                 object[] param = new object[] {
-                    talentID
+                    talentID,
+                    month,
+                    year
                 };
 
                 string paramasString = CommonLogic.ConvertToParamString(param);

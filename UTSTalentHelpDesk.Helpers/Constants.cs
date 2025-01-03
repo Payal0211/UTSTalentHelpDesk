@@ -11,6 +11,7 @@
             public static string TS_Sproc_Add_Talent_Document = "TS_Sproc_Add_Talent_Document";
             public static string TS_Sproc_Get_Talent_DocumentList = "TS_Sproc_Get_Talent_DocumentList";
             public static string TS_Sproc_Verify_Talent_Document = "TS_Sproc_Verify_Talent_Document";
+            public static string TS_Sproc_Remove_Talent_Document = "TS_Sproc_Remove_Talent_Document";
             #endregion
 
             #region Ticket
@@ -35,6 +36,16 @@
 
             #region Dashboard
             public static string TS_Sproc_Get_DashBoradCounts = "TS_Sproc_Get_DashBoradCounts";
+            #endregion
+
+            #region Leaves
+
+            public const string TS_Sproc_Insert_Update_Talent_Leaves = "TS_Sproc_Insert_Update_Talent_Leaves";
+            public const string TS_Sproc_Approve_Reject_Revoke_Talent_Leaves = "TS_Sproc_Approve_Reject_Revoke_Talent_Leaves";
+            public const string TS_Sproc_GetTalentLeaves = "TS_Sproc_GetTalentLeaves";
+            public const string TS_Sproc_Get_Talent_Leaves_Monthly_Calendar = "TS_Sproc_Get_Talent_Leaves_Monthly_Calendar";
+            public const string TS_Sproc_Get_Talent_Contact_Details = "TS_Sproc_Get_Talent_Contact_Details";
+
             #endregion
         }
     }

@@ -151,7 +151,7 @@ namespace UTSTalentHelpDesk.Controllers
             return Ok(new { status = "success" });
         }
 
-        [HttpPost("zoho-webhookUpdateSample")]
+        [HttpPost("zoho-webhookUpdate")]
         public async Task<IActionResult> HandleZohoWebhookUpdate()
         {
             List<ZohoWebhookPayload>? webhookPayload = new List<ZohoWebhookPayload>();

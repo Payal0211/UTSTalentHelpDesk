@@ -19,33 +19,24 @@
     using UTSTalentHelpDesk.Helpers.Common;
     using UTSTalentHelpDesk.Models.ComplexTypes;
     using UTSTalentHelpDesk.Models.Models;
-    using UTSTalentHelpDesk.Models.ViewModels;   
+    using UTSTalentHelpDesk.Models.ViewModels;
+    using UTSTalentHelpDesk.Repositories.Interfaces;
     using static System.Net.Mime.MediaTypeNames;
     using static System.Net.WebRequestMethods;
 
     public class EmailBinder
     {
         #region Variables 
-        IConfiguration _configuration;
-        EmailDatabaseContentProvider emailDatabaseContentProvider;
-        UTSTalentHelpDeskDBConnection _UTSTalentHelpDeskDBContext;
-      
-        List<string> CCEMAIL = new List<string>();
-        List<string> CCEMAILNAME = new List<string>();
-        string ccEmail = string.Empty;
-        string ccEmailName = string.Empty;
+        IConfiguration _configuration;             
+        private readonly IEmail _iEmail;
+
         #endregion
 
         #region Constructor
-        public EmailBinder(IConfiguration configuration, UTSTalentHelpDeskDBConnection UTSTalentHelpDeskDBContext)
+        public EmailBinder(IConfiguration configuration, IEmail iEmail)
         {
-            _configuration = configuration;
-            _UTSTalentHelpDeskDBContext = UTSTalentHelpDeskDBContext;
-
-            emailDatabaseContentProvider = new EmailDatabaseContentProvider(_UTSTalentHelpDeskDBContext);
-            ccEmail = _configuration["app_settings:CCEmailId"];
-            ccEmailName = _configuration["app_settings:CCEmailName"];
-
+            _configuration = configuration;           
+            _iEmail = iEmail;
         }
 
         #endregion
@@ -68,64 +59,72 @@
         }
 
 
-        public string SendEmailForHRDeleteToInternalTeam(GenSalesHiringRequest? _SalesHiringRequest, string? userName, string? talentEmail)
+        public string SendEmailToClientWhenRequestedForLeave(LeaveRequestViewModel request)
         {
             try
-            {
-                string Subject = "", BodyCustom = "", companyName = "", ClientName = "", ClientEmail = "";
+            {              
+                string? Subject = "", BodyCustom = "",  ClientName = "", ClientEmail = "";
                 StringBuilder sbBody = new StringBuilder();
 
-                if (_SalesHiringRequest != null)
-                {
-                    var ContactId = _SalesHiringRequest.ContactId;
-                    GenContact contact = _UTSTalentHelpDeskDBContext.GenContacts.Where(x => x.Id == ContactId).FirstOrDefault();
+                var reactClientPortalURL = _configuration["ReactClientPortalURL"];
 
-                    if (contact != null)
-                    {
-                        ClientName = contact.FullName;
-                        ClientEmail = contact.EmailId;
-                        GenCompany company = _UTSTalentHelpDeskDBContext.GenCompanies.Where(x => x.Id == contact.CompanyId).FirstOrDefault();
+                TS_Sproc_Get_Talent_Contact_Details_Result? contact_Details_Result =  _iEmail.GetTalentContactDetails(request.TalentID.Value);
 
-                        if (company != null)
-                        {
-                            companyName = company.Company;
-                        }
-                    }
+                if (contact_Details_Result != null)
+                { 
+                    ClientName = contact_Details_Result.FullName;
+                    ClientEmail = "riya.a@uplers.in"; //contact_Details_Result.EmailID
 
-                    BodyCustom = "Hello Team,";
+                    BodyCustom = $"Hello {ClientName},";
                     sbBody.Append(BodyCustom);
                     sbBody.Append("<br/><br/>");
-                    sbBody.Append("Greetings for the day!");
+                    sbBody.Append("I hope this message finds you well.");
                     sbBody.Append("<br/><br/>");
 
-                    Subject = $"Talent is removed from HR {_SalesHiringRequest.HrNumber}";
-                    sbBody.Append($"The Talent <strong>{talentEmail}</strong> is removed from the {_SalesHiringRequest.HrNumber} by {userName}.");
+                    if (!string.IsNullOrEmpty(request.LeaveID))
+                    {
+                        sbBody.Append($"Please ignore the previous leave request for {contact_Details_Result.TalentName}, below is the updated leave request");
+                        sbBody.Append("<br/><br/>");
+                    }
 
-                    sbBody.Append("&nbsp;Below are the required details:");
-                    sbBody.Append("<div style='width:100%'>");
+                    Subject = "Employee Leave Request Notification";
+
+                    sbBody.Append($"I wanted to inform you that {contact_Details_Result.TalentName}, who has been working on your project, " +
+                        $"has submitted a leave request for {request.LeaveDate.Value.ToString("dd/MM/yyyy")} - {request.LeaveEndDate.Value.ToString("dd/MM/yyyy")}. " +
+                        $"During this period, {contact_Details_Result.TalentName} will be unavailable..");
+
+                    sbBody.Append("<br/><br/>");
+
+                    sbBody.Append("&nbsp;If there are any immediate concerns or requirements, please feel free to let us know, and we will arrange" +
+                        " for an alternative point of contact or resources as needed.:");
+                    sbBody.Append("<br/><br/>");
+                    sbBody.Append("We appreciate your understanding and will keep you updated if there are any changes.");                    
                     sbBody.Append("<br/>");
-                    sbBody.Append("HR number: " + _SalesHiringRequest.HrNumber);
                     sbBody.Append("<br/>");
-                    sbBody.Append("Job Title: " + _SalesHiringRequest.RequestForTalent);
-                    sbBody.Append("<br/>");
-                    sbBody.Append("Talent Email: " + talentEmail);
-                    sbBody.Append("<br/>");
-                    sbBody.Append($"Client: {ClientName} ({ClientEmail})");
-                    sbBody.Append("<br/>");
-                    sbBody.Append($"Company: {companyName}");
+                    sbBody.Append("Kindly click <a style='color:#232323;font-style:normal;font-weight:700;text-transform:uppercase;border:0;background:#FFDA30;padding:0 20px;font-size:14px;display:inline-block;text-align:center;border-radius:27px;line-height:40px;text-decoration:none;' class='link' href='" + reactClientPortalURL + "leavedetails?talentId=" + MyExtensions.Encrypt(request.TalentID?.ToString()) + "&contactId=" + MyExtensions.Encrypt(contact_Details_Result.ID.ToString()) + "' target='_blank'>here</a> to take action.");
                     sbBody.Append("<br/>");
                     sbBody.Append("<br/>");
                     sbBody.Append("Thanks");
                     sbBody.Append("<br/>");
                     sbBody.Append("Uplers Talent Solutions Team");
-                    sbBody.Append("<br/>");
-                    sbBody.Append("</div>");
+                    sbBody.Append("<br/>");                   
 
                     #region Variable
                     EmailOperator emailOperator = new EmailOperator(_configuration);
                     #endregion
 
-                    emailOperator.SetToEmailWithComma(ccEmail, ccEmailName);
+                    List<string> toEmail = new List<string>
+                    {
+                        ClientEmail
+                    };
+
+                    List<string> toEmailName = new List<string>
+                    {
+                        ClientName
+                    };
+
+                    emailOperator.SetToEmail(toEmail);
+                    emailOperator.SetToEmailName(toEmailName);
                     emailOperator.SetSubject(Subject);
                     emailOperator.SetBody(sbBody.ToString());
 

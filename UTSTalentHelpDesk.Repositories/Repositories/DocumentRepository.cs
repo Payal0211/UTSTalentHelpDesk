@@ -16,6 +16,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         #region Variables
         private UTSTalentHelpDeskDBConnection db;
         #endregion
+
         #region Constructor
         public DocumentRepository(UTSTalentHelpDeskDBConnection _db)
         {
@@ -34,6 +35,11 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         public void VerifyDocument(string param)
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Verify_Talent_Document, param));
+        }
+
+        public void RemoveDocument(string param)
+        {
+            db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Remove_Talent_Document, param));
         }
     }
 }

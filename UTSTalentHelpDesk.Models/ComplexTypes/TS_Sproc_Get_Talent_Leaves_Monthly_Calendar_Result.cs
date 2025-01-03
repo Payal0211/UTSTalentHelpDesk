@@ -16,5 +16,6 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? DayOfWeeks { get; set; }
         public string? ColorCode { get; set; }
         public string? LeaveStatus { get; set; }
+        public string? LeaveReason { get; set; }
     }
 }

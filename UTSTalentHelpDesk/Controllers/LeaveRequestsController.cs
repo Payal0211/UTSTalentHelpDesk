@@ -147,7 +147,6 @@ namespace UTSTalentHelpDesk.Controllers
                 else
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
 
-
             }
             catch (Exception)
             {

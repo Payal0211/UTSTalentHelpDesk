@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 using UTSTalentHelpDesk.Helpers;
 using UTSTalentHelpDesk.Helpers.Common;
 using UTSTalentHelpDesk.Models.ComplexTypes;
@@ -89,7 +90,7 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpPost("ApproveRejectRevokeTalentLeaves")]
-        public async Task<IActionResult> ApproveRejectRevokeTalentLeaves(LeaveRequestActions actions)
+        public async Task<IActionResult> ApproveRejectRevokeTalentLeaves([FromForm] LeaveRequestActions actions)
         {
             try
             {
@@ -100,13 +101,75 @@ namespace UTSTalentHelpDesk.Controllers
                 }
                 #endregion
 
+                string fileName = "";
+
+                #region FileValidation
+
+                if (actions?.Files?.Count != 0)
+                {
+                    string[] allowedFileExtensions = { ".pdf", ".doc", ".docx", ".txt", ".jpg", ".jpeg", ".png" };
+                    double maxFileSizeInMB = 0.5; // 500 KB
+                    string uploadPath = System.IO.Path.Combine(_iConfiguration["AdminPath"], "Media/TalentLeaveDocuments");
+
+                    if (!Directory.Exists(uploadPath))
+                    {
+                        Directory.CreateDirectory(uploadPath);
+                    }
+
+                    foreach (var file in actions?.Files)
+                    {
+                        var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                        fileName = Path.GetFileNameWithoutExtension(file.FileName);
+
+                        if (!allowedFileExtensions.Contains(fileExtension))
+                        {
+                            return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
+                            {
+                                statusCode = StatusCodes.Status400BadRequest,
+                                Message = $"File '{fileName}' has an invalid format.",
+                                Details = null
+                            });
+                        }
+
+                        var fileSizeInMB = (file.Length / 1024.0) / 1024.0;
+                        if (fileSizeInMB > maxFileSizeInMB)
+                        {
+                            return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
+                            {
+                                statusCode = StatusCodes.Status400BadRequest,
+                                Message = $"File '{fileName}' exceeds the maximum allowed size of 500 KB.",
+                                Details = null
+                            });
+                        }
+
+                        DateTime now = DateTime.Now;
+                        string formattedDate = now.ToString("dd/MM/yyyy HH:mm:ss");
+                        string pattern = @"[^a-zA-Z0-9._]";
+                        // Replace specified special characters with an empty string
+                        string uniqueFileName = $"{fileName}_{formattedDate}.{fileExtension}";
+                        string cleanName = Regex.Replace(uniqueFileName, pattern, "");
+                        // file.FileName + "" + System.DateTime.Now.ToString("ddmmyyyyhh:mm") + fileExtension;
+                        string fullPath = Path.Combine(uploadPath, cleanName);
+
+                        using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        fileName = cleanName;
+                    }
+                }
+
+                #endregion
+
                 object[] param = new object[]
                 {
                     actions.LeaveID,
                     actions.ActionDoneBy,
                     actions.IsActionDoneByAM,
                     actions.LeaveRejectionRemark,
-                    actions.Flag
+                    actions.Flag,
+                    fileName
                 };
 
                 string paramasString = CommonLogic.ConvertToParamStringWithNull(param);

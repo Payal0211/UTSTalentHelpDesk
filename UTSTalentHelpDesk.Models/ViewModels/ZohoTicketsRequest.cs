@@ -25,7 +25,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string? ticketNumber { get; set; }
         public string? layoutId { get; set; }
         public string? email { get; set; }
-        public object phone { get; set; }
+        public string phone { get; set; }
         public string? subject { get; set; }
         public string? status { get; set; }
         public string? statusType { get; set; }

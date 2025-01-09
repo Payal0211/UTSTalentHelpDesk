@@ -253,7 +253,9 @@ namespace UTSTalentHelpDesk.Controllers
                             payload.Cf?.Url ?? string.Empty,
                             webhookPayload[0].EventTime,
                             webhookPayload[0].EventType,
-                            webhookPayload[0].OrgId
+                            webhookPayload[0].OrgId,
+                            "",
+                            payload.Classification
                         };
                             string paramasString = CommonLogic.ConvertToParamString(param);
 

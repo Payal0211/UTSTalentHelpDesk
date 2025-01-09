@@ -28,5 +28,6 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? TalentName { get; set; }
         public string? ApprovedByName { get; set; }
         public string? RejectedByName { get; set; }
+        public string? ActionFileName { get; set; }
     }
 }

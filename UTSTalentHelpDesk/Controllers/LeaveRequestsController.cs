@@ -105,7 +105,7 @@ namespace UTSTalentHelpDesk.Controllers
 
                 #region FileValidation
 
-                if (actions?.Files?.Count != 0)
+                if (actions.Files != null && actions.Files.Count != 0)
                 {
                     string[] allowedFileExtensions = { ".pdf", ".doc", ".docx", ".txt", ".jpg", ".jpeg", ".png" };
                     double maxFileSizeInMB = 0.5; // 500 KB
@@ -185,7 +185,7 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpGet("GetTalentLeaves")]
-        public async Task<IActionResult> GetTalentLeaves(long talentID, int month, int year)
+        public async Task<IActionResult> GetTalentLeaves(long talentID, int month, int year, long onBoardId)
         {
             try
             {
@@ -197,7 +197,8 @@ namespace UTSTalentHelpDesk.Controllers
                 object[] param = new object[] {
                     talentID,
                     month,
-                    year
+                    year,
+                    onBoardId
                 };
 
                 string paramasString = CommonLogic.ConvertToParamString(param);

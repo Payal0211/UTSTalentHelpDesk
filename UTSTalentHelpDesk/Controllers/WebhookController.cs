@@ -259,71 +259,7 @@ namespace UTSTalentHelpDesk.Controllers
                         };
                             string paramasString = CommonLogic.ConvertToParamString(param);
 
-                            _iTicket.SaveZohoWebHookTickets(paramasString);
-
-                            // Save Previous Ticket State
-                            if (prevState != null)
-                            {
-                                object[] prevParam = new object[] {
-                                prevState.Id,
-                                prevState.TicketNumber,
-                                prevState.Subject,
-                                null,
-                                prevState.Status,
-                                prevState.StatusType,
-                                prevState.Priority ?? string.Empty,
-                                prevState.Category,
-                                prevState.SubCategory ?? string.Empty,
-                                prevState.Channel,
-                                prevState.ChannelCode ?? string.Empty,
-                                prevState.Source?.Type ?? string.Empty,
-                                prevState.Source?.AppName ?? string.Empty,
-                                prevState.ContactId,
-                                prevState.Contact?.FirstName ?? string.Empty,
-                                prevState.Contact?.LastName ?? string.Empty,
-                                prevState.Contact?.Email ?? string.Empty,
-                                prevState.Contact?.Phone ?? string.Empty,
-                                prevState.Contact?.Mobile ?? string.Empty,
-                                prevState.AssigneeId,
-                                prevState.Assignee?.FirstName ?? string.Empty,
-                                prevState.Assignee?.LastName ?? string.Empty,
-                                prevState.Assignee?.Email ?? string.Empty,
-                                prevState.IsOverDue,
-                                prevState.IsTrashed,
-                                prevState.IsResponseOverdue,
-                                prevState.IsSpam,
-                                prevState.IsArchived,
-                                prevState.IsDeleted,
-                                prevState.IsEscalated,
-                                prevState.CreatedTime,
-                                prevState.ModifiedTime,
-                                prevState.DueDate,
-                                prevState.ClosedTime,
-                                prevState.CustomerResponseTime,
-                                prevState.ResponseDueDate,
-                                null,
-                                int.Parse(prevState.ThreadCount ?? "0"),
-                                int.Parse(prevState.CommentCount ?? "0"),
-                                int.Parse(prevState.TaskCount ?? "0"),
-                                int.Parse(prevState.ApprovalCount ?? "0"),
-                                int.Parse(prevState.AttachmentCount ?? "0"),
-                                prevState.DepartmentId ?? string.Empty,
-                                string.Empty,
-                                string.Empty,
-                                string.Empty,
-                                prevState.LayoutDetails?.Id ?? string.Empty,
-                                prevState.LayoutDetails?.LayoutName ?? string.Empty,
-                                decimal.TryParse(prevState.CustomFields?.SeverityPercentage ?? "0", out decimal prevSeverity) ? prevSeverity : 0,
-                                prevState.CustomFields?.DateOfPurchase,
-                                prevState.CustomFields?.Url ?? string.Empty,
-                                webhookPayload[0].EventTime,
-                                webhookPayload[0].EventType,
-                                webhookPayload[0].OrgId
-                            };
-                                string prevParamasString = CommonLogic.ConvertToParamString(prevParam);
-
-                                _iTicket.SaveZohoWebHookPrevTickets(prevParamasString);
-                            }
+                            _iTicket.SaveZohoWebHookTickets(paramasString);                           
                         }
                     }
                 }

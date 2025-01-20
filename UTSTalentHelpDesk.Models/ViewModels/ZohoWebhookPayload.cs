@@ -186,7 +186,6 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Id { get; set; }
         public string Email { get; set; }
     }
-
     public class LayoutDetails
     {
         public string Id { get; set; }
@@ -202,4 +201,16 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Url { get; set; }
     }
 
+    public class ZohoTicketDelete
+    {
+        public DeletePayload payload { get; set; }
+        public string eventTime { get; set; }
+        public string eventType { get; set; }
+        public string orgId { get; set; }
+    }
+
+    public class DeletePayload
+    {
+        public string id { get; set; }
+    }
 }

@@ -48,7 +48,7 @@ namespace UTSTalentHelpDesk.Controllers
                                 webhookPayload?[0].OrgId,
                                 null
                             };
-                    string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
+                    string paramasStringwebhook = CommonLogic.ConvertToParamStringWithNull(paramwebhook);
 
                     _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
                 }
@@ -156,8 +156,7 @@ namespace UTSTalentHelpDesk.Controllers
         {
             List<ZohoWebhookPayload>? webhookPayload = new List<ZohoWebhookPayload>();
             PayloadDetails payload = new PayloadDetails();
-            PrevStateDetails prevState = new PrevStateDetails();
-
+           
             using (StreamReader reader = new StreamReader(Request.Body))
             {
                 string xxjson = await reader.ReadToEndAsync();
@@ -176,8 +175,7 @@ namespace UTSTalentHelpDesk.Controllers
                     // Extract payload and prevState only if deserialization succeeds and the list has data
                     if (webhookPayload != null && webhookPayload.Count > 0)
                     {
-                        payload = webhookPayload[0].Payload;
-                        prevState = webhookPayload[0].PrevState;
+                        payload = webhookPayload[0].Payload;                       
 
                         // Save webhook event details
                         if (Id > 0)
@@ -257,7 +255,7 @@ namespace UTSTalentHelpDesk.Controllers
                             "",
                             payload.Classification
                         };
-                            string paramasString = CommonLogic.ConvertToParamString(param);
+                            string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
 
                             _iTicket.SaveZohoWebHookTickets(paramasString);                           
                         }
@@ -270,6 +268,129 @@ namespace UTSTalentHelpDesk.Controllers
                 }
 
 
+            }
+
+            // Respond with a success message
+            return Ok(new { status = "success", message = "Webhook processed successfully" });
+        }
+
+
+        [HttpPost("zoho-webhookDelete")]
+        public async Task<IActionResult> HandleZohoWebhookDelete()
+        {                   
+
+            using (StreamReader reader = new StreamReader(Request.Body))
+            {
+                string xxjson = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrEmpty(xxjson) || xxjson.Trim() == "{}")
+                {
+                    return Ok(new { status = "success", message = "Webhook processed successfully" });
+                }
+
+                long Id = await SaveZohoWebHookLogs(xxjson);
+                // Deserialize JSON payload to the ZohoWebhookPayload list
+                try
+                {
+                    List<ZohoTicketDelete>? webhookPayload = new List<ZohoTicketDelete>();
+                    DeletePayload payload = new DeletePayload();
+
+                    webhookPayload = JsonConvert.DeserializeObject<List<ZohoTicketDelete>>(xxjson);
+
+                    // Extract payload and prevState only if deserialization succeeds and the list has data
+                    if (webhookPayload != null && webhookPayload.Count > 0)
+                    {
+                        payload = webhookPayload[0].payload;                       
+
+                        // Save webhook event details
+                        if (Id > 0)
+                        {
+                            object[] paramwebhook = new object[] {
+                                Id,
+                                payload?.id,
+                                webhookPayload[0].eventTime,
+                                webhookPayload[0].eventType,
+                                webhookPayload[0].orgId,
+                                null
+                            };
+                            string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
+
+                            _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                        }
+
+                        // delete ticket
+                        if (payload != null && webhookPayload[0].eventType == "Ticket_Delete")
+                        {
+                            // Save Current Ticket State
+                            object[] param = new object[] {
+                                payload.id,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                true,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                DateTime.Now, // Deleted time
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null
+                            };
+                            string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+
+                            _iTicket.SaveZohoWebHookTickets(paramasString);
+                        }
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    // Handle JSON deserialization errors
+                    return BadRequest(new { status = "error", message = "Invalid JSON payload.", error = ex.Message });
+                }
             }
 
             // Respond with a success message

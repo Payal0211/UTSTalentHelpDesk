@@ -7,6 +7,10 @@
         /// </summary>
         public static class ProcConstant
         {
+            #region Login
+            public static string TS_Sproc_Talent_Login = "TS_Sproc_Talent_Login";
+            #endregion
+
             #region Document
             public static string TS_Sproc_Add_Talent_Document = "TS_Sproc_Add_Talent_Document";
             public static string TS_Sproc_Get_Talent_DocumentList = "TS_Sproc_Get_Talent_DocumentList";

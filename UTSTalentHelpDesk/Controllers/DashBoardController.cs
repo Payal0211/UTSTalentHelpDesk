@@ -40,7 +40,7 @@ namespace UTSTalentHelpDesk.Controllers
 
             object[] param = new object[] {
                 talentId
-                };
+            };
 
 
             string paramasString = CommonLogic.ConvertToParamString(param);
@@ -51,8 +51,9 @@ namespace UTSTalentHelpDesk.Controllers
                 return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = dashBoradCounts });
             }
             else
+            {
                 return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Count" });
-
+            }
         }
 
     }

@@ -9,17 +9,11 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
 {
     public interface IAccount
     {
-        Task<GenTalent> LoginUser(string username, string password);
-        Task<bool> IsTalentExists(string emailId);
+        GenTalent LoginUser(string username, string password, bool isFromAdmin, long talentId);       
         Task<bool> IsAddTokenInMemory(string token, string userId);
         Task<IList<JwtTokenDataModel>> GetActiveTokenList();
-        Task<bool> IsLogoutUser(string token); 
-        Task<GenTalent> TalentDetailByEmail(string emailId);       
-        Task<bool> TalentDetailIsPasswordChanged(long Id);
-        Task<GenTalent> GetGenTalentByUserName(string userName);
-        Task<UsrUser> UserDetails(long id = 0);
-        Task<GenTalent> LoginUserFromAdmin(string username);
+        Task<bool> IsLogoutUser(string token);        
+        Task<UsrUser> UserDetails(long id = 0);       
         Task<GenTalent> TalentDetails(string emailId, long id = 0);
-
     }
 }

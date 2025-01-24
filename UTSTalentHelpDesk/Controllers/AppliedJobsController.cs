@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Controllers
 {
     [Route("AppliedJobs/", Name = "Applied Jobs")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class AppliedJobsController : ControllerBase
     {
 
@@ -39,11 +39,10 @@ namespace UTSTalentHelpDesk.Controllers
                 #endregion
 
                 object[] param = new object[] {
-                TalentId
+                    TalentId
                 };
 
-
-                string paramasString = CommonLogic.ConvertToParamString(param);
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
 
                 List<TS_Sproc_GetActive_EngagementList_Result> listEngagement = await _iappliedjobs.GetActive_EngagementList(paramasString);
                 if (listEngagement.Any())
@@ -57,12 +56,8 @@ namespace UTSTalentHelpDesk.Controllers
             }
             catch (Exception)
             {
-
                 throw;
             }
-
-
-
         }
         #endregion
 
@@ -78,11 +73,11 @@ namespace UTSTalentHelpDesk.Controllers
                 #endregion
 
                 object[] param = new object[] {
-                TalentId
+                    TalentId
                 };
 
 
-                string paramasString = CommonLogic.ConvertToParamString(param);
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
 
                 List<TS_Sproc_GetClose_EngagementList_Result> listEngagement = await _iappliedjobs.GetClose_EngagementList(paramasString);
                 if (listEngagement.Any())
@@ -120,7 +115,7 @@ namespace UTSTalentHelpDesk.Controllers
                     onBoardId
                 };
 
-                string paramasString = CommonLogic.ConvertToParamString(param);
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
 
                 List<TS_Sproc_Get_engagement_PRDetails_MonthWise_Result> listEngagementPRDetails = await _iappliedjobs.GetEngagementPRDetailsMonthWiseResult(paramasString);
                 if (listEngagementPRDetails.Any())
@@ -128,9 +123,9 @@ namespace UTSTalentHelpDesk.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = listEngagementPRDetails });
                 }
                 else
+                {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
-
-
+                }
             }
             catch (Exception)
             {

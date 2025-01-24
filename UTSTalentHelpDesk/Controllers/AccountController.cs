@@ -50,6 +50,7 @@ namespace UTSTalentHelpDesk.Controllers
                 long ssoUserId = 0;
                 var SSOUserName = "";
                 var SSOUserEmailId = "";
+                long talentId = 0;
 
                 List<Tuple<string, string, string>> employee = new List<Tuple<string, string, string>>();
                 if (isFromAdminLogin)
@@ -70,40 +71,29 @@ namespace UTSTalentHelpDesk.Controllers
 
                     if (isFromAdminLogin)
                     {
-                        var talentId = MyExtensions.Decrypt(Uri.UnescapeDataString(talentLogin.EncryptedTalentId));
-                        var userId = MyExtensions.Decrypt(Uri.UnescapeDataString(talentLogin.EncryptedUserId));
-                        genTalent = await _iAccounts.LoginUserFromAdmin(talentId).ConfigureAwait(false);
+                        talentId = Convert.ToInt64(MyExtensions.Decrypt(Uri.UnescapeDataString(talentLogin.EncryptedTalentId)));
+                        var userId = MyExtensions.Decrypt(Uri.UnescapeDataString(talentLogin.EncryptedUserId));                       
                         ssoUserId = Convert.ToInt64(userId);
                     }
                     else
-                    {
-                        genTalent = await _iAccounts.LoginUser(talentLogin.username, talentLogin.password).ConfigureAwait(false);
+                    {                       
                         ssoUserId = 0;
                     }
 
+                    genTalent = _iAccounts.LoginUser(talentLogin.username, talentLogin.password, isFromAdminLogin, talentId);
 
                     if (genTalent != null)
                     {
-                        UsrUser user = _iAccounts.UserDetails(ssoUserId).Result;
+                        UsrUser user = await _iAccounts.UserDetails(ssoUserId);
                         if (user != null)
                         {
                             SSOUserName = user.FullName;
                             SSOUserEmailId = user.EmailId;
                         }
 
-
                         var result = CustomRendering.LoginResponse(genTalent, _iConfiguration, SSOUserName, SSOUserEmailId, isFromAdmin: isFromAdminLogin, ssoUserId: ssoUserId);
 
-                        bool resultIsAddTokenInMemory = await _iAccounts.IsAddTokenInMemory(result.Token, result.LoggedInUserNameTC);
-
-                        //UTS-6698: SSO login - for credit based client  it shown OTP verification page 
-                        object[] param = new object[] { genTalent.Id };
-                        string paramString = CommonLogic.ConvertToParamString(param);
-
-                        string strQueryData = CommonLogic.Encrypt($"{DateTime.Now.AddDays(1).Ticks}#{genTalent.Id}");
-                        result.TalentDashboardUrl = $"{_iConfiguration.GetValue("TalentHelpDeskPortalURL", "")}TalentHelpDesk/TalentHelpDeskLoginFromReact?data={strQueryData}";
-
-                        result.IsEmailVerified = true;
+                        bool resultIsAddTokenInMemory = await _iAccounts.IsAddTokenInMemory(result.Token, result.LoggedInUserNameTC);                      
 
                         return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = result });
                     }
@@ -120,27 +110,7 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
         }
-        #endregion
-
-        [Authorize]
-        [HttpGet("RedirectToDashboard")]
-        public async Task<ObjectResult> RedirectToDashboard()
-        {
-            long TalentId = SessionValues.LoginUserId;
-
-            string strQueryData = CommonLogic.Encrypt($"{DateTime.Now.AddMinutes(5).Ticks}#{TalentId}");
-
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject()
-            {
-                statusCode = StatusCodes.Status200OK,
-                Message = "Open this URL in new tab.",
-                Details = new
-                {
-                    redirectURL = $"{_iConfiguration.GetValue("TalentHelpDeskPortalURL", "")}TalentHelpDesk/TalentHelpDeskLoginFromReact?data={strQueryData}"
-                }
-            });
-        }
-
+        #endregion        
 
         #region Logout
         [Authorize]
@@ -159,7 +129,6 @@ namespace UTSTalentHelpDesk.Controllers
             }
         }
         #endregion
-
 
         #region ReloadLocalStorageWhileRefresh
 
@@ -183,22 +152,14 @@ namespace UTSTalentHelpDesk.Controllers
             if (ssoUserId > 0)
             {
                 isFromAdmin = true;
-            }
-           
+            }           
 
             if (genTalent != null)
             {
                 string EmailID = genTalent.EmailId;
                 string Name = genTalent.Name;
                 result = CustomRendering.LoginResponse(genTalent, _iConfiguration, Name, EmailID, isRefresh: true, isFromAdmin: isFromAdmin, ssoUserId: ssoUserId);
-                result.Token = tokens.Token;
-
-                object[] param = new object[] { genTalent.Id };
-                string paramString = CommonLogic.ConvertToParamString(param);
-
-                string strQueryData = CommonLogic.Encrypt($"{DateTime.Now.AddDays(1).Ticks}#{genTalent.Id}");
-                result.TalentDashboardUrl = $"{_iConfiguration.GetValue("TalentHelpDeskPortalURL", "")}TalentHelpDesk/TalentHelpDeskLoginFromReact?data={strQueryData}";
-
+                result.Token = tokens.Token;              
             }
             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success", Details = result });
         }

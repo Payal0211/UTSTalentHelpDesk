@@ -19,6 +19,9 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? ContractEndDate { get; set; }
         public string? LastWorkingDate { get; set; }
         public decimal? ActualPayRate { get; set; }
+        public string? ActualPayRateStr { get; set; }
         public string? PayRateCurrency { get; set; }
+        public long? OnBoardId { get; set; }
+        public long? HRID { get; set; }
     }
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UTSTalentHelpDesk.Helpers;
+using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Generic;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Repositories.Interfaces;
@@ -29,6 +31,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         }
 
         #endregion
+
         public async Task<IList<JwtTokenDataModel>> GetActiveTokenList()
         {
             try
@@ -40,13 +43,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
 
                 throw;
             }
-        }
-
-        public async Task<GenTalent> GetGenTalentByUserName(string userName)
-        {
-            var result = await _unitOfWork.genTalents.GetAllByCondition(x => x.Username == userName && x.IsPasswordChanged == true && x.IsResetPassword == true);
-            return result.OrderByDescending(x => x.Id).FirstOrDefault();
-        }
+        }      
 
         public async Task<bool> IsAddTokenInMemory(string token, string userId)
         {
@@ -94,79 +91,25 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             }
         }
 
-
-        public async Task<bool> IsTalentExists(string emailId)
-        {
-            var genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.EmailId.ToLower().Equals(emailId.ToLower()));
-            return genTalent != null;
-        }
-
-        public async Task<GenTalent> LoginUser(string username, string password)
+        public GenTalent LoginUser(string username, string password, bool isFromAdmin, long talentId)
         {
             try
             {
-
-                GenTalent genTalent;
-                genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.EmailId.ToLower().Equals(username.ToLower()));
-                if (genTalent != null)
+                object[] param = new object[]
                 {
-                    // Done by Riya to check the password with case sensitivity.
-                    string? clientPassword = genTalent.Password;
-                    if (clientPassword != null && clientPassword.Equals(password))
-                    {
-                        return genTalent;
-                    }
-                    else
-                    {
-                        if (genTalent != null)
-                        {
-                            genTalent.IsPasswordChanged = false;
-                            _unitOfWork.genTalents.Update(genTalent);
-                            _unitOfWork.Save();
-                        }
-                        genTalent = null;
-                    }
-                }
-                return genTalent;
+                    username,password,isFromAdmin,talentId
+                };
+
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);               
+                return _db.Set<GenTalent>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Talent_Login, paramasString)).AsEnumerable().FirstOrDefault();
+               
             }
             catch (Exception)
             {
                 throw;
             }
-        }
-
-        public async Task<GenTalent> LoginUserFromAdmin(string TalentId)
-        {
-            try
-            {
-                GenTalent genTalent;
-                long userTalentId = Convert.ToInt64(TalentId);
-                genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.Id == userTalentId);
-                return genTalent;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<GenTalent> TalentDetailByEmail(string emailId)
-        {
-            return await _unitOfWork.genTalents.GetSingleByCondition(x => x.EmailId == emailId);
-        }
-
-        public async Task<bool> TalentDetailIsPasswordChanged(long Id)
-        {
-            GenTalent obj = await _unitOfWork.genTalents.GetSingleByCondition(x => x.Id == Id);
-            if (obj != null)
-            {
-                obj.IsPasswordChanged = false;
-                _unitOfWork.genTalents.Update(obj);
-                _unitOfWork.Save();
-            }
-            return true;
-        }
-
+        }                
+        
         public async Task<UsrUser> UserDetails(long id = 0)
         {
             var user = await _unitOfWork.usrUsers.GetSingleByCondition(x => x.Id == id);
@@ -175,7 +118,7 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
 
         public async Task<GenTalent> TalentDetails(string emailId, long id = 0)
         {
-            GenTalent genTalent = new GenTalent();
+            GenTalent genTalent;
             if (string.IsNullOrEmpty(emailId))
             {
                 genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.Id == id);

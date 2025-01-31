@@ -23,5 +23,6 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         Task<long> InsertZohoWebHookLogs(TsGenZohoTicketsWebhookEvent genZohoTicketsWebhookEvent);
         void saveZohoWebHookEvent(string param);
         Task<TS_sproc_GetToken_Result> GetTokenList(string strparams);
+        Task<List<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result>> GetZohoTicketsBasedOnUser(string param);
     }
 }

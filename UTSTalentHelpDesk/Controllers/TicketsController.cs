@@ -13,16 +13,16 @@ using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
 using UTSTalentHelpDesk.Repositories.Interfaces;
 using UTSTalentHelpDesk.Repositories.Repositories;
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 using static UTSTalentHelpDesk.Config.HubSpotResponseUTSAdmin;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Collections;
 using static UTSTalentHelpDesk.Models.ViewModels.ZohoWebhookPayload;
 using System.Text.Json;
+using AuthorizeAttribute = UTSTalentHelpDesk.Helpers.Common.AuthorizeAttribute;
 
 namespace UTSTalentHelpDesk.Controllers
 {
-    [Authorize]
+    
     [ApiController]
     [Route("Tickets/", Name = "Ticket")]
     public class TicketsController : ControllerBase
@@ -407,352 +407,7 @@ namespace UTSTalentHelpDesk.Controllers
 
 
         //}
-        #endregion
-
-        #region Save All Tickets into db from Zoho
-        [HttpPost("SaveTickets")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SaveTickets([FromBody] TicketResponse ticketResponse)
-        {
-            try
-            {
-                if (ticketResponse?.Data == null || !ticketResponse.Data.Any())
-                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid Payload." });
-
-                foreach (var ticket in ticketResponse.Data)
-                {
-                    object[] param = new object[] {
-                    ticket.TicketNumber,
-                    ticket.SubCategory,
-                    ticket.Subject,
-                    ticket.DueDate,
-                    ticket.DepartmentId,
-                    ticket.Channel,
-                    ticket.OnholdTime,
-                    ticket.Source?.Type,
-                    ticket.ClosedTime,
-                    ticket.SharedCount,
-                    ticket.ResponseDueDate,
-                    ticket.Contact?.FirstName,
-                    ticket.Contact?.LastName,
-                    ticket.Contact?.Phone,
-                    ticket.Contact?.Mobile,
-                    ticket.Contact?.Id,
-                    ticket.Contact?.Email,
-                    ticket.Contact?.Account?.AccountName,
-                    ticket.Contact?.Account?.Id,
-                    ticket.CreatedTime,
-                    ticket.Id,
-                    ticket.Email,
-                    ticket.ChannelCode,
-                    ticket.CustomerResponseTime,
-                    ticket.Priority,
-                    ticket.Assignee?.FirstName,
-                    ticket.Assignee?.LastName,
-                    ticket.Assignee?.Email,
-                    ticket.Status
-                };
-
-                    string paramasString = CommonLogic.ConvertToParamString(param);
-
-                    _iTicket.SaveAllTickets(paramasString);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "All Tickets saved." });
-        }
-        #endregion
-
-        #region When New Ticket Create in Zoho it will call below API through webhook
-        [HttpPost("SaveToZohoTicket")]
-        [AllowAnonymous]
-        public async Task<IActionResult> SaveToZohoTicket()
-        {
-            try
-            {
-                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
-                PayloadDetails payload = new PayloadDetails();
-                using (StreamReader reader = new StreamReader(Request.Body))
-                {
-                    string xxjson = await reader.ReadToEndAsync();
-
-                    if (string.IsNullOrEmpty(xxjson))
-                    {
-                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "No request body." });
-                    }
-
-                    long Id = await SaveZohoWebHookLogs(xxjson);
-                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
-                    payload = webhookPayload?.Payload;
-                    if (Id > 0)
-                    {
-                        object[] paramwebhook = new object[] {
-                                Id,
-                                payload.Id,
-                                webhookPayload.EventTime,
-                                webhookPayload.EventType,
-                                webhookPayload.OrgId,
-                                null
-                            };
-                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
-
-                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
-                    }
-
-                }
-
-                object[] param = new object[] {
-                // Ticket Main Details
-                payload.Id,
-                payload.TicketNumber,
-                payload.Subject,
-                payload.Description,
-                payload.Status,
-                payload.StatusType,
-                payload.Priority ?? string.Empty,
-                payload.Category,
-                payload.SubCategory ?? string.Empty,
-                // Channel Information
-                payload.Channel,
-                payload.ChannelCode ?? string.Empty,
-                payload.Source?.Type ?? string.Empty,
-                payload.Source?.AppName ?? string.Empty,
-                // Contact Details
-                payload.ContactId,
-                payload.Contact?.FirstName ?? string.Empty,
-                payload.Contact?.LastName ?? string.Empty,
-                payload.Contact?.Email ?? string.Empty,
-                payload.Contact?.Phone ?? string.Empty,
-                payload.Contact?.Mobile ?? string.Empty,
-                // Assignee Details
-                payload.AssigneeId,
-                payload.Assignee?.FirstName ?? string.Empty,
-                payload.Assignee?.LastName ?? string.Empty,
-                payload.Assignee?.Email ?? string.Empty,
-                // Ticket Flags
-                payload.IsOverDue,
-                payload.IsTrashed,
-                payload.IsResponseOverdue,
-                payload.IsSpam,
-                payload.IsArchived,
-                payload.IsDeleted,
-                payload.IsEscalated,
-                // Dates and Times
-                payload.CreatedTime,
-                payload.ModifiedTime,
-                payload.DueDate,
-                payload.ClosedTime,
-                payload.CustomerResponseTime,
-                payload.ResponseDueDate,
-                null,
-                // Counts
-                int.Parse(payload.ThreadCount ?? "0"),
-                int.Parse(payload.CommentCount ?? "0"),
-                int.Parse(payload.TaskCount ?? "0"),
-                int.Parse(payload.ApprovalCount ?? "0"),
-                int.Parse(payload.AttachmentCount ?? "0"),
-                // Additional Details
-                payload.DepartmentId ?? string.Empty,
-                payload.TeamId ?? string.Empty,
-                payload.ProductId ?? string.Empty,
-                payload.AccountId ?? string.Empty,
-                payload.LayoutDetails?.Id ?? string.Empty,
-                payload.LayoutDetails?.LayoutName ?? string.Empty,
-                // Custom Fields                
-                decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity) ? severity : 0,
-                payload.Cf?.DateOfPurchase,
-                payload.Cf?.Url ?? string.Empty,
-                // Webhook Details
-                webhookPayload.EventTime,
-                webhookPayload.EventType,
-                webhookPayload.OrgId
-            };
-
-                string paramasString = CommonLogic.ConvertToParamString(param);
-
-                _iTicket.SaveZohoWebHookTickets(paramasString);
-                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket saved." });
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                //_logger.LogError(ex, "Error saving Zoho ticket");
-                throw;
-            }
-        }
-        #endregion
-
-        #region When Ticket Update in Zoho it will call below API through webhook
-        [HttpPost("UpdateZohoTicket")]
-        [AllowAnonymous]
-        public async Task<IActionResult> UpdateZohoTicket()
-        {
-            try
-            {
-                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
-                PayloadDetails payload = new PayloadDetails();
-                using (StreamReader reader = new StreamReader(Request.Body))
-                {
-                    reader.BaseStream.Seek(0, SeekOrigin.Begin);
-                    string xxjson = await reader.ReadToEndAsync();
-
-                    long Id = await SaveZohoWebHookLogs(xxjson);
-                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
-                    payload = webhookPayload?.Payload;
-                    if (Id > 0)
-                    {
-                        object[] paramwebhook = new object[] {
-                                Id,
-                                payload.Id,
-                                webhookPayload.EventTime,
-                                webhookPayload.EventType,
-                                webhookPayload.OrgId,
-                                null
-                            };
-                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
-
-                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
-                    }
-                }
-
-
-                object[] param = new object[] {
-                    // Ticket Main Details
-                    payload.Id,
-                    payload.TicketNumber,
-                    payload.Subject,
-                    payload.Description,
-                    payload.Status,
-                    payload.StatusType,
-                    payload.Priority ?? string.Empty,
-                    payload.Category,
-                    payload.SubCategory ?? string.Empty,
-                    // Channel Information
-                    payload.Channel,
-                    payload.ChannelCode ?? string.Empty,
-                    payload.Source?.Type ?? string.Empty,
-                    payload.Source?.AppName ?? string.Empty,
-                    // Contact Details
-                    payload.ContactId,
-                    payload.Contact?.FirstName ?? string.Empty,
-                    payload.Contact?.LastName ?? string.Empty,
-                    payload.Contact?.Email ?? string.Empty,
-                    payload.Contact?.Phone ?? string.Empty,
-                    payload.Contact?.Mobile ?? string.Empty,
-                    // Assignee Details
-                    payload.AssigneeId,
-                    payload.Assignee?.FirstName ?? string.Empty,
-                    payload.Assignee?.LastName ?? string.Empty,
-                    payload.Assignee?.Email ?? string.Empty,
-                    // Ticket Flags
-                    payload.IsOverDue,
-                    payload.IsTrashed,
-                    payload.IsResponseOverdue,
-                    payload.IsSpam,
-                    payload.IsArchived,
-                    payload.IsDeleted,
-                    payload.IsEscalated,
-                    // Dates and Times
-                    payload.CreatedTime,
-                    payload.ModifiedTime,
-                    payload.DueDate,
-                    payload.ClosedTime,
-                    payload.CustomerResponseTime,
-                    payload.ResponseDueDate,
-                    null,
-                    // Counts
-                    int.Parse(payload.ThreadCount ?? "0"),
-                    int.Parse(payload.CommentCount ?? "0"),
-                    int.Parse(payload.TaskCount ?? "0"),
-                    int.Parse(payload.ApprovalCount ?? "0"),
-                    int.Parse(payload.AttachmentCount ?? "0"),
-                    // Additional Details
-                    payload.DepartmentId ?? string.Empty,
-                    payload.TeamId ?? string.Empty,
-                    payload.ProductId ?? string.Empty,
-                    payload.AccountId ?? string.Empty,
-                    payload.LayoutDetails?.Id ?? string.Empty,
-                    payload.LayoutDetails?.LayoutName ?? string.Empty,
-                    // Custom Fields                
-                    decimal.TryParse(payload.Cf?.SeverityPercentage ?? "0", out decimal severity)
-                        ? severity : 0,
-                    payload.Cf?.DateOfPurchase,
-                    payload.Cf?.Url ?? string.Empty,
-                    // Webhook Details
-                    webhookPayload.EventTime,
-                    webhookPayload.EventType,
-                    webhookPayload.OrgId
-                };
-                string paramasString = CommonLogic.ConvertToParamString(param);
-
-                // Call update method
-                _iTicket.SaveZohoTickets(paramasString);
-                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Updated." });
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-        #endregion
-
-        #region delete ticket in zoho webhook
-        [HttpPost("DeleteZohoTicket")]
-        [AllowAnonymous]
-        public async Task<IActionResult> DeleteZohoTicket()
-        {
-            try
-            {
-                ZohoWebhookPayload? webhookPayload = new ZohoWebhookPayload();
-                PayloadDetails payload = new PayloadDetails();
-                using (StreamReader reader = new StreamReader(Request.Body))
-                {
-                    reader.BaseStream.Seek(0, SeekOrigin.Begin);
-                    string xxjson = await reader.ReadToEndAsync();
-
-                    long Id = await SaveZohoWebHookLogs(xxjson);
-                    webhookPayload = JsonConvert.DeserializeObject<ZohoWebhookPayload>(xxjson);
-                    payload = webhookPayload?.Payload;
-                    if (Id > 0)
-                    {
-                        object[] paramwebhook = new object[] {
-                                Id,
-                                payload.Id,
-                                webhookPayload.EventTime,
-                                webhookPayload.EventType,
-                                webhookPayload.OrgId,
-                                null
-                            };
-                        string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
-
-                        _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
-                    }
-                }
-
-                object[] param = new object[] {
-                    // Ticket Main Details
-                    payload.Id,                    
-                    // Webhook Details
-                    webhookPayload.EventTime,
-                    webhookPayload.EventType,
-                    webhookPayload.OrgId
-                };
-                string paramasString = CommonLogic.ConvertToParamString(param);
-
-                // Call update method
-                _iTicket.deleteZohoTickets(paramasString);
-                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Ticket Updated." });
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-        #endregion
+        #endregion        
 
         #region Save tickets from zoho api in one go
         [HttpPost("SaveZohoTicketinOneGo")]
@@ -1126,5 +781,48 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         #endregion
+
+        [Authorize]
+        [HttpGet("GetZohoTickets")]
+        public async Task<IActionResult> GetZohoTickets(long talentId, string status)
+        {
+            try
+            {
+                #region Validation
+                if (talentId == 0)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide talent details." });
+                }
+                #endregion
+
+                object[] param = new object[]
+                {
+                    0,
+                    status,
+                    "",
+                    1,
+                    5000,
+                    "",
+                    talentId
+                };
+
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+
+                List<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result> zohoTicketDetails = await _iTicket.GetZohoTicketsBasedOnUser(paramasString).ConfigureAwait(false);
+
+                if (zohoTicketDetails.Any())
+                {                   
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = zohoTicketDetails });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Tickets Available" });
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }

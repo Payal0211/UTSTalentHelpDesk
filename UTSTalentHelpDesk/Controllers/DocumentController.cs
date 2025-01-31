@@ -36,27 +36,7 @@ namespace UTSTalentHelpDesk.Controllers
         public async Task<ObjectResult> Filters()
         {
             try
-            {
-                #region Authorization
-
-                var headers = Request.Headers;
-                string? token = "";
-
-                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-                Hashtable htable = new Hashtable(dict);
-                if (!htable.ContainsKey("authorization"))
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
-                }
-
-                token = Convert.ToString(htable["authorization"]);
-
-                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
-                }
-
-                #endregion
+            {               
 
                 DocumentFilters documentFilters = new DocumentFilters();
 
@@ -80,27 +60,7 @@ namespace UTSTalentHelpDesk.Controllers
         public async Task<ObjectResult> UploadFiles([FromForm] ImageUpload files)
         {
             try
-            {
-                #region Authorization
-
-                var headers = Request.Headers;
-                string? token = "";
-
-                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-                Hashtable htable = new Hashtable(dict);
-                if (!htable.ContainsKey("authorization"))
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
-                }
-
-                token = Convert.ToString(htable["authorization"]);
-
-                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
-                }
-
-                #endregion
+            {               
 
                 if (files == null || files.Files.Count == 0)
                 {
@@ -207,27 +167,7 @@ namespace UTSTalentHelpDesk.Controllers
         public async Task<IActionResult> GetTalentDocumentList(long TalentID)
         {
             try
-            {
-                #region Authorization
-
-                var headers = Request.Headers;
-                string? token = "";
-
-                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-                Hashtable htable = new Hashtable(dict);
-                if (!htable.ContainsKey("authorization"))
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
-                }
-
-                token = Convert.ToString(htable["authorization"]);
-
-                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
-                }
-
-                #endregion
+            {                
 
                 #region Pre-Validation
                 if (TalentID == 0)
@@ -235,7 +175,9 @@ namespace UTSTalentHelpDesk.Controllers
                 #endregion
 
                 object[] param = new object[] {
-                    TalentID
+                    TalentID,
+                    0,
+                    true
                 };
 
                 string paramasString = CommonLogic.ConvertToParamString(param);
@@ -262,27 +204,7 @@ namespace UTSTalentHelpDesk.Controllers
         public IActionResult VerifyTalentDocument(long TalentDocumentID)
         {
             try
-            {
-                #region Authorization
-
-                var headers = Request.Headers;
-                string? token = "";
-
-                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-                Hashtable htable = new Hashtable(dict);
-                if (!htable.ContainsKey("authorization"))
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
-                }
-
-                token = Convert.ToString(htable["authorization"]);
-
-                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
-                }
-
-                #endregion
+            {               
 
                 #region Pre-Validation
                 if (TalentDocumentID == 0)
@@ -314,27 +236,7 @@ namespace UTSTalentHelpDesk.Controllers
         public IActionResult RemoveTalentDocument(long TalentDocumentID)
         {
             try
-            {
-                #region Authorization
-
-                var headers = Request.Headers;
-                string? token = "";
-
-                var dict = headers.ToDictionary(kvp => kvp.Key.ToLower(), kvp => kvp.Value);
-                Hashtable htable = new Hashtable(dict);
-                if (!htable.ContainsKey("authorization"))
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "No Authorization Key found", Details = null });
-                }
-
-                token = Convert.ToString(htable["authorization"]);
-
-                if (token != "4b441aae-d361-46e1-ad14-2b2114ffbe17")
-                {
-                    return StatusCode(StatusCodes.Status401Unauthorized, new ResponseObject() { statusCode = StatusCodes.Status401Unauthorized, Message = "Invalid Token", Details = null });
-                }
-
-                #endregion
+            {                
 
                 #region Pre-Validation
                 if (TalentDocumentID == 0)

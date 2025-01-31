@@ -83,5 +83,10 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             db.Database.ExecuteSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_SaveZohoPrevTicket_Webhook, param));
         }
+
+        public async Task<List<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result>> GetZohoTicketsBasedOnUser(string param)
+        {
+            return await db.Set<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result>().FromSqlRaw(String.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_Zoho_Tickets_BasedOnUser, param)).ToListAsync();
+        }
     }
 }

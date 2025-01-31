@@ -30,6 +30,7 @@
             public static string TS_Sproc_WebHook_History_Manage = "TS_Sproc_WebHook_History_Manage";
             public static string TS_Sproc_SaveZohoTicket_Webhook = "TS_Sproc_SaveZohoTicket_Webhook";
             public static string TS_Sproc_SaveZohoPrevTicket_Webhook = "TS_Sproc_SaveZohoPrevTicket_Webhook";
+            public static string TS_Sproc_Get_Zoho_Tickets_BasedOnUser = "TS_Sproc_Get_Zoho_Tickets_BasedOnUser";
             #endregion
 
             #region Engagements

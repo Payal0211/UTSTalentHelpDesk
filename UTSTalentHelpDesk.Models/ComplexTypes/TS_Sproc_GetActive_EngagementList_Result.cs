@@ -23,5 +23,8 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? PayRateCurrency { get; set; }
         public long? OnBoardId { get; set; }
         public long? HRID { get; set; }
+        public string? WorkingDays { get; set; }
+        public string? ShiftStartTime { get; set; }
+        public string? ShiftEndTime { get; set; }
     }
 }

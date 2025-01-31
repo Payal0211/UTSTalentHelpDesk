@@ -16,9 +16,7 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public int? Years { get; set; }
         public string? EngagemenID { get; set; }
         public string? Currency { get; set; }
-        public string? MonthNames { get; set; }
-        public decimal? BR { get; set; }
-        public string? BRStr { get; set; }
+        public string? MonthNames { get; set; }        
         public int? TotalDaysinMonth { get; set; }
         public decimal? PR_Per_Day { get; set; }
         public string? PR_Per_DayStr { get; set; }
@@ -29,10 +27,7 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public decimal? PR { get; set; }
         public string? PRStr { get; set; }
         public decimal? Final_PR { get; set; }
-        public string? Final_PRStr { get; set; }
-        public decimal? NR_DP_Value { get; set; }
-        public string? NR_DP_ValueStr { get; set; }
-        public decimal? Actual_NR_Percentage { get; set; }
+        public string? Final_PRStr { get; set; }        
         public string? ContractType { get; set; }
         public DateTime? ClientInvoiceDate { get; set; }
         public string? EngagementId_HRID { get; set; }

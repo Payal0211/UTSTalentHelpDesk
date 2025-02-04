@@ -19,6 +19,8 @@ using System.Collections;
 using static UTSTalentHelpDesk.Models.ViewModels.ZohoWebhookPayload;
 using System.Text.Json;
 using AuthorizeAttribute = UTSTalentHelpDesk.Helpers.Common.AuthorizeAttribute;
+using Org.BouncyCastle.Asn1.Ocsp;
+using UTSTalentHelpDesk.Helpers;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -32,14 +34,16 @@ namespace UTSTalentHelpDesk.Controllers
         private readonly IConfigurationSection zohoConfig;
         private readonly ITicket _iTicket;
         private readonly HttpClient _httpClient;
+        private IEmail _iEmail;
 
-        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory, ITicket iTicket, HttpClient httpClient)
+        public TicketsController(IConfiguration configuration, IHttpClientFactory httpClientFactory, ITicket iTicket, HttpClient httpClient, IEmail iEmail)
         {
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
             zohoConfig = _configuration.GetSection("Zoho");
             _iTicket = iTicket;
             _httpClient = httpClient;
+            _iEmail = iEmail;
         }
 
         #region Token Generation
@@ -782,6 +786,8 @@ namespace UTSTalentHelpDesk.Controllers
 
         #endregion
 
+        #region Ticket-listing
+
         [Authorize]
         [HttpGet("GetZohoTickets")]
         public async Task<IActionResult> GetZohoTickets(long talentId, string status)
@@ -824,5 +830,47 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
         }
+
+        #endregion
+
+        #region Send email on talentsupport while raising ticket
+
+        [Authorize]
+        [HttpPost("RaiseTicket")]
+        public IActionResult RaiseTicket([FromBody] TicketRequestViewModel ticketRequest)
+        {
+            #region Validation
+
+            if (ticketRequest == null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty." });
+            }
+
+            #endregion
+
+            TsGenTalentTicket talentTicket = new TsGenTalentTicket()
+            {
+                Subject = ticketRequest.Subject,
+                Description = ticketRequest.Description,
+                TalentId = 1584,
+                CreatedDate = DateTime.Now
+            };
+
+            talentTicket = _iTicket.SaveUpdateTicketHistory(talentTicket);
+
+            //send email to talentsupport
+            EmailBinder emailBinder = new EmailBinder(_configuration, _iEmail);            
+            bool issuccess = emailBinder.SendEmailToTalentSupportWhenTicketRaised(ticketRequest);
+
+            if (issuccess)
+            {
+                talentTicket.IsEmailSent = issuccess;
+                _iTicket.SaveUpdateTicketHistory(talentTicket);
+            }
+
+            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
+        }
+
+        #endregion
     }
 }

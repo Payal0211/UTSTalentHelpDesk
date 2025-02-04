@@ -35,5 +35,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public bool? IsEscalated { get; set; }
         public bool? IsSpam { get; set; }
         public bool? IsArchieved { get; set; }
+        public string? TicketClassification { get; set; }
     }
 }

@@ -21,5 +21,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? Comments { get; set; }
         public int? TicketTechnicalJustificationId { get; set; }
         public int? RatingStar { get; set; }
+        public bool? IsClientFeedback { get; set; }
     }
 }

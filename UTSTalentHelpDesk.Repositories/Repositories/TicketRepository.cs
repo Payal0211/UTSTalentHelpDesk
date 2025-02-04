@@ -88,5 +88,24 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
         {
             return await db.Set<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result>().FromSqlRaw(String.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_Zoho_Tickets_BasedOnUser, param)).ToListAsync();
         }
+
+        public TsGenTalentTicket SaveUpdateTicketHistory(TsGenTalentTicket talentTicket)
+        {
+            if (talentTicket != null )
+            {
+                if (talentTicket.Id == 0)
+                {
+                    db.TsGenTalentTickets.Add(talentTicket);
+                    db.SaveChanges(true);
+                }
+                else
+                {
+                    db.TsGenTalentTickets.Update(talentTicket);
+                    db.SaveChanges(true);
+                }
+            }
+
+            return talentTicket;
+        }
     }
 }

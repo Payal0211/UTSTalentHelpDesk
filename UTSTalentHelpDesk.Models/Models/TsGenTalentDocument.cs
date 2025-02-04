@@ -14,5 +14,9 @@ namespace UTSTalentHelpDesk.Models.Models
         public bool? IsApproved { get; set; }
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDateTime { get; set; }
+        public string? UniqueFileName { get; set; }
+        public long? CompanyId { get; set; }
+        public long? CreatedById { get; set; }
+        public int? AppActionDoneBy { get; set; }
     }
 }

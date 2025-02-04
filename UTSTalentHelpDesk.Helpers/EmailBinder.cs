@@ -143,6 +143,55 @@
 
         #endregion
 
+        #region Email to TalentSupport for Zoho-ticket
 
+        public bool SendEmailToTalentSupportWhenTicketRaised(TicketRequestViewModel request)
+        {
+            try
+            {
+                string? Subject = "", BodyCustom = "", ClientName = "riya.a@uplers.in", ClientEmail = "Riya Agarwal";
+                StringBuilder sbBody = new StringBuilder();
+              
+                Subject = request.Subject;
+
+                sbBody.Append(request.Description);
+
+                sbBody.Append("<br/><br/>");
+                
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("Thanks");
+                sbBody.Append("<br/>");                
+
+                #region Variable
+                EmailOperator emailOperator = new EmailOperator(_configuration);
+                #endregion
+
+                List<string> toEmail = new List<string>
+                {
+                        ClientEmail
+                };
+
+                List<string> toEmailName = new List<string>
+                {
+                        ClientName
+                };
+
+                emailOperator.SetToEmail(toEmail);
+                emailOperator.SetToEmailName(toEmailName);
+                emailOperator.SetSubject(Subject);
+                emailOperator.SetBody(sbBody.ToString());
+
+                #region SendEmail
+                if (!string.IsNullOrEmpty(Subject))
+                    emailOperator.SendEmail(false, false, false);
+                #endregion
+
+                return true;
+            }
+            catch (Exception e) { return false; }
+        }
+
+        #endregion
     }
 }

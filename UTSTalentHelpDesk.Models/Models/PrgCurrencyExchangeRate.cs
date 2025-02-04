@@ -12,5 +12,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public DateTime? LastUpdatedDate { get; set; }
         public string? CountryCode { get; set; }
         public string? Culture { get; set; }
+        public decimal? UsdExchangeRate { get; set; }
     }
 }

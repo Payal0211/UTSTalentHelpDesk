@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 namespace UTSTalentHelpDesk.Models.ViewModels
 {
     [Keyless]
-    public class TicketRequest
+    public class TicketRequestViewModel
     {
-        public string Subject { get; set; }
-        public string DepartmentId { get; set; }
-        public string Description { get; set; }
-        public string Email { get; set; }
+        public string? Subject { get; set; }      
+        public string? Description { get; set; }
     }
 }

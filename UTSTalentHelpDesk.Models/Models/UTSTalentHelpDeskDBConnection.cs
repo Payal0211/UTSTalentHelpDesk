@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Models.Models
 {
     public partial class UTSTalentHelpDeskDBConnection : DbContext
     {
-       
+        
 
         public UTSTalentHelpDeskDBConnection(DbContextOptions<UTSTalentHelpDeskDBConnection> options)
             : base(options)
@@ -141,6 +141,8 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenOnBoardTalentsClientFeedback> GenOnBoardTalentsClientFeedbacks { get; set; } = null!;
         public virtual DbSet<GenOnBoardTalentsLegalDetail> GenOnBoardTalentsLegalDetails { get; set; } = null!;
         public virtual DbSet<GenOnBoardTalentsReplacementDetail> GenOnBoardTalentsReplacementDetails { get; set; } = null!;
+        public virtual DbSet<GenOnBoardedTalentNote> GenOnBoardedTalentNotes { get; set; } = null!;
+        public virtual DbSet<GenOnBoardedTalentNotesTagUserDetail> GenOnBoardedTalentNotesTagUserDetails { get; set; } = null!;
         public virtual DbSet<GenOnlyDealId> GenOnlyDealIds { get; set; } = null!;
         public virtual DbSet<GenPayPerViewModelClientPortal> GenPayPerViewModelClientPortals { get; set; } = null!;
         public virtual DbSet<GenPaymentHistoryClientPortal> GenPaymentHistoryClientPortals { get; set; } = null!;
@@ -189,6 +191,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenTalentClientTele> GenTalentClientTeles { get; set; } = null!;
         public virtual DbSet<GenTalentComfortableAreaDetail> GenTalentComfortableAreaDetails { get; set; } = null!;
         public virtual DbSet<GenTalentComfortableWorkingDetail> GenTalentComfortableWorkingDetails { get; set; } = null!;
+        public virtual DbSet<GenTalentDetail> GenTalentDetails { get; set; } = null!;
         public virtual DbSet<GenTalentEducationDetail> GenTalentEducationDetails { get; set; } = null!;
         public virtual DbSet<GenTalentFinancialDetail> GenTalentFinancialDetails { get; set; } = null!;
         public virtual DbSet<GenTalentGetHelpQuestion> GenTalentGetHelpQuestions { get; set; } = null!;
@@ -196,6 +199,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenTalentInterestDetail> GenTalentInterestDetails { get; set; } = null!;
         public virtual DbSet<GenTalentInterviewFeedback> GenTalentInterviewFeedbacks { get; set; } = null!;
         public virtual DbSet<GenTalentKeyQualityDetail> GenTalentKeyQualityDetails { get; set; } = null!;
+        public virtual DbSet<GenTalentLeaveRequest> GenTalentLeaveRequests { get; set; } = null!;
         public virtual DbSet<GenTalentLegalInfo> GenTalentLegalInfos { get; set; } = null!;
         public virtual DbSet<GenTalentNotesClientPortal> GenTalentNotesClientPortals { get; set; } = null!;
         public virtual DbSet<GenTalentNotificationHistory> GenTalentNotificationHistories { get; set; } = null!;
@@ -396,6 +400,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<StoreApiurl> StoreApiurls { get; set; } = null!;
         public virtual DbSet<Testtable> Testtables { get; set; } = null!;
         public virtual DbSet<TsGenTalentDocument> TsGenTalentDocuments { get; set; } = null!;
+        public virtual DbSet<TsGenTalentTicket> TsGenTalentTickets { get; set; } = null!;
         public virtual DbSet<TsGenZohoAssignee> TsGenZohoAssignees { get; set; } = null!;
         public virtual DbSet<TsGenZohoContact> TsGenZohoContacts { get; set; } = null!;
         public virtual DbSet<TsGenZohoTicket> TsGenZohoTickets { get; set; } = null!;
@@ -432,7 +437,7 @@ namespace UTSTalentHelpDesk.Models.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=27.109.9.66;Database=TalentConnect; user id=jimit; password=jimitD04");
+                optionsBuilder.UseSqlServer("Server=27.109.9.66;Database=TalentConnect; user id=riya; password=riya@123");
             }
         }
 
@@ -4430,6 +4435,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.LostDate).HasColumnType("datetime");
 
+                entity.Property(e => e.OHiringTypePricingId).HasColumnName("O_HiringTypePricingId");
+
                 entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
 
                 entity.Property(e => e.ProceedWithClientLeavePolicyFileUpload)
@@ -4878,6 +4885,34 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.ReplacementStage).HasMaxLength(100);
 
                 entity.Property(e => e.TalentAgreementDateForReplacement).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<GenOnBoardedTalentNote>(entity =>
+            {
+                entity.ToTable("gen_OnBoarded_Talent_Notes");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedByDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedById).HasColumnName("CreatedByID");
+
+                entity.Property(e => e.HiringRequestId).HasColumnName("HiringRequestID");
+
+                entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
+
+                entity.Property(e => e.TalentId).HasColumnName("TalentID");
+            });
+
+            modelBuilder.Entity<GenOnBoardedTalentNotesTagUserDetail>(entity =>
+            {
+                entity.ToTable("gen_OnBoarded_Talent_Notes_TagUserDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.NoteId).HasColumnName("NoteID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
             modelBuilder.Entity<GenOnlyDealId>(entity =>
@@ -6875,6 +6910,19 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
             });
 
+            modelBuilder.Entity<GenTalentDetail>(entity =>
+            {
+                entity.ToTable("gen_TalentDetails");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.TalentId).HasColumnName("Talent_ID");
+
+                entity.Property(e => e.TalentUplersId)
+                    .HasMaxLength(50)
+                    .HasColumnName("Talent_UplersID");
+            });
+
             modelBuilder.Entity<GenTalentEducationDetail>(entity =>
             {
                 entity.ToTable("gen_TalentEducationDetails");
@@ -7085,6 +7133,37 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.KeyQualitiesId).HasColumnName("KeyQualities_ID");
+
+                entity.Property(e => e.TalentId).HasColumnName("TalentID");
+            });
+
+            modelBuilder.Entity<GenTalentLeaveRequest>(entity =>
+            {
+                entity.ToTable("gen_Talent_LeaveRequests");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ApprovalDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.IsApprovedByAm).HasColumnName("IsApprovedByAM");
+
+                entity.Property(e => e.IsRejectedByAm).HasColumnName("IsRejectedByAM");
+
+                entity.Property(e => e.LeaveDate).HasColumnType("datetime");
+
+                entity.Property(e => e.LeaveDuration).HasMaxLength(100);
+
+                entity.Property(e => e.LeaveId)
+                    .HasMaxLength(500)
+                    .HasColumnName("LeaveID");
+
+                entity.Property(e => e.RejectedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
             });
@@ -8598,6 +8677,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.ExchangeRate).HasColumnType("decimal(18, 4)");
 
                 entity.Property(e => e.LastUpdatedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.UsdExchangeRate)
+                    .HasColumnType("decimal(18, 4)")
+                    .HasColumnName("USD_ExchangeRate");
             });
 
             modelBuilder.Entity<PrgDealPipeline>(entity =>
@@ -10540,11 +10623,30 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.ApprovedDateTime).HasColumnType("datetime");
 
+                entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+
+                entity.Property(e => e.CreatedById).HasColumnName("CreatedByID");
+
                 entity.Property(e => e.CreatedDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.DocumentName).HasMaxLength(500);
 
                 entity.Property(e => e.DocumentTypeId).HasColumnName("DocumentTypeID");
+
+                entity.Property(e => e.TalentId).HasColumnName("TalentID");
+
+                entity.Property(e => e.UniqueFileName)
+                    .HasMaxLength(500)
+                    .HasColumnName("Unique_FileName");
+            });
+
+            modelBuilder.Entity<TsGenTalentTicket>(entity =>
+            {
+                entity.ToTable("TS_gen_Talent_Ticket");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
             });
@@ -10640,6 +10742,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Subject).HasMaxLength(500);
 
                 entity.Property(e => e.TalentId).HasColumnName("Talent_ID");
+
+                entity.Property(e => e.TicketClassification).HasMaxLength(200);
 
                 entity.Property(e => e.TicketNumber).HasMaxLength(255);
 

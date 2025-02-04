@@ -18,6 +18,8 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string? Status { get; set; } // ENUM('Pending', 'Approved', 'Rejected')        
         public int? NoOfDays { get; set; }    
         public string? LeaveID { get; set; }    
+        public long? CompanyID { get; set; }    
+        public bool IsFromSalesPortal { get; set; } = true;
     }
 
     public class LeaveRequestActions

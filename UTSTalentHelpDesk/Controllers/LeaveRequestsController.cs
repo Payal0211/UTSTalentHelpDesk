@@ -7,6 +7,7 @@ using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
 using UTSTalentHelpDesk.Repositories.Interfaces;
+using static UTSTalentHelpDesk.Helpers.Enum;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -67,7 +68,9 @@ namespace UTSTalentHelpDesk.Controllers
                         request.LeaveDuration,
                         request.LeaveReason,
                         request.LeaveID,
-                        flag
+                        flag,
+                        request.IsFromSalesPortal ? (short)AppActionDoneBy.UTS : (short)AppActionDoneBy.TalentSupport,
+                        request.CompanyID
                     };
 
                     string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
@@ -185,7 +188,7 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpGet("GetTalentLeaves")]
-        public async Task<IActionResult> GetTalentLeaves(long talentID, int month, int year, long onBoardId)
+        public async Task<IActionResult> GetTalentLeaves(long talentID, int month, int year, long onBoardId, long companyId)
         {
             try
             {
@@ -198,7 +201,8 @@ namespace UTSTalentHelpDesk.Controllers
                     talentID,
                     month,
                     year,
-                    onBoardId
+                    onBoardId,
+                    companyId
                 };
 
                 string paramasString = CommonLogic.ConvertToParamString(param);
@@ -219,7 +223,7 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpGet("GetTalentLeavesMonthlyCalendar")]
-        public async Task<IActionResult> GetTalentLeavesMonthlyCalendar(long talentID, int month, int year)
+        public async Task<IActionResult> GetTalentLeavesMonthlyCalendar(long talentID, int month, int year, long companyId)
         {
             try
             {
@@ -231,7 +235,8 @@ namespace UTSTalentHelpDesk.Controllers
                 object[] param = new object[] {
                     talentID,
                     month,
-                    year
+                    year,
+                    companyId
                 };
 
                 string paramasString = CommonLogic.ConvertToParamString(param);

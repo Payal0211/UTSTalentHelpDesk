@@ -22,7 +22,8 @@ namespace UTSTalentHelpDesk.Helpers
             OldAdmin = 1,
             ATS = 2,
             UTS = 3,
-            FrontEnd = 4
+            FrontEnd = 4,
+            TalentSupport = 5
         }
         public enum EntityStaus
         {

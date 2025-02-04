@@ -12,6 +12,7 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
     public class TS_Sproc_Get_DashBoradCounts_Result
     {
         public int? NoOfAppliedJobs { get; set; }
+        public int? NoOfActiveEngagements { get; set; }
         public int? OpenTickets { get; set; }
         public int? ClosedTickets { get; set; }
         public decimal? NoOfLeavesTaken { get; set; }

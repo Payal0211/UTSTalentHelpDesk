@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections;
 using System.Dynamic;
+using System.Text.RegularExpressions;
 using UTSTalentHelpDesk.Helpers.Common;
 using UTSTalentHelpDesk.Models.ComplexTypes;
 using UTSTalentHelpDesk.Models.Models;
 using UTSTalentHelpDesk.Models.ViewModels;
 using UTSTalentHelpDesk.Repositories.Interfaces;
+using static UTSTalentHelpDesk.Helpers.Enum;
 
 namespace UTSTalentHelpDesk.Controllers
 {
@@ -73,8 +75,8 @@ namespace UTSTalentHelpDesk.Controllers
                 }
 
                 string[] allowedFileExtensions = { ".pdf", ".doc", ".docx", ".txt", ".jpg", ".jpeg", ".png" };
-                double maxFileSizeInMB = 0.5; // 500 KB
-                string uploadPath = "Media/TalentDocuments";
+                double maxFileSizeInMB = 0.5; // 500 KB                
+                string uploadPath = System.IO.Path.Combine(_iConfiguration["AdminPath"], "Media/TalentDocuments");
 
                 if (!Directory.Exists(uploadPath))
                 {
@@ -97,6 +99,8 @@ namespace UTSTalentHelpDesk.Controllers
                     }
 
                     var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                    string fileName = Path.GetFileNameWithoutExtension(file.FileName);
+
                     if (!allowedFileExtensions.Contains(fileExtension))
                     {
                         return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
@@ -107,21 +111,26 @@ namespace UTSTalentHelpDesk.Controllers
                         });
                     }
 
-                    var fileSizeInMB = (file.Length / 1024.0) / 1024.0;
-                    if (fileSizeInMB > maxFileSizeInMB)
-                    {
-                        return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
-                        {
-                            statusCode = StatusCodes.Status400BadRequest,
-                            Message = $"File '{file.FileName}' exceeds the maximum allowed size of 500 KB.",
-                            Details = null
-                        });
-                    }
+                    //var fileSizeInMB = (file.Length / 1024.0) / 1024.0;
+                    //if (fileSizeInMB > maxFileSizeInMB)
+                    //{
+                    //    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject()
+                    //    {
+                    //        statusCode = StatusCodes.Status400BadRequest,
+                    //        Message = $"File '{file.FileName}' exceeds the maximum allowed size of 500 KB.",
+                    //        Details = null
+                    //    });
+                    //}
                     #endregion
 
                     #region Save File
-                    string uniqueFileName = file.FileName + "#" + System.DateTime.Now.ToString("ddmmyyyyhh:mm") + fileExtension;
-                    string fullPath = Path.Combine(uploadPath, uniqueFileName);
+                    DateTime now = DateTime.Now;
+                    string formattedDate = now.ToString("dd/MM/yyyy HH:mm:ss");
+                    string pattern = @"[^a-zA-Z0-9._]";
+                    // Replace specified special characters with an empty string
+                    string uniqueFileName = $"{fileName}_{formattedDate}.{fileExtension}";
+                    string cleanName = Regex.Replace(uniqueFileName, pattern, "");                   
+                    string fullPath = Path.Combine(uploadPath, cleanName);
 
                     using (var fileStream = new FileStream(fullPath, FileMode.Create))
                     {
@@ -133,7 +142,11 @@ namespace UTSTalentHelpDesk.Controllers
                                 files.TalentID,
                                 file.FileName,
                                 files.TalentID,
-                                uniqueFileName
+                                cleanName,
+                                0, // CompanyId will be 0 in this case because talent is uploading document from his own irrespective of engagement.
+                                false, // The uploaded doc will not be verified by default.
+                                SessionValues.LoginUserId,
+                                (short)AppActionDoneBy.TalentSupport
                             };
                     string paramasStringwebhook = CommonLogic.ConvertToParamString(paramwebhook);
 

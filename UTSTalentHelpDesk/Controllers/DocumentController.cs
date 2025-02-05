@@ -42,7 +42,7 @@ namespace UTSTalentHelpDesk.Controllers
 
                 DocumentFilters documentFilters = new DocumentFilters();
 
-                documentFilters.DocumentType = _connection.TsPrgDocumentTypes.Where(x => x.IsActive == true).ToList().Select(x => new SelectListItem
+                documentFilters.DocumentType = _connection.TsPrgDocumentTypes.Where(x => x.IsActive == true && x.Id != 1 && x.Id != 4).ToList().Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
                     Text = x.DocumentType

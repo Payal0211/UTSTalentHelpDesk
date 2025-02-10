@@ -74,7 +74,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? UplersfeesAmount { get; set; }
         public int? WorkOptionId { get; set; }
         public int? TotalLeavesGiven { get; set; }
-        public int? TotalLeaveBalance { get; set; }
+        public decimal? TotalLeaveBalance { get; set; }
         public int? HolidayLeaves { get; set; }
         public int? FromWorkingDay { get; set; }
         public int? ToWorkingDay { get; set; }

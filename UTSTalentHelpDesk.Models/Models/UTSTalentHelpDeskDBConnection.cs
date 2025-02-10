@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Models.Models
 {
     public partial class UTSTalentHelpDeskDBConnection : DbContext
     {
-        
+      
 
         public UTSTalentHelpDeskDBConnection(DbContextOptions<UTSTalentHelpDeskDBConnection> options)
             : base(options)
@@ -199,6 +199,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenTalentInterestDetail> GenTalentInterestDetails { get; set; } = null!;
         public virtual DbSet<GenTalentInterviewFeedback> GenTalentInterviewFeedbacks { get; set; } = null!;
         public virtual DbSet<GenTalentKeyQualityDetail> GenTalentKeyQualityDetails { get; set; } = null!;
+        public virtual DbSet<GenTalentLeaveDetail> GenTalentLeaveDetails { get; set; } = null!;
         public virtual DbSet<GenTalentLeaveRequest> GenTalentLeaveRequests { get; set; } = null!;
         public virtual DbSet<GenTalentLegalInfo> GenTalentLegalInfos { get; set; } = null!;
         public virtual DbSet<GenTalentNotesClientPortal> GenTalentNotesClientPortals { get; set; } = null!;
@@ -4425,6 +4426,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.IsContractCompleted).HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.IsEor).HasColumnName("IsEOR");
+
                 entity.Property(e => e.IsRecurring).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.LastModifiedById).HasColumnName("LastModifiedByID");
@@ -4772,6 +4775,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.TalentOnBoardingStatusId)
                     .HasColumnName("TalentOnBoarding_StatusID")
                     .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TotalLeaveBalance).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.TscPersonId).HasColumnName("TSC_PersonID");
 
@@ -5145,6 +5150,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
 
+                entity.Property(e => e.LeaveHistoryId).HasColumnName("LeaveHistoryID");
+
                 entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
 
                 entity.Property(e => e.PayOutAmount).HasColumnType("decimal(18, 2)");
@@ -5204,6 +5211,8 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("TDSCalculatedAmount");
 
                 entity.Property(e => e.TotalApprovedLeaves).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalNumberOfLeavesTaken).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.TotalNumberofLeaves).HasColumnType("decimal(18, 2)");
 
@@ -6916,6 +6925,22 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Otp)
+                    .HasMaxLength(50)
+                    .HasColumnName("OTP");
+
+                entity.Property(e => e.OtpCreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("OTP_CreatedDate");
+
+                entity.Property(e => e.OtpExpiredDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("OTP_ExpiredDate");
+
+                entity.Property(e => e.OtpIsActive).HasColumnName("OTP_IsActive");
+
+                entity.Property(e => e.OtpvalidationCount).HasColumnName("OTPValidationCount");
+
                 entity.Property(e => e.TalentId).HasColumnName("Talent_ID");
 
                 entity.Property(e => e.TalentUplersId)
@@ -7135,6 +7160,21 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.KeyQualitiesId).HasColumnName("KeyQualities_ID");
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
+            });
+
+            modelBuilder.Entity<GenTalentLeaveDetail>(entity =>
+            {
+                entity.ToTable("gen_Talent_Leave_Details");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ContractEndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ContractStartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedbyDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
             });
 
             modelBuilder.Entity<GenTalentLeaveRequest>(entity =>

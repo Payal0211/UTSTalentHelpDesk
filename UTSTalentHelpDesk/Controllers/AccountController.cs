@@ -110,7 +110,190 @@ namespace UTSTalentHelpDesk.Controllers
                 throw;
             }
         }
-        #endregion        
+        #endregion
+
+        #region LoginWithOTP
+
+        [HttpPost("LoginWithOTP")]
+        [AllowAnonymous]
+        public async Task<ObjectResult> LoginWithOTP([FromBody] TalentLoginUserWithOtp talentLogin)
+        {
+            try
+            {
+                #region Validation
+                if (talentLogin == null)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty" });
+                }
+                #endregion
+               
+                long talentId = 0;
+
+                List<Tuple<string, string, string>> employee = new List<Tuple<string, string, string>>();
+
+                employee.Add(new Tuple<string, string, string>("notempty", talentLogin.username, "Username"));
+
+                List<string> errors = new Validator(employee).Validate();
+
+                if (errors.Count == 0)
+                {
+                    GenTalent? genTalent = null;                   
+
+                    genTalent = await _iAccounts.TalentDetails(talentLogin.username, talentId);
+
+                    if (genTalent != null)
+                    {
+                        talentId = genTalent.Id;
+                        string otp = GenerateOTP();
+                        _iAccounts.LoginWithOTP(talentId, otp, false);
+
+                        EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                        emailBinder.SendOTP(genTalent, otp);
+
+                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = genTalent });
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Username is invalid, please try again.", Details = errors });
+                    }
+                }
+                else
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Validation Failed", Details = errors });
+            }
+            catch(Exception e) 
+            {
+                throw e;
+            }
+        }
+
+        [HttpPost("ValidateOTP")]
+        [AllowAnonymous]
+        public async Task<ObjectResult> ValidateOTP([FromBody] TalentLoginUserWithOtp talentLogin)
+        {
+            try
+            {
+                #region Validation
+                if (talentLogin == null)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty" });
+                }
+                #endregion
+
+                long talentId = 0;
+
+                List<Tuple<string, string, string>> employee = new List<Tuple<string, string, string>>();
+
+                employee.Add(new Tuple<string, string, string>("notempty", talentLogin.username, "Username"));
+                employee.Add(new Tuple<string, string, string>("notempty", talentLogin.OTP, "OTP"));
+
+                List<string> errors = new Validator(employee).Validate();
+
+                if (errors.Count == 0)
+                {
+                    GenTalent? genTalent = null;
+
+                    genTalent = await _iAccounts.TalentDetails(talentLogin.username, talentId);
+
+                    if (genTalent != null)
+                    {
+                        talentId = genTalent.Id;
+                        string otp = talentLogin.OTP;
+                        GenTalentDetail talentDetail = _iAccounts.LoginWithOTP(talentId, otp, true);
+                        if (talentDetail != null)
+                        {
+                            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = genTalent });
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Invalid OTP.", Details = talentLogin });
+                        }
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Username is invalid, please try again.", Details = errors });
+                    }
+                }
+                else
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Validation Failed", Details = errors });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        [HttpPost("ResendOTP")]
+        [AllowAnonymous]
+        public async Task<ObjectResult> ResendOTP([FromBody] TalentLoginUserWithOtp talentLogin)
+        {
+            try
+            {
+                #region Validation
+                if (talentLogin == null)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty" });
+                }
+                #endregion
+
+                long talentId = 0;
+
+                List<Tuple<string, string, string>> employee = new List<Tuple<string, string, string>>();
+
+                employee.Add(new Tuple<string, string, string>("notempty", talentLogin.username, "Username"));
+
+                List<string> errors = new Validator(employee).Validate();
+
+                if (errors.Count == 0)
+                {
+                    GenTalent? genTalent = null;
+
+                    genTalent = await _iAccounts.TalentDetails(talentLogin.username, talentId);
+
+                    if (genTalent != null)
+                    {
+                        talentId = genTalent.Id;
+                        string otp = GenerateOTP();
+                        _iAccounts.LoginWithOTP(talentId, otp, false);
+
+                        EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                        emailBinder.SendOTP(genTalent, otp);
+
+                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "OTP send successfully", Details = genTalent });
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Username is invalid, please try again.", Details = errors });
+                    }
+                }
+                else
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Validation Failed", Details = errors });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        [NonAction]
+        private string GenerateOTP()
+        {
+            try
+            {
+                string OTP = "";                 
+
+                Random random = new Random();              
+
+                OTP = Convert.ToString(random.Next(10000, 99999));
+
+                return OTP;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion
 
         #region Logout
         [Authorize]

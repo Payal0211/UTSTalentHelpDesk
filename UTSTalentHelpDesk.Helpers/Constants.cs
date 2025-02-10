@@ -9,6 +9,7 @@
         {
             #region Login
             public static string TS_Sproc_Talent_Login = "TS_Sproc_Talent_Login";
+            public static string TS_Sproc_Talent_OTP_Verify = "TS_Sproc_Talent_OTP_Verify";
             #endregion
 
             #region Document

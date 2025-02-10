@@ -193,5 +193,73 @@
         }
 
         #endregion
+
+        #region Send OTP
+
+        public bool SendOTP(GenTalent genTalent, string otp)
+        {
+            try
+            {
+                EmailOperator emailOperator = new EmailOperator(_configuration);
+
+                string subject = "";
+                string bodyCustom = "";
+                System.Text.StringBuilder sbBody = new System.Text.StringBuilder();            
+
+
+                subject = "Verify your email address with Uplers";
+                bodyCustom = $"Hello {genTalent.Name},";
+                sbBody.Append(bodyCustom);
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("To login into your account, please enter the following One-Time Password (OTP) in the required field:");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append($"OTP: {otp}");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("This OTP is valid for 15 minutes. If you did not request this OTP or if it expires, please request a new one from the same web page.");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("For any queries or further assistance, our support team is here to help. Please get in touch with us on talentsupport@uplers.com");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("Best regards,");
+                sbBody.Append("<br/>");
+                sbBody.Append("Uplers");
+
+                List<string> toEmail = new List<string>
+                {
+                    genTalent.EmailId
+                };
+
+                List<string> toEmailName = new List<string>
+                {
+                    genTalent.Name
+                };               
+
+
+                #region Send Email
+
+                emailOperator.SetToEmail(toEmail);
+                emailOperator.SetToEmailName(toEmailName);               
+
+                emailOperator.SetSubject(subject);
+                emailOperator.SetBody(sbBody.ToString());
+
+                if (!string.IsNullOrEmpty(subject))
+                    emailOperator.SendEmail(false, false, true);
+
+                #endregion
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
     }
 }

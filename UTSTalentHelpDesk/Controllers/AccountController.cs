@@ -253,12 +253,26 @@ namespace UTSTalentHelpDesk.Controllers
                     {
                         talentId = genTalent.Id;
                         string otp = GenerateOTP();
-                        _iAccounts.LoginWithOTP(talentId, otp, false);
+                        GenTalentDetail talentDetail = _iAccounts.LoginWithOTP(talentId, otp, false);
 
-                        EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
-                        emailBinder.SendOTP(genTalent, otp);
-
-                        return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "OTP send successfully", Details = genTalent });
+                        if (talentDetail != null)
+                        {
+                            // If the resend count is more than 5 then do not allow to login.
+                            if (talentDetail.OtpvalidationCount > 5)
+                            {
+                                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "More than 5 attempts, cannot login, please come tommorrow.", Details = genTalent });
+                            }
+                            else
+                            {
+                                EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                                emailBinder.SendOTP(genTalent, otp);
+                            }
+                            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "OTP send successfully", Details = genTalent });
+                        }
+                        else
+                        {
+                            return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "No such talent found"});
+                        }
                     }
                     else
                     {

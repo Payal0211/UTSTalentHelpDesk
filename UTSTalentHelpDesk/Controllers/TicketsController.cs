@@ -21,10 +21,12 @@ using System.Text.Json;
 using AuthorizeAttribute = UTSTalentHelpDesk.Helpers.Common.AuthorizeAttribute;
 using Org.BouncyCastle.Asn1.Ocsp;
 using UTSTalentHelpDesk.Helpers;
+using System.Dynamic;
+using System.Text.Json.Serialization;
 
 namespace UTSTalentHelpDesk.Controllers
 {
-    
+
     [ApiController]
     [Route("Tickets/", Name = "Ticket")]
     public class TicketsController : ControllerBase
@@ -561,7 +563,7 @@ namespace UTSTalentHelpDesk.Controllers
                 #endregion
 
                 string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
-                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");                
+                string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");
 
                 // Step 1: Make the API request to fetch ticket history
                 List<TicketHistory> ticketHistoryResponse = await GetTicketHistoryDetails(ticketNumber, accessToken);
@@ -592,7 +594,7 @@ namespace UTSTalentHelpDesk.Controllers
                         historyResponse.EventDate = group.Key;
                         historyResponse.TicketHistory = new List<TicketHistory>();
 
-                        foreach(var item in group)
+                        foreach (var item in group)
                         {
                             historyResponse.TicketHistory.Add(item);
                         }
@@ -603,7 +605,7 @@ namespace UTSTalentHelpDesk.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success.", Details = ticketHistoryResponses });
                 }
 
-                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success."});
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success." });
             }
             catch (Exception ex)
             {
@@ -640,11 +642,11 @@ namespace UTSTalentHelpDesk.Controllers
         private async Task<string> RefreshAccessToken(string refreshToken)
         {
             try
-            {             
+            {
                 string? tokenEndpoint = zohoConfig["TokenEndpoint"];
                 string? clientId = zohoConfig["ClientId"];
                 string? clientSecret = zohoConfig["ClientSecret"];
-                
+
                 var requestData = new FormUrlEncodedContent(new[]
                 {
                     new KeyValuePair<string, string>("grant_type", "refresh_token"),
@@ -669,7 +671,7 @@ namespace UTSTalentHelpDesk.Controllers
             }
             catch (Exception ex)
             {
-                throw; 
+                throw;
             }
         }
 
@@ -745,7 +747,7 @@ namespace UTSTalentHelpDesk.Controllers
                         Url = $"https://desk.zoho.com/agent/usplt/talent-support/tickets/details/{ticketNumber}/conversation"
                     }).ToList();
 
-                    
+
 
                     return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "success.", Details = groupedEvents });
                 }
@@ -817,7 +819,7 @@ namespace UTSTalentHelpDesk.Controllers
                 List<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result> zohoTicketDetails = await _iTicket.GetZohoTicketsBasedOnUser(paramasString).ConfigureAwait(false);
 
                 if (zohoTicketDetails.Any())
-                {                   
+                {
                     return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = zohoTicketDetails });
                 }
                 else
@@ -837,7 +839,7 @@ namespace UTSTalentHelpDesk.Controllers
 
         [Authorize]
         [HttpPost("RaiseTicket")]
-        public IActionResult RaiseTicket([FromBody] TicketRequestViewModel ticketRequest)
+        public async Task<IActionResult> RaiseTicket([FromBody] TicketRequestViewModel ticketRequest)
         {
             #region Validation
 
@@ -852,23 +854,68 @@ namespace UTSTalentHelpDesk.Controllers
             {
                 Subject = ticketRequest.Subject,
                 Description = ticketRequest.Description,
-                TalentId = 1584,
+                TalentId = SessionValues.LoginUserId,
                 CreatedDate = DateTime.Now
             };
 
             talentTicket = _iTicket.SaveUpdateTicketHistory(talentTicket);
 
-            //send email to talentsupport
-            EmailBinder emailBinder = new EmailBinder(_configuration, _iEmail);            
-            bool issuccess = emailBinder.SendEmailToTalentSupportWhenTicketRaised(ticketRequest);
+            ZohoTicketCreatePayload zohoTicketObj = new ZohoTicketCreatePayload();
+            zohoTicketObj.subject = ticketRequest.Description;
+            zohoTicketObj.departmentId = Convert.ToInt64(_configuration["Zoho:DepartmentID"]);
 
-            if (issuccess)
+            ZohoTicketCreateContact contact = new ZohoTicketCreateContact()
             {
-                talentTicket.IsEmailSent = issuccess;
-                _iTicket.SaveUpdateTicketHistory(talentTicket);
+                email = SessionValues.LoggedInTalentEmailID
+            };
+            zohoTicketObj.contact = contact;
+
+            string ticketNumber = await CreateTicketInZoho(zohoTicketObj);
+            if (string.IsNullOrEmpty(ticketNumber))
+            {
+                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                // Step 2: If the access token is expired, refresh the token
+                var newTokens = await RefreshAccessToken(refreshToken);
+                if (!string.IsNullOrEmpty(newTokens))
+                {
+                    // Save the new tokens in the database
+                    await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
+                    ticketNumber = await CreateTicketInZoho(zohoTicketObj);
+                }
             }
 
+            talentTicket.ZohoTicketId = ticketNumber;
+            _iTicket.SaveUpdateTicketHistory(talentTicket);
+
             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
+        }
+
+        private async Task<string> CreateTicketInZoho(ZohoTicketCreatePayload zohoTicketObj)
+        {
+           
+            string accessToken = await GetTokenFromDatabase("ZohoAccessToken", "AccessToken");           
+
+            var url = $"https://desk.zoho.com/api/v1/tickets";
+            var request = new HttpRequestMessage(HttpMethod.Post, url);
+            request.Headers.Add("Authorization", $"Zoho-oauthtoken {accessToken}");
+            request.Headers.Add("Accept", "application/json"); // Ensure JSON response
+
+            // Serialize the payload
+            var jsonPayload = System.Text.Json.JsonSerializer.Serialize(zohoTicketObj);
+
+            request.Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var ticketResponse = await response.Content.ReadFromJsonAsync<ZohoTicketResponse>();
+                return ticketResponse.TicketNumber;
+            }
+            else
+            {
+                return "";
+            }
         }
 
         #endregion

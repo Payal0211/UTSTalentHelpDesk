@@ -99,4 +99,16 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string Permalink { get; set; }
         public string AppPhotoURL { get; set; }
     }
+
+    public class ZohoTicketCreatePayload
+    {
+        public string subject { get; set; }
+        public long departmentId { get; set; }
+        public ZohoTicketCreateContact contact { get; set; }
+    }
+
+    public class ZohoTicketCreateContact
+    {
+        public string email { get; set; }
+    }
 }

@@ -64,5 +64,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public bool? IsFresherAllowed { get; set; }
         public bool? IsMustHaveSkillschanged { get; set; }
         public bool? IsGoodToHaveSkillschanged { get; set; }
+        public decimal? MinYearsOfExperience { get; set; }
+        public decimal? MaxYearsOfExperience { get; set; }
     }
 }

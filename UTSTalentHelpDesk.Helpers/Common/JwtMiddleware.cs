@@ -74,10 +74,11 @@
                 var loginUserId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
 
                 var IsFromAdminLogin = jwtToken.Claims.First(x => x.Type == "IsFromAdminLogin").Value;
-                var SSOLoggedInUserId = jwtToken.Claims.First(x => x.Type == "SSOLoggedInUserId").Value;
+                var SSOLoggedInUserId = jwtToken.Claims.First(x => x.Type == "SSOLoggedInUserId").Value;                
 
                 SessionValues.LoginUserId = Convert.ToInt64(loginUserId);                
                 SessionValues.SSOLoggedInUserId = Convert.ToInt64(SSOLoggedInUserId);
+                SessionValues.LoggedInTalentEmailID = Convert.ToString(userId);
 
                 // attach user to context on successful jwt validation
                 context.Items["User"] = userId;

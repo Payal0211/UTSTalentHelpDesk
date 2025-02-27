@@ -201,7 +201,12 @@ namespace UTSTalentHelpDesk.Controllers
                         GenTalentDetail talentDetail = _iAccounts.LoginWithOTP(talentId, otp, true);
                         if (talentDetail != null)
                         {
-                            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = genTalent });
+                            var result = CustomRendering.LoginResponse(genTalent, _iConfiguration, "", "", isFromAdmin: false, ssoUserId: 0);
+
+                            bool resultIsAddTokenInMemory = await _iAccounts.IsAddTokenInMemory(result.Token, result.LoggedInUserNameTC);
+
+                            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = result });
+                            
                         }
                         else
                         {

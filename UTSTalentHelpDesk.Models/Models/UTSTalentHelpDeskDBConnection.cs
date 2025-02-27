@@ -5385,6 +5385,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.JobLocation).HasMaxLength(500);
 
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.ModifiedByDateTime).HasColumnType("datetime");
 
                 entity.Property(e => e.ModifiedById).HasColumnName("ModifiedByID");
@@ -5650,6 +5654,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
 
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.NotMatchAfterAcceptanceTimezoneId).HasColumnName("NotMatch_AfterAcceptance_Timezone_ID");
 
                 entity.Property(e => e.OverlapingHours).HasColumnType("decimal(18, 1)");
@@ -5761,6 +5769,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.LastModifiedById).HasColumnName("LastModifiedByID");
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.NotMatchAfterAcceptanceTimezoneId).HasColumnName("NotMatch_AfterAcceptance_Timezone_ID");
 
@@ -10689,6 +10701,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
+
+                entity.Property(e => e.ZohoTicketId)
+                    .HasMaxLength(500)
+                    .HasColumnName("ZohoTicketID");
             });
 
             modelBuilder.Entity<TsGenZohoAssignee>(entity =>

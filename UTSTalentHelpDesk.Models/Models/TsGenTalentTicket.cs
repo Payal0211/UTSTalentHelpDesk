@@ -10,6 +10,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? Subject { get; set; }
         public string? Description { get; set; }
         public DateTime? CreatedDate { get; set; }
-        public bool? IsEmailSent { get; set; }
+        public string? ZohoTicketId { get; set; }
     }
 }

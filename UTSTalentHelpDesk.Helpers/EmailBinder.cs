@@ -29,7 +29,7 @@
         #region Variables 
         IConfiguration _configuration;             
         private readonly IEmail _iEmail;
-
+        bool sendEmailToActualID = false;
         #endregion
 
         #region Constructor
@@ -37,6 +37,8 @@
         {
             _configuration = configuration;           
             _iEmail = iEmail;
+
+            sendEmailToActualID = Convert.ToBoolean(_configuration["SendEmailToActualID"]);
         }
 
         #endregion
@@ -73,7 +75,7 @@
                 if (contact_Details_Result != null)
                 { 
                     ClientName = contact_Details_Result.FullName;
-                    ClientEmail = "riya.a@uplers.in"; //contact_Details_Result.EmailID
+                    ClientEmail = sendEmailToActualID ? contact_Details_Result.EmailID : "riya.a@uplers.in"; //contact_Details_Result.EmailID
 
                     BodyCustom = $"Hello {ClientName},";
                     sbBody.Append(BodyCustom);
@@ -149,14 +151,21 @@
         {
             try
             {
-                string? Subject = "", BodyCustom = "", ClientName = "riya.a@uplers.in", ClientEmail = "Riya Agarwal";
+                string? Subject = "", BodyCustom = "", 
+                    ClientName = "Riya Agarwal", 
+                    ClientEmail = "riya.a@uplers.in";
+
+                if (sendEmailToActualID)
+                {
+                    ClientName = "Talent Support";
+                    ClientEmail = "talentsupport@uplers.in";
+                }
+
                 StringBuilder sbBody = new StringBuilder();
               
                 Subject = request.Subject;
 
-                sbBody.Append(request.Description);
-
-                sbBody.Append("<br/><br/>");
+                sbBody.Append(request.Description);              
                 
                 sbBody.Append("<br/>");
                 sbBody.Append("<br/>");
@@ -204,6 +213,16 @@
 
                 string subject = "";
                 string bodyCustom = "";
+
+                string? ClientName = "Riya Agarwal",
+                    ClientEmail = "riya.a@uplers.in";
+
+                if (sendEmailToActualID)
+                {
+                    ClientName = genTalent.Name;
+                    ClientEmail = genTalent.EmailId;
+                }
+
                 System.Text.StringBuilder sbBody = new System.Text.StringBuilder();            
 
 
@@ -226,18 +245,17 @@
                 sbBody.Append("<br/>");
                 sbBody.Append("Best regards,");
                 sbBody.Append("<br/>");
-                sbBody.Append("Uplers");
+                sbBody.Append("Uplers");            
 
                 List<string> toEmail = new List<string>
                 {
-                    genTalent.EmailId
+                    ClientEmail
                 };
 
                 List<string> toEmailName = new List<string>
                 {
-                    genTalent.Name
-                };               
-
+                    ClientName
+                };
 
                 #region Send Email
 
@@ -248,7 +266,7 @@
                 emailOperator.SetBody(sbBody.ToString());
 
                 if (!string.IsNullOrEmpty(subject))
-                    emailOperator.SendEmail(false, false, true);
+                    emailOperator.SendEmail(false, false, false);
 
                 #endregion
 

@@ -18,5 +18,6 @@
         /// </value>
         public static int LoginUserTypeId { get; set; }
         public static long? SSOLoggedInUserId { get; set; }
+        public static string? LoggedInTalentEmailID { get; set; }
     }
 }

@@ -103,6 +103,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
     public class ZohoTicketCreatePayload
     {
         public string subject { get; set; }
+        public string channel { get; set; }
         public long departmentId { get; set; }
         public ZohoTicketCreateContact contact { get; set; }
     }

@@ -841,53 +841,61 @@ namespace UTSTalentHelpDesk.Controllers
         [HttpPost("RaiseTicket")]
         public async Task<IActionResult> RaiseTicket([FromBody] TicketRequestViewModel ticketRequest)
         {
-            #region Validation
-
-            if (ticketRequest == null)
+            try
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty." });
-            }
+                #region Validation
 
-            #endregion
-
-            TsGenTalentTicket talentTicket = new TsGenTalentTicket()
-            {
-                Subject = ticketRequest.Subject,
-                Description = ticketRequest.Description,
-                TalentId = SessionValues.LoginUserId,
-                CreatedDate = DateTime.Now
-            };
-
-            talentTicket = _iTicket.SaveUpdateTicketHistory(talentTicket);
-
-            ZohoTicketCreatePayload zohoTicketObj = new ZohoTicketCreatePayload();
-            zohoTicketObj.subject = ticketRequest.Description;
-            zohoTicketObj.departmentId = Convert.ToInt64(_configuration["Zoho:DepartmentID"]);
-
-            ZohoTicketCreateContact contact = new ZohoTicketCreateContact()
-            {
-                email = SessionValues.LoggedInTalentEmailID
-            };
-            zohoTicketObj.contact = contact;
-
-            string ticketNumber = await CreateTicketInZoho(zohoTicketObj);
-            if (string.IsNullOrEmpty(ticketNumber))
-            {
-                string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
-                // Step 2: If the access token is expired, refresh the token
-                var newTokens = await RefreshAccessToken(refreshToken);
-                if (!string.IsNullOrEmpty(newTokens))
+                if (ticketRequest == null)
                 {
-                    // Save the new tokens in the database
-                    await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
-                    ticketNumber = await CreateTicketInZoho(zohoTicketObj);
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Request object is empty." });
                 }
+
+                #endregion
+
+                TsGenTalentTicket talentTicket = new TsGenTalentTicket()
+                {
+                    Subject = ticketRequest.Subject,
+                    Description = ticketRequest.Description,
+                    TalentId = SessionValues.LoginUserId,
+                    CreatedDate = DateTime.Now
+                };
+
+                talentTicket = _iTicket.SaveUpdateTicketHistory(talentTicket);
+
+                ZohoTicketCreatePayload zohoTicketObj = new ZohoTicketCreatePayload();
+                zohoTicketObj.subject = ticketRequest.Description;
+                zohoTicketObj.departmentId = Convert.ToInt64(_configuration["Zoho:DepartmentID"]);
+                zohoTicketObj.channel = "Email";
+
+                ZohoTicketCreateContact contact = new ZohoTicketCreateContact()
+                {
+                    email = SessionValues.LoggedInTalentEmailID
+                };
+                zohoTicketObj.contact = contact;
+
+                string ticketNumber = await CreateTicketInZoho(zohoTicketObj);
+                if (string.IsNullOrEmpty(ticketNumber))
+                {
+                    string refreshToken = await GetTokenFromDatabase("ZohoAccessToken", "RefreshToken");
+                    // Step 2: If the access token is expired, refresh the token
+                    var newTokens = await RefreshAccessToken(refreshToken);
+                    if (!string.IsNullOrEmpty(newTokens))
+                    {
+                        // Save the new tokens in the database
+                        await SaveTokensToDatabase("ZohoAccessToken", newTokens, refreshToken);
+                        ticketNumber = await CreateTicketInZoho(zohoTicketObj);
+                    }
+                }
+
+                talentTicket.ZohoTicketId = ticketNumber;
+                _iTicket.SaveUpdateTicketHistory(talentTicket);
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
             }
-
-            talentTicket.ZohoTicketId = ticketNumber;
-            _iTicket.SaveUpdateTicketHistory(talentTicket);
-
-            return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
+            catch(Exception ex) 
+            {
+                throw ex;
+            }
         }
 
         private async Task<string> CreateTicketInZoho(ZohoTicketCreatePayload zohoTicketObj)
@@ -909,8 +917,11 @@ namespace UTSTalentHelpDesk.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var ticketResponse = await response.Content.ReadFromJsonAsync<ZohoTicketResponse>();
-                return ticketResponse.TicketNumber;
+                string responseContent = await response.Content.ReadAsStringAsync(); // Read raw response
+
+                var ticketResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+
+                return ticketResponse?.ticketNumber;
             }
             else
             {

@@ -18,5 +18,6 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? ApprovedBy { get; set; }
         public string? ApprovedDateTime { get; set; }
         public string? Unique_FileName { get; set; }
+        public bool? IsOfficial { get; set; }
     }
 }

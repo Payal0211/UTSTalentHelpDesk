@@ -20,6 +20,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string? LeaveID { get; set; }    
         public long? CompanyID { get; set; }    
         public bool IsFromSalesPortal { get; set; } = true;
+        public int? LeaveTypeID { get; set; }    
     }
 
     public class LeaveRequestActions

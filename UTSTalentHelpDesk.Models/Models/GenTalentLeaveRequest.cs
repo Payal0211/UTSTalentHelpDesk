@@ -24,5 +24,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? ActionFileName { get; set; }
         public int? AppActionDoneBy { get; set; }
         public long? CompanyId { get; set; }
+        public int? LeaveTypeId { get; set; }
     }
 }

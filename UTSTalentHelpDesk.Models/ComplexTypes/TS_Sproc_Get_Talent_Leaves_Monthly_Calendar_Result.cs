@@ -12,10 +12,12 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
     {
         public string? ActualDate { get; set; }
         public bool? IsLeave { get; set; }
-        public string? LeaveType { get; set; }
+        public string? LeaveDuration { get; set; }
         public string? DayOfWeeks { get; set; }
         public string? ColorCode { get; set; }
         public string? LeaveStatus { get; set; }
         public string? LeaveReason { get; set; }
+        public int? LeaveTypeID { get; set; }
+        public string? LeaveType { get; set; }
     }
 }

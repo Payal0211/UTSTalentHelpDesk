@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Models.Models
 {
     public partial class UTSTalentHelpDeskDBConnection : DbContext
     {
-      
+        
 
         public UTSTalentHelpDeskDBConnection(DbContextOptions<UTSTalentHelpDeskDBConnection> options)
             : base(options)
@@ -408,6 +408,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TsGenZohoTicketHistory> TsGenZohoTicketHistories { get; set; } = null!;
         public virtual DbSet<TsGenZohoTicketsWebhookEvent> TsGenZohoTicketsWebhookEvents { get; set; } = null!;
         public virtual DbSet<TsPrgDocumentType> TsPrgDocumentTypes { get; set; } = null!;
+        public virtual DbSet<TsPrgLeaveType> TsPrgLeaveTypes { get; set; } = null!;
         public virtual DbSet<UsrUser> UsrUsers { get; set; } = null!;
         public virtual DbSet<UsrUserGeoDetail> UsrUserGeoDetails { get; set; } = null!;
         public virtual DbSet<UsrUserHierarchy> UsrUserHierarchies { get; set; } = null!;
@@ -431,6 +432,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result> TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_Talent_Contact_Details_Result> TS_Sproc_Get_Talent_Contact_Details_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result> TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetLeaveBalance_History_Result> TS_Sproc_GetLeaveBalance_History_Result { get; set; } = null!;
 
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -7213,6 +7215,8 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasMaxLength(500)
                     .HasColumnName("LeaveID");
 
+                entity.Property(e => e.LeaveTypeId).HasColumnName("LeaveTypeID");
+
                 entity.Property(e => e.RejectedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Status).HasMaxLength(50);
@@ -10853,6 +10857,15 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.DocumentType).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<TsPrgLeaveType>(entity =>
+            {
+                entity.ToTable("TS_prg_LeaveTypes");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.LeaveType).HasMaxLength(250);
             });
 
             modelBuilder.Entity<UsrUser>(entity =>

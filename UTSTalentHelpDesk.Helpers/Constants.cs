@@ -51,6 +51,7 @@
             public const string TS_Sproc_GetTalentLeaves = "TS_Sproc_GetTalentLeaves";
             public const string TS_Sproc_Get_Talent_Leaves_Monthly_Calendar = "TS_Sproc_Get_Talent_Leaves_Monthly_Calendar";
             public const string TS_Sproc_Get_Talent_Contact_Details = "TS_Sproc_Get_Talent_Contact_Details";
+            public const string TS_Sproc_GetLeaveBalance_History = "TS_Sproc_GetLeaveBalance_History";
 
             #endregion
         }

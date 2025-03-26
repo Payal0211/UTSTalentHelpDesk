@@ -199,6 +199,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<GenTalentInterestDetail> GenTalentInterestDetails { get; set; } = null!;
         public virtual DbSet<GenTalentInterviewFeedback> GenTalentInterviewFeedbacks { get; set; } = null!;
         public virtual DbSet<GenTalentKeyQualityDetail> GenTalentKeyQualityDetails { get; set; } = null!;
+        public virtual DbSet<GenTalentLeaveDetail> GenTalentLeaveDetails { get; set; } = null!;
         public virtual DbSet<GenTalentLeaveRequest> GenTalentLeaveRequests { get; set; } = null!;
         public virtual DbSet<GenTalentLegalInfo> GenTalentLegalInfos { get; set; } = null!;
         public virtual DbSet<GenTalentNotesClientPortal> GenTalentNotesClientPortals { get; set; } = null!;
@@ -407,6 +408,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TsGenZohoTicketHistory> TsGenZohoTicketHistories { get; set; } = null!;
         public virtual DbSet<TsGenZohoTicketsWebhookEvent> TsGenZohoTicketsWebhookEvents { get; set; } = null!;
         public virtual DbSet<TsPrgDocumentType> TsPrgDocumentTypes { get; set; } = null!;
+        public virtual DbSet<TsPrgLeaveType> TsPrgLeaveTypes { get; set; } = null!;
         public virtual DbSet<UsrUser> UsrUsers { get; set; } = null!;
         public virtual DbSet<UsrUserGeoDetail> UsrUserGeoDetails { get; set; } = null!;
         public virtual DbSet<UsrUserHierarchy> UsrUserHierarchies { get; set; } = null!;
@@ -430,6 +432,8 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result> TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_Talent_Contact_Details_Result> TS_Sproc_Get_Talent_Contact_Details_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result> TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result { get; set; } = null!;
+        public virtual DbSet<TS_Sproc_GetLeaveBalance_History_Result> TS_Sproc_GetLeaveBalance_History_Result { get; set; } = null!;
+        public virtual DbSet<sp_UTS_get_PasswordData_Result> sp_UTS_get_PasswordData_Result { get; set; } = null!;
 
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -4425,6 +4429,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.IsContractCompleted).HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.IsEor).HasColumnName("IsEOR");
+
                 entity.Property(e => e.IsRecurring).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.LastModifiedById).HasColumnName("LastModifiedByID");
@@ -4772,6 +4778,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.TalentOnBoardingStatusId)
                     .HasColumnName("TalentOnBoarding_StatusID")
                     .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TotalLeaveBalance).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.TscPersonId).HasColumnName("TSC_PersonID");
 
@@ -5145,6 +5153,8 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
 
+                entity.Property(e => e.LeaveHistoryId).HasColumnName("LeaveHistoryID");
+
                 entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
 
                 entity.Property(e => e.PayOutAmount).HasColumnType("decimal(18, 2)");
@@ -5204,6 +5214,8 @@ namespace UTSTalentHelpDesk.Models.Models
                     .HasColumnName("TDSCalculatedAmount");
 
                 entity.Property(e => e.TotalApprovedLeaves).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalNumberOfLeavesTaken).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.TotalNumberofLeaves).HasColumnType("decimal(18, 2)");
 
@@ -5375,6 +5387,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.IsOpenToWorkNearByCities).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.JobLocation).HasMaxLength(500);
+
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.ModifiedByDateTime).HasColumnType("datetime");
 
@@ -5641,6 +5657,10 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
 
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
+
                 entity.Property(e => e.NotMatchAfterAcceptanceTimezoneId).HasColumnName("NotMatch_AfterAcceptance_Timezone_ID");
 
                 entity.Property(e => e.OverlapingHours).HasColumnType("decimal(18, 1)");
@@ -5752,6 +5772,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.LastModifiedById).HasColumnName("LastModifiedByID");
 
                 entity.Property(e => e.LastModifiedDatetime).HasColumnType("datetime");
+
+                entity.Property(e => e.MaxYearsOfExperience).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.MinYearsOfExperience).HasColumnType("decimal(18, 2)");
 
                 entity.Property(e => e.NotMatchAfterAcceptanceTimezoneId).HasColumnName("NotMatch_AfterAcceptance_Timezone_ID");
 
@@ -6916,6 +6940,22 @@ namespace UTSTalentHelpDesk.Models.Models
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Otp)
+                    .HasMaxLength(50)
+                    .HasColumnName("OTP");
+
+                entity.Property(e => e.OtpCreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("OTP_CreatedDate");
+
+                entity.Property(e => e.OtpExpiredDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("OTP_ExpiredDate");
+
+                entity.Property(e => e.OtpIsActive).HasColumnName("OTP_IsActive");
+
+                entity.Property(e => e.OtpvalidationCount).HasColumnName("OTPValidationCount");
+
                 entity.Property(e => e.TalentId).HasColumnName("Talent_ID");
 
                 entity.Property(e => e.TalentUplersId)
@@ -7137,6 +7177,21 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
             });
 
+            modelBuilder.Entity<GenTalentLeaveDetail>(entity =>
+            {
+                entity.ToTable("gen_Talent_Leave_Details");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ContractEndDate).HasColumnType("datetime");
+
+                entity.Property(e => e.ContractStartDate).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedbyDateTime).HasColumnType("datetime");
+
+                entity.Property(e => e.OnBoardId).HasColumnName("OnBoardID");
+            });
+
             modelBuilder.Entity<GenTalentLeaveRequest>(entity =>
             {
                 entity.ToTable("gen_Talent_LeaveRequests");
@@ -7160,6 +7215,8 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.LeaveId)
                     .HasMaxLength(500)
                     .HasColumnName("LeaveID");
+
+                entity.Property(e => e.LeaveTypeId).HasColumnName("LeaveTypeID");
 
                 entity.Property(e => e.RejectedDate).HasColumnType("datetime");
 
@@ -10649,6 +10706,10 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.TalentId).HasColumnName("TalentID");
+
+                entity.Property(e => e.ZohoTicketId)
+                    .HasMaxLength(500)
+                    .HasColumnName("ZohoTicketID");
             });
 
             modelBuilder.Entity<TsGenZohoAssignee>(entity =>
@@ -10797,6 +10858,15 @@ namespace UTSTalentHelpDesk.Models.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.DocumentType).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<TsPrgLeaveType>(entity =>
+            {
+                entity.ToTable("TS_prg_LeaveTypes");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.LeaveType).HasMaxLength(250);
             });
 
             modelBuilder.Entity<UsrUser>(entity =>

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using System.Net.Mail;
 using UTSTalentHelpDesk.Helpers.Common;
 using Amazon;
+using UTSTalentHelpDesk.Models.ComplexTypes;
+using UTSTalentHelpDesk.Repositories.Interfaces;
 
 namespace UTSTalentHelpDesk.Helpers
 {
@@ -17,6 +19,7 @@ namespace UTSTalentHelpDesk.Helpers
         private bool exceptionEmailNameHasComma = false;
         private static MailMessage mailMessage;
         private static SmtpClient smtpClient;
+        private static IEmail _iEmail;
         private string awsAccessKeyId { get; set; }
         private string awsSecretAccessKey { get; set; }
         private string environment { get; set; }
@@ -52,14 +55,18 @@ namespace UTSTalentHelpDesk.Helpers
         #endregion
 
         #region Constructor
-        public EmailOperator(IConfiguration configuration)
+        public EmailOperator(IConfiguration configuration, IEmail iEmail)
         {
             _configuration = configuration;
+            _iEmail = iEmail;
+
             ccEmails = _configuration["app_settings:CCEmailId"].ToString();
             ccNames = _configuration["app_settings:CCEmailName"].ToString();
 
             smtpEmailName = _configuration["app_settings:SMTPEmailName"].ToString();
-            smtpPasswordName = _configuration["app_settings:SMTPPasswordName"].ToString();
+
+            smtpPasswordName = _iEmail.GetPasswordByKey(smtpEmailName); //_configuration["app_settings:SMTPPasswordName"].ToString();
+
             smtpClientName = _configuration["app_settings:SMTPClientName"].ToString();
             smtpSSLName = Convert.ToBoolean(_configuration["app_settings:SMTPSSLName"].ToString());
             smtpPortName = Convert.ToInt16(_configuration["app_settings:SMTPPortName"].ToString());
@@ -722,6 +729,6 @@ namespace UTSTalentHelpDesk.Helpers
 
             }
         }
-        #endregion
+        #endregion      
     }
 }

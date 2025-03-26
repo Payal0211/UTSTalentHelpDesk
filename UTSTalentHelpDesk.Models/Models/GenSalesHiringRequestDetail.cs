@@ -66,5 +66,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? ScreeningQuestionLink { get; set; }
         public int? TotalScreeningQuestions { get; set; }
         public bool? ScreeningQuestionsExternallyModified { get; set; }
+        public decimal? MinYearsOfExperience { get; set; }
+        public decimal? MaxYearsOfExperience { get; set; }
     }
 }

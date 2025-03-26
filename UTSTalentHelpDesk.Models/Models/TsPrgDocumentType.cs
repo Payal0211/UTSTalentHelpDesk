@@ -8,5 +8,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public int Id { get; set; }
         public string? DocumentType { get; set; }
         public bool? IsActive { get; set; }
+        public bool? IsOfficial { get; set; }
     }
 }

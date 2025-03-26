@@ -29,7 +29,7 @@
         #region Variables 
         IConfiguration _configuration;             
         private readonly IEmail _iEmail;
-
+        bool sendEmailToActualID = false;
         #endregion
 
         #region Constructor
@@ -37,6 +37,8 @@
         {
             _configuration = configuration;           
             _iEmail = iEmail;
+
+            sendEmailToActualID = Convert.ToBoolean(_configuration["SendEmailToActualID"]);
         }
 
         #endregion
@@ -45,7 +47,7 @@
 
         public void BindEmailForError(List<string> toEmail, List<string> toEmailName, string subject, string body = "")
         {
-            EmailOperator emailOperator = new EmailOperator(_configuration);
+            EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
 
             #region SetParam
             emailOperator.SetToEmail(toEmail);
@@ -73,7 +75,7 @@
                 if (contact_Details_Result != null)
                 { 
                     ClientName = contact_Details_Result.FullName;
-                    ClientEmail = "riya.a@uplers.in"; //contact_Details_Result.EmailID
+                    ClientEmail = sendEmailToActualID ? contact_Details_Result.EmailID : "riya.a@uplers.in"; //contact_Details_Result.EmailID
 
                     BodyCustom = $"Hello {ClientName},";
                     sbBody.Append(BodyCustom);
@@ -110,7 +112,7 @@
                     sbBody.Append("<br/>");                   
 
                     #region Variable
-                    EmailOperator emailOperator = new EmailOperator(_configuration);
+                    EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
                     #endregion
 
                     List<string> toEmail = new List<string>
@@ -141,55 +143,81 @@
             catch (Exception e) { return e.Message; }
         }
 
-        #endregion
+        #endregion       
 
-        #region Email to TalentSupport for Zoho-ticket
+        #region Send OTP
 
-        public bool SendEmailToTalentSupportWhenTicketRaised(TicketRequestViewModel request)
+        public bool SendOTP(GenTalent genTalent, string otp)
         {
             try
             {
-                string? Subject = "", BodyCustom = "", ClientName = "riya.a@uplers.in", ClientEmail = "Riya Agarwal";
-                StringBuilder sbBody = new StringBuilder();
-              
-                Subject = request.Subject;
+                EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
 
-                sbBody.Append(request.Description);
+                string subject = "";
+                string bodyCustom = "";
 
-                sbBody.Append("<br/><br/>");
-                
+                string? ClientName = "Riya Agarwal",
+                    ClientEmail = "riya.a@uplers.in";
+
+                if (sendEmailToActualID)
+                {
+                    ClientName = genTalent.Name;
+                    ClientEmail = genTalent.EmailId;
+                }
+
+                System.Text.StringBuilder sbBody = new System.Text.StringBuilder();            
+
+
+                subject = "Verify your email address with Uplers";
+                bodyCustom = $"Hello {genTalent.Name},";
+                sbBody.Append(bodyCustom);
                 sbBody.Append("<br/>");
                 sbBody.Append("<br/>");
-                sbBody.Append("Thanks");
-                sbBody.Append("<br/>");                
-
-                #region Variable
-                EmailOperator emailOperator = new EmailOperator(_configuration);
-                #endregion
+                sbBody.Append("To login into your account, please enter the following One-Time Password (OTP) in the required field:");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append($"OTP: {otp}");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("This OTP is valid for 15 minutes. If you did not request this OTP or if it expires, please request a new one from the same web page.");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("For any queries or further assistance, our support team is here to help. Please get in touch with us on talentsupport@uplers.com");
+                sbBody.Append("<br/>");
+                sbBody.Append("<br/>");
+                sbBody.Append("Best regards,");
+                sbBody.Append("<br/>");
+                sbBody.Append("Uplers");            
 
                 List<string> toEmail = new List<string>
                 {
-                        ClientEmail
+                    ClientEmail
                 };
 
                 List<string> toEmailName = new List<string>
                 {
-                        ClientName
+                    ClientName
                 };
 
+                #region Send Email
+
                 emailOperator.SetToEmail(toEmail);
-                emailOperator.SetToEmailName(toEmailName);
-                emailOperator.SetSubject(Subject);
+                emailOperator.SetToEmailName(toEmailName);               
+
+                emailOperator.SetSubject(subject);
                 emailOperator.SetBody(sbBody.ToString());
 
-                #region SendEmail
-                if (!string.IsNullOrEmpty(Subject))
+                if (!string.IsNullOrEmpty(subject))
                     emailOperator.SendEmail(false, false, false);
+
                 #endregion
 
                 return true;
             }
-            catch (Exception e) { return false; }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

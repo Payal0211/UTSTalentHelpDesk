@@ -67,5 +67,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public int? AmSalesPersonId { get; set; }
         public string? ContractType { get; set; }
         public int? EngagementStatusId { get; set; }
+        public decimal? TotalNumberOfLeavesTaken { get; set; }
+        public long? LeaveHistoryId { get; set; }
     }
 }

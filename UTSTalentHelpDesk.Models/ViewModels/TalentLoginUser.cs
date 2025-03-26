@@ -15,4 +15,10 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string? EncryptedTalentId { get; set; }
         public string? EncryptedUserId { get; set; }
     }
+
+    public class TalentLoginUserWithOtp
+    {
+        public string? username { get; set; }
+        public string? OTP { get; set; }        
+    }
 }

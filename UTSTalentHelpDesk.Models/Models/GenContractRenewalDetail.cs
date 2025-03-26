@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public long Id { get; set; }
         public long OnBoardId { get; set; }
         public DateTime RenewalStartDate { get; set; }
-        public DateTime RenewalEndDate { get; set; }
+        public DateTime? RenewalEndDate { get; set; }
         public decimal ContractDuration { get; set; }
         public decimal NewBr { get; set; }
         public decimal NewPr { get; set; }

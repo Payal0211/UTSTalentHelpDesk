@@ -37,5 +37,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public string? NearByCities { get; set; }
         public long? AtsJobLocationId { get; set; }
         public string? AtsNearByCities { get; set; }
+        public decimal? MinYearsOfExperience { get; set; }
+        public decimal? MaxYearsOfExperience { get; set; }
     }
 }

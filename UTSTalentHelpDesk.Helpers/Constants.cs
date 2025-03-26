@@ -9,6 +9,7 @@
         {
             #region Login
             public static string TS_Sproc_Talent_Login = "TS_Sproc_Talent_Login";
+            public static string TS_Sproc_Talent_OTP_Verify = "TS_Sproc_Talent_OTP_Verify";
             #endregion
 
             #region Document
@@ -50,8 +51,12 @@
             public const string TS_Sproc_GetTalentLeaves = "TS_Sproc_GetTalentLeaves";
             public const string TS_Sproc_Get_Talent_Leaves_Monthly_Calendar = "TS_Sproc_Get_Talent_Leaves_Monthly_Calendar";
             public const string TS_Sproc_Get_Talent_Contact_Details = "TS_Sproc_Get_Talent_Contact_Details";
+            public const string TS_Sproc_GetLeaveBalance_History = "TS_Sproc_GetLeaveBalance_History";
 
             #endregion
+
+            public static string sp_UTS_get_PasswordData = "sp_UTS_get_PasswordData";
+            
         }
     }
 }

@@ -67,5 +67,6 @@ namespace UTSTalentHelpDesk.Models.Models
         public bool? IsRenewalInitiated { get; set; }
         public bool? IsOngoing { get; set; }
         public int? OHiringTypePricingId { get; set; }
+        public bool? IsEor { get; set; }
     }
 }

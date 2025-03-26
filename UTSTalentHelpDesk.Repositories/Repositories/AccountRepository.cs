@@ -122,13 +122,31 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             if (string.IsNullOrEmpty(emailId))
             {
                 genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.Id == id);
-
             }
             else
             {
                 genTalent = await _unitOfWork.genTalents.GetSingleByCondition(x => x.EmailId.ToLower().Equals(emailId.ToLower()));
             }
             return genTalent;
+        }
+
+        public GenTalentDetail LoginWithOTP(long talentId, string otp, bool isValidateOtp)
+        {
+            try
+            {
+                object[] param = new object[]
+                {
+                    talentId,otp,isValidateOtp
+                };
+
+                string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+                return _db.Set<GenTalentDetail>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Talent_OTP_Verify, paramasString)).AsEnumerable().FirstOrDefault();
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

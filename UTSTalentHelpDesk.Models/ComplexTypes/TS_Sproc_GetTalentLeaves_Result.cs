@@ -29,7 +29,10 @@ namespace UTSTalentHelpDesk.Models.ComplexTypes
         public string? ApprovedByName { get; set; }
         public string? RejectedByName { get; set; }
         public string? ActionFileName { get; set; }
-        public int? TotalLeaveBalance { get; set; }
+        public decimal? TotalLeaveBalance { get; set; }
         public int? TotalLeavesGiven { get; set; }
+        public int? HolidayLeaves { get; set; }
+        public int? LeaveTypeID { get; set; }
+        public string? LeaveType { get; set; }
     }
 }

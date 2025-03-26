@@ -33,6 +33,20 @@ namespace UTSTalentHelpDesk.Controllers
 
         #region public API's
 
+        [HttpGet("GetLeaveTypes")]
+        public async Task<IActionResult> GetLeaveTypes()
+        {
+            try
+            {
+                List<TsPrgLeaveType> leaveTypes = await _iLeaveRequest.GetLeaveTypes();
+                return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = leaveTypes });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         [HttpPost("InsertUpdateLeaveRequest")]
         public async Task<IActionResult> InsertUpdateLeaveRequest(LeaveRequestViewModel request)
         {
@@ -70,7 +84,8 @@ namespace UTSTalentHelpDesk.Controllers
                         request.LeaveID,
                         flag,
                         request.IsFromSalesPortal ? (short)AppActionDoneBy.UTS : (short)AppActionDoneBy.TalentSupport,
-                        request.CompanyID
+                        request.CompanyID,
+                        request.LeaveTypeID
                     };
 
                     string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
@@ -249,6 +264,38 @@ namespace UTSTalentHelpDesk.Controllers
                 else
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
 
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("GetTalentLeavesHistory")]
+        public async Task<IActionResult> GetTalentLeavesHistory(long talentID, long onBoardId)
+        {
+            try
+            {
+                #region Pre-Validation
+                if (talentID == 0)
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseObject() { statusCode = StatusCodes.Status400BadRequest, Message = "Please provide Talent" });
+                #endregion
+
+                object[] param = new object[] {
+                    onBoardId,
+                    talentID 
+                };
+
+                string paramasString = CommonLogic.ConvertToParamString(param);
+
+                List<TS_Sproc_GetLeaveBalance_History_Result> leavesHistory = await _iLeaveRequest.GetLeaveBalance_History_Results(paramasString);
+                if (leavesHistory.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success", Details = leavesHistory });
+                }
+                else
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseObject() { statusCode = StatusCodes.Status404NotFound, Message = "No Details" });
 
             }
             catch (Exception)

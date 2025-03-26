@@ -15,5 +15,6 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         Task<bool> IsLogoutUser(string token);        
         Task<UsrUser> UserDetails(long id = 0);       
         Task<GenTalent> TalentDetails(string emailId, long id = 0);
+        GenTalentDetail LoginWithOTP(long talentId, string otp, bool isValidateOtp);
     }
 }

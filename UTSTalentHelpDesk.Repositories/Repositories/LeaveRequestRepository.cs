@@ -44,6 +44,16 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             return await _db.Set<TS_Sproc_Get_Talent_Leaves_Monthly_Calendar_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_Get_Talent_Leaves_Monthly_Calendar, param)).ToListAsync();
         }
 
+        public async Task<List<TsPrgLeaveType>> GetLeaveTypes()
+        {
+            return await _db.TsPrgLeaveTypes.ToListAsync();
+        }
+
+        public async Task<List<TS_Sproc_GetLeaveBalance_History_Result>> GetLeaveBalance_History_Results(string param)
+        {
+            return await _db.Set<TS_Sproc_GetLeaveBalance_History_Result>().FromSqlRaw(string.Format("{0} {1}", Constants.ProcConstant.TS_Sproc_GetLeaveBalance_History, param)).ToListAsync();
+        }
+
         #endregion
     }
 }

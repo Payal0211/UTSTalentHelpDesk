@@ -433,6 +433,7 @@ namespace UTSTalentHelpDesk.Models.Models
         public virtual DbSet<TS_Sproc_Get_Talent_Contact_Details_Result> TS_Sproc_Get_Talent_Contact_Details_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result> TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result { get; set; } = null!;
         public virtual DbSet<TS_Sproc_GetLeaveBalance_History_Result> TS_Sproc_GetLeaveBalance_History_Result { get; set; } = null!;
+        public virtual DbSet<sp_UTS_get_PasswordData_Result> sp_UTS_get_PasswordData_Result { get; set; } = null!;
 
         #endregion
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

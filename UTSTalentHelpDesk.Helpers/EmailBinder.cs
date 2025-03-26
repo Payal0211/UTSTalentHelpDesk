@@ -47,7 +47,7 @@
 
         public void BindEmailForError(List<string> toEmail, List<string> toEmailName, string subject, string body = "")
         {
-            EmailOperator emailOperator = new EmailOperator(_configuration);
+            EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
 
             #region SetParam
             emailOperator.SetToEmail(toEmail);
@@ -112,7 +112,7 @@
                     sbBody.Append("<br/>");                   
 
                     #region Variable
-                    EmailOperator emailOperator = new EmailOperator(_configuration);
+                    EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
                     #endregion
 
                     List<string> toEmail = new List<string>
@@ -143,65 +143,7 @@
             catch (Exception e) { return e.Message; }
         }
 
-        #endregion
-
-        #region Email to TalentSupport for Zoho-ticket
-
-        public bool SendEmailToTalentSupportWhenTicketRaised(TicketRequestViewModel request)
-        {
-            try
-            {
-                string? Subject = "", BodyCustom = "", 
-                    ClientName = "Riya Agarwal", 
-                    ClientEmail = "riya.a@uplers.in";
-
-                if (sendEmailToActualID)
-                {
-                    ClientName = "Talent Support";
-                    ClientEmail = "talentsupport@uplers.in";
-                }
-
-                StringBuilder sbBody = new StringBuilder();
-              
-                Subject = request.Subject;
-
-                sbBody.Append(request.Description);              
-                
-                sbBody.Append("<br/>");
-                sbBody.Append("<br/>");
-                sbBody.Append("Thanks");
-                sbBody.Append("<br/>");                
-
-                #region Variable
-                EmailOperator emailOperator = new EmailOperator(_configuration);
-                #endregion
-
-                List<string> toEmail = new List<string>
-                {
-                        ClientEmail
-                };
-
-                List<string> toEmailName = new List<string>
-                {
-                        ClientName
-                };
-
-                emailOperator.SetToEmail(toEmail);
-                emailOperator.SetToEmailName(toEmailName);
-                emailOperator.SetSubject(Subject);
-                emailOperator.SetBody(sbBody.ToString());
-
-                #region SendEmail
-                if (!string.IsNullOrEmpty(Subject))
-                    emailOperator.SendEmail(false, false, false);
-                #endregion
-
-                return true;
-            }
-            catch (Exception e) { return false; }
-        }
-
-        #endregion
+        #endregion       
 
         #region Send OTP
 
@@ -209,7 +151,7 @@
         {
             try
             {
-                EmailOperator emailOperator = new EmailOperator(_configuration);
+                EmailOperator emailOperator = new EmailOperator(_configuration, _iEmail);
 
                 string subject = "";
                 string bodyCustom = "";

@@ -54,6 +54,9 @@
             public const string TS_Sproc_GetLeaveBalance_History = "TS_Sproc_GetLeaveBalance_History";
 
             #endregion
+
+            public static string sp_UTS_get_PasswordData = "sp_UTS_get_PasswordData";
+            
         }
     }
 }

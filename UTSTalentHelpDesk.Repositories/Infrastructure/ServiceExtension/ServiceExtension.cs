@@ -89,6 +89,7 @@ namespace UTSTalentHelpDesk.Repositories.Infrastructure.ServiceExtension
             services.AddScoped<IAppliedjobs, AppliedJobsRepository>();
             services.AddScoped<IDocument, DocumentRepository>();
             services.AddScoped<ILeaveRequest, LeaveRequestRepository>();
+            services.AddScoped<IZohoInvoice, ZohoInvoiceWebhookRepository>();
         }
     }
 }

@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace UTSTalentHelpDesk.Models.Models
 {
+    public class ZohoCustomerWebhook
+    {
+        public string Auth_Key { get; set; }
+        public string Auth_Token { get; set; }
+        public string Customer_Id { get; set; }
+        //public ZohoContactJSonString JSONString { get; set; }
+    }
     public partial class ZohoCustomer
     {
         public long? Zoho_Organization_ID { get; set; }

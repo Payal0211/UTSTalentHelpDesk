@@ -4,15 +4,36 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using UTSTalentHelpDesk.Helpers.Common;
+using UTSTalentHelpDesk.Models.Models;
+using UTSTalentHelpDesk.Models.ViewModels;
+using UTSTalentHelpDesk.Repositories.Interfaces;
+using static UTSTalentHelpDesk.Config.HubSpotResponseUTSAdmin;
 
 namespace UTSTalentHelpDesk.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("ZohoInvoice/", Name = "ZohoInvoice")]
     [ApiController]
     public class ZohoInvoiceWebhookController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfigurationSection zohoConfig;
+        private readonly IZohoInvoice _iZohoInvoice;
+        private readonly HttpClient _httpClient;
+
+
+        public ZohoInvoiceWebhookController(IConfiguration configuration, IHttpClientFactory httpClientFactory, IZohoInvoice iZohoInvoice, HttpClient httpClient)
+        {
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
+            zohoConfig = _configuration.GetSection("Zoho");
+            _iZohoInvoice = iZohoInvoice;
+            _httpClient = httpClient;
+           
+        }
+
         [HttpPost]
-        public JsonResult WebhookZohoInvoiceUpdate(ZohoInvoiceWebhook zohoInvoiceWebhook)
+        public JsonResult ZohoInvoiceUpdateWebhook(ZohoInvoiceWebhook zohoInvoiceWebhook)
         {
             string AllErrorMessages = "";
             bool HasError = false;
@@ -109,25 +130,18 @@ namespace UTSTalentHelpDesk.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetZohoContactWebHookNotification(ZohoContactWebhook zohoContactWebhook)
-        {
-
-            string errorFileName = Server.MapPath("~\\WebhookFiles") + "\\ZohoInvoiceWebHookDetailError_" + DateTime.Now.Ticks + ".txt";
-
+        public JsonResult ZohoContactUpdateWebhook(ZohoCustomerWebhook zohoCustomerWebhook)
+        {         
             try
             {
-                string fileName = Server.MapPath("~\\WebhookFiles") + "\\ZohoInvoiceWebHookDetailJson_" + DateTime.Now.Ticks + ".txt";
-                _commonHelper.SaveRequestInFile(fileName, zohoContactWebhook);
-
-
-                if (zohoContactWebhook != null)
+                if (zohoCustomerWebhook != null)
                 {
                     long zohoOrganizationId = 0;
-                    long.TryParse(zohoContactWebhook.Auth_Key, out zohoOrganizationId);
+                    long.TryParse(zohoCustomerWebhook.Auth_Key, out zohoOrganizationId);
 
                     //Check if valid organization then update customer.
                     var ZohoOrganization = db.prg_ZohoOrganizations.Where(xy => xy.ZohoOrganizationID == zohoOrganizationId).FirstOrDefault();
-                    if (ZohoOrganization != null && zohoContactWebhook.Customer_Id != null)
+                    if (ZohoOrganization != null && zohoCustomerWebhook.Customer_Id != null)
                     {
                         string zohoContactAPIURL = Config.ProjectAPIURL + "GetZohoContactDetails";
                         StreamWriter requestWriter;
@@ -144,7 +158,7 @@ namespace UTSTalentHelpDesk.Controllers
                             //POST the data.
                             using (requestWriter = new StreamWriter(webRequest.GetRequestStream()))
                             {
-                                string json = JsonConvert.SerializeObject(new { ZohoCustomerId = zohoContactWebhook.Customer_Id, ZohoOrganizationId = zohoOrganizationId });
+                                string json = JsonConvert.SerializeObject(new { ZohoCustomerId = zohoCustomerWebhook.Customer_Id, ZohoOrganizationId = zohoOrganizationId });
 
                                 requestWriter.Write(json);
 

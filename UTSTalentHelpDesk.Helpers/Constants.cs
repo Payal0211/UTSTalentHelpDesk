@@ -55,6 +55,14 @@
 
             #endregion
 
+            #region Zoho Invoice
+
+            public static string SP_ZOHO_Customer_InsertORUpdate = "SP_ZOHO_Customer_InsertORUpdate";
+            public static string SP_ZOHO_ContactPerson_InsertORUpdate = "SP_ZOHO_ContactPerson_InsertORUpdate";
+            public static string Sproc_InsertOrUpdate_ZohoInvoice = "Sproc_InsertOrUpdate_ZohoInvoice";
+
+            #endregion
+
             public static string sp_UTS_get_PasswordData = "sp_UTS_get_PasswordData";
             
         }

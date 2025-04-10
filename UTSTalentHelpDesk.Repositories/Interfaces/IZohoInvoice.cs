@@ -8,7 +8,7 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
 {
     public interface IZohoInvoice
     {
-        void WebhookZohoInvoiceUpdateZohoInvoiceUpdateWebhook(string param);
-        void ZohoContactUpdateWebhook(string param);
+        Task InsertUpdateZohoCustomers(string paramString);
+        Task InsertUpdateZohoContactPerson(string paramString);
     }
 }

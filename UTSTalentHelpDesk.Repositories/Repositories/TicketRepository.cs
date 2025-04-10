@@ -69,8 +69,8 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             TsGenZohoTicketsWebhookEvent zohoTicketsWebhookEvent = new TsGenZohoTicketsWebhookEvent();
 
             zohoTicketsWebhookEvent.Payload = genZohoTicketsWebhookEvent.Payload;
-             db.TsGenZohoTicketsWebhookEvents.AddAsync(zohoTicketsWebhookEvent);
-            db.SaveChanges();
+            await db.TsGenZohoTicketsWebhookEvents.AddAsync(zohoTicketsWebhookEvent);
+            await db.SaveChangesAsync();
 
             return zohoTicketsWebhookEvent.Id;
         }
@@ -106,6 +106,12 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             }
 
             return talentTicket;
+        }
+
+        public async Task InsertOrUpdateInvoiceAsync(string paramString)
+        {
+            string sql = $"EXEC {Constants.ProcConstant.Sproc_InsertOrUpdate_ZohoInvoice} {paramString}";
+            await db.Database.ExecuteSqlRawAsync(sql);
         }
     }
 }

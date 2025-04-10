@@ -14,9 +14,11 @@ namespace UTSTalentHelpDesk.Controllers
     {
 
         private readonly ITicket _iTicket;
-        public WebhookController(ITicket iTicket)
+        private readonly IConfiguration _iConfiguration;
+        public WebhookController(ITicket iTicket, IConfiguration iConfiguration)
         {
             _iTicket = iTicket;
+            _iConfiguration = iConfiguration;
         }
 
         [HttpPost("zoho-webhook")]
@@ -274,7 +276,6 @@ namespace UTSTalentHelpDesk.Controllers
             return Ok(new { status = "success", message = "Webhook processed successfully" });
         }
 
-
         [HttpPost("zoho-webhookDelete")]
         public async Task<IActionResult> HandleZohoWebhookDelete()
         {                   
@@ -396,6 +397,97 @@ namespace UTSTalentHelpDesk.Controllers
             // Respond with a success message
             return Ok(new { status = "success", message = "Webhook processed successfully" });
         }
+
+        #region ZohoInvoiceWebhooks
+
+        [HttpPost("ZohoInvoiceWebhook")]
+        public async Task<IActionResult> ZohoInvoiceWebhook(ZohoInvoiceWebhook zohoInvoice)
+        {
+            if (zohoInvoice != null)
+            {
+                var json = JsonConvert.SerializeObject(zohoInvoice);
+
+                long Id = await SaveZohoWebHookLogs(json);
+                if (Id > 0)
+                {
+                    DateTime localTime = DateTime.Now;
+                    long unixMs = new DateTimeOffset(localTime).ToUnixTimeMilliseconds();
+
+                    object[] paramwebhook = new object[]
+                    {
+                       Id,
+                       zohoInvoice.InvoiceID,
+                       unixMs,
+                       "Invoice_Webhook",
+                       Convert.ToString(_iConfiguration["ZohoInvoiceOrgID"]),
+                       null
+                    };
+                    string paramasStringwebhook = CommonLogic.ConvertToParamStringWithNull(paramwebhook);
+
+                    _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                }
+
+                if (zohoInvoice.Auth_Token == _iConfiguration["ZohoWebhookAuthToken"])
+                {
+                    object[] param = new object[]
+                    {
+                    null,
+                    Convert.ToInt64(zohoInvoice.InvoiceID),
+                    null,
+                    null,
+                    zohoInvoice.InvoiceStatus
+                    };
+
+                    string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+
+                    await _iTicket.InsertOrUpdateInvoiceAsync(paramasString);
+                }
+                else
+                {
+                    return Ok(new { status = "success", message = "wrong auth_token" });
+                }
+            }
+           
+            // Process the incoming webhook data from Zoho
+            // You can handle the incoming JSON here and trigger any logic you need
+            return Ok(new { status = "success" });
+        }
+
+        [HttpPost("ZohoCustomerWebhook")]
+        public async Task<IActionResult> ZohoCustomerWebhook()
+        {
+            using (StreamReader reader = new StreamReader(Request.Body))
+            {
+                string xxjson = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrEmpty(xxjson) || xxjson.Trim() == "{}")
+                {
+                    return Ok(new { status = "success" });
+                }
+
+                long Id = await SaveZohoWebHookLogs(xxjson);
+                if (Id > 0)
+                {
+                    object[] paramwebhook = new object[]
+                    {
+                       Id,
+                       0,
+                       null,
+                       "Customer_Webhook",
+                       Convert.ToString(_iConfiguration["ZohoInvoiceOrgID"]),
+                       null
+                    };
+                    string paramasStringwebhook = CommonLogic.ConvertToParamStringWithNull(paramwebhook);
+
+                    _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                }
+            }
+            // Process the incoming webhook data from Zoho
+            // You can handle the incoming JSON here and trigger any logic you need
+            return Ok(new { status = "success" });
+        }
+
+        #endregion
 
         #region Save into ZohoWebHook Event Table
         private async Task<long> SaveZohoWebHookLogs(string json)

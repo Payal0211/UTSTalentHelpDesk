@@ -64,7 +64,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
     public class WebhookInvoice
     {
         public bool can_send_in_mail { get; set; }
-        public int early_payment_discount_amount { get; set; }
+        
         public string submitted_by_email { get; set; }
         public string bcy_shipping_charge_tax { get; set; }
         public string tax_reg_no { get; set; }
@@ -78,9 +78,9 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public bool is_autobill_enabled { get; set; }
         public string tax_treatment_formatted { get; set; }
         public string shipping_charge_tax_name { get; set; }
-        public int discount_total { get; set; }
-        public int tax_total { get; set; }
-        public int write_off_amount { get; set; }
+       
+        public decimal tax_total { get; set; }
+        
         public bool is_viewed_by_client { get; set; }
         public string salesorder_id { get; set; }
         public string last_reminder_sent_date_formatted { get; set; }
@@ -90,7 +90,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string currency_symbol { get; set; }
         public bool ach_supported { get; set; }        
         public string transaction_rounding_type { get; set; }
-        public int roundoff_value { get; set; }
+      
         public List<ContactPersonsDetail> contact_persons_details { get; set; }
         public string template_name { get; set; }
         public string salesorder_number { get; set; }
@@ -101,12 +101,11 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string payment_terms_label { get; set; }
         public bool show_no_of_copies { get; set; }
         public string notes { get; set; }
-        public List<object> documents { get; set; }
         public string client_viewed_time { get; set; }
         public string ecomm_operator_id { get; set; }
         public string early_payment_discount_due_days { get; set; }
         public string tds_override_preference { get; set; }
-        public int shipping_charge_inclusive_of_tax { get; set; }        
+        
         public string payment_discount_formatted { get; set; }
         public string invoice_id { get; set; }
         public string contact_category { get; set; }
@@ -118,15 +117,15 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string created_date_formatted { get; set; }
         public bool is_inclusive_tax { get; set; }
         public string early_payment_discount_amount_formatted { get; set; }        
-        public int price_precision { get; set; }
+        
         public string sub_total_inclusive_of_tax_formatted { get; set; }
-        public int unprocessed_payment_amount { get; set; }
+       
         public string submitted_by_photo_url { get; set; }
         public string tax_treatment { get; set; }
-        public int payment_discount { get; set; }       
+          
         public string shipping_charge_tax_percentage { get; set; }
         public string zcrm_potential_name { get; set; }
-        public int adjustment { get; set; }
+        
         public string current_sub_status { get; set; }
         public string due_date_formatted { get; set; }
         public bool is_progress_invoice { get; set; }
@@ -136,37 +135,29 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string shipping_charge_exclusive_of_tax_formatted { get; set; }
         public List<ContactPersonsAssociated> contact_persons_associated { get; set; }
         public string current_sub_status_id { get; set; }
-        public CustomFieldHash custom_field_hash { get; set; }
-        public int tax_amount_withheld { get; set; }       
+        public CustomFieldHash custom_field_hash { get; set; }          
         public string next_reminder_date_formatted { get; set; }
         public string shipping_charge_tax_type { get; set; }
         public string subject_content { get; set; }
         public string shipping_charge_account_name { get; set; }
-        public string payment_expected_date { get; set; }
-        public bool is_emailed { get; set; }
-        public int unused_retainer_payments { get; set; }
-        public string offline_created_date_with_time { get; set; }
-        public int total_retention_amount { get; set; }
-        public int shipping_charge { get; set; }
-        public int bcy_adjustment { get; set; }
+        public string payment_expected_date { get; set; } 
         public bool allow_partial_payments { get; set; }        
         public string currency_id { get; set; }
         public bool includes_package_tracking_info { get; set; }
         public string zcrm_potential_id { get; set; }
-        public int discount { get; set; }
-        public List<object> taxes { get; set; }
+        //public int discount { get; set; }
+        //public List<object> taxes { get; set; }
         public bool is_client_review_settings_enabled { get; set; }
         public BillingAddress billing_address { get; set; }
-        public List<LineItem> line_items { get; set; }
+        //public List<LineItem> line_items { get; set; }
         public bool can_show_kit_return { get; set; }
         public string payment_expected_date_formatted { get; set; }
         public double balance { get; set; }
-        public string terms { get; set; }
-        public int credits_applied { get; set; }
+        public string terms { get; set; }       
         public string credits_applied_formatted { get; set; }
         public string invoice_number { get; set; }       
-        public int sub_total_inclusive_of_tax { get; set; }
-        public int exchange_rate { get; set; }
+        public decimal sub_total_inclusive_of_tax { get; set; }
+        public decimal exchange_rate { get; set; }
         public string invoice_source_formatted { get; set; }
         public string approver_id { get; set; }
         public string merchant_name { get; set; }
@@ -174,8 +165,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string shipping_charge_formatted { get; set; }
         public string total_retention_amount_formatted { get; set; }
         public string reference_number { get; set; }
-        public string shipping_charge_account_id { get; set; }
-        public int discount_percent { get; set; }
+        public string shipping_charge_account_id { get; set; }       
         public string page_height { get; set; }
         public string status { get; set; }
         public string unprocessed_payment_amount_formatted { get; set; }
@@ -199,15 +189,14 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string roundoff_value_formatted { get; set; }
         public string unused_retainer_payments_formatted { get; set; }
         public string date { get; set; }
-        public string submitted_date { get; set; }
-        public int early_payment_discount_percentage { get; set; }
+        public string submitted_date { get; set; }       
         public string template_type_formatted { get; set; }        
         public string currency_name_formatted { get; set; }
         public string created_by_name { get; set; }
         public string last_modified_by_id { get; set; }
         public string write_off_amount_formatted { get; set; }
         public string color_code { get; set; }
-        public int bcy_tax_total { get; set; }
+        public decimal bcy_tax_total { get; set; }
         public string last_payment_date_formatted { get; set; }        
         public string last_payment_date { get; set; }      
         public string current_sub_status_formatted { get; set; }
@@ -220,27 +209,23 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string attachment_name { get; set; }
         public bool ach_payment_initiated { get; set; }
         public string last_reminder_sent_date { get; set; }
-        public int payment_terms { get; set; }
-        public int shipping_charge_exclusive_of_tax { get; set; }
-        public double total { get; set; }
+        public int payment_terms { get; set; }        
+        public decimal total { get; set; }
         public string tax_total_formatted { get; set; }
         public string sub_total_formatted { get; set; }
-        public string tax_amount_withheld_formatted { get; set; }
-        public int bcy_shipping_charge { get; set; }      
-        public string shipping_charge_tax_formatted { get; set; }
-        public int bcy_discount_total { get; set; }
-        public string orientation { get; set; }
-        public int discount_applied_on_amount { get; set; }
+        public string tax_amount_withheld_formatted { get; set; }            
+        public string shipping_charge_tax_formatted { get; set; }       
+        public string orientation { get; set; }        
         public string due_date { get; set; }
         public string submitter_id { get; set; }
         public string submitted_by { get; set; }
         public int no_of_copies { get; set; }
         public string payment_made_formatted { get; set; }
         public double bcy_sub_total { get; set; }
-        public int reminders_sent { get; set; }
+       
         public string salesperson_name { get; set; }
         public string salesperson_id { get; set; }
-        public int payment_made { get; set; }
+       
         public double sub_total { get; set; }
         public string computation_type { get; set; }
         public string created_date { get; set; }

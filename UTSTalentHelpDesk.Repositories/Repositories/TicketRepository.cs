@@ -106,12 +106,6 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             }
 
             return talentTicket;
-        }
-
-        public async Task InsertOrUpdateInvoiceAsync(string paramString)
-        {
-            string sql = $"EXEC {Constants.ProcConstant.Sproc_InsertOrUpdate_ZohoInvoice} {paramString}";
-            await db.Database.ExecuteSqlRawAsync(sql);
-        }
+        }       
     }
 }

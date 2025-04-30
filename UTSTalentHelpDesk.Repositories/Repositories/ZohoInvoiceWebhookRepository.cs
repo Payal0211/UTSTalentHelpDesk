@@ -38,6 +38,20 @@ namespace UTSTalentHelpDesk.Repositories.Repositories
             await _db.Database.ExecuteSqlRawAsync(sql);
         }
 
+        public Sproc_InsertOrUpdate_ZohoInvoice_Result InsertOrUpdateInvoiceAsync(string parameterString)
+        {
+            var sql = $"EXEC {Constants.ProcConstant.Sproc_InsertOrUpdate_ZohoInvoice} {parameterString}";
+            return _db.Set<Sproc_InsertOrUpdate_ZohoInvoice_Result>().FromSqlRaw(sql).ToList().FirstOrDefault();
+        }
+
+        public async Task<long> InsertOrUpdateLineItemAsync(string paramString)
+        {
+            string sql = $"EXEC {Constants.ProcConstant.Sproc_InsertOrUpdate_Invoice_Line_Item} {paramString}";
+            var result = await _db.Database.ExecuteSqlRawAsync(sql);
+
+            return result;
+        }
+
         #endregion
     }
 }

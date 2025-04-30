@@ -15,10 +15,12 @@ namespace UTSTalentHelpDesk.Controllers
 
         private readonly ITicket _iTicket;
         private readonly IConfiguration _iConfiguration;
-        public WebhookController(ITicket iTicket, IConfiguration iConfiguration)
+        private readonly IZohoInvoice _iZohoInvoice;
+        public WebhookController(ITicket iTicket, IConfiguration iConfiguration, IZohoInvoice iZohoInvoice)
         {
             _iTicket = iTicket;
             _iConfiguration = iConfiguration;
+            _iZohoInvoice = iZohoInvoice;
         }
 
         [HttpPost("zoho-webhook")]
@@ -398,60 +400,7 @@ namespace UTSTalentHelpDesk.Controllers
             return Ok(new { status = "success", message = "Webhook processed successfully" });
         }
 
-        #region ZohoInvoiceWebhooks
-
-        [HttpPost("ZohoInvoiceWebhook")]
-        public async Task<IActionResult> ZohoInvoiceWebhook(ZohoInvoiceWebhook zohoInvoice)
-        {
-            if (zohoInvoice != null)
-            {
-                var json = JsonConvert.SerializeObject(zohoInvoice);
-
-                long Id = await SaveZohoWebHookLogs(json);
-                if (Id > 0)
-                {
-                    DateTime localTime = DateTime.Now;
-                    long unixMs = new DateTimeOffset(localTime).ToUnixTimeMilliseconds();
-
-                    object[] paramwebhook = new object[]
-                    {
-                       Id,
-                       zohoInvoice.InvoiceID,
-                       unixMs,
-                       "Invoice_Webhook",
-                       Convert.ToString(_iConfiguration["ZohoInvoiceOrgID"]),
-                       null
-                    };
-                    string paramasStringwebhook = CommonLogic.ConvertToParamStringWithNull(paramwebhook);
-
-                    _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
-                }
-
-                if (zohoInvoice.Auth_Token == _iConfiguration["ZohoWebhookAuthToken"])
-                {
-                    object[] param = new object[]
-                    {
-                    null,
-                    Convert.ToInt64(zohoInvoice.InvoiceID),
-                    null,
-                    null,
-                    zohoInvoice.InvoiceStatus
-                    };
-
-                    string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
-
-                    await _iTicket.InsertOrUpdateInvoiceAsync(paramasString);
-                }
-                else
-                {
-                    return Ok(new { status = "success", message = "wrong auth_token" });
-                }
-            }
-           
-            // Process the incoming webhook data from Zoho
-            // You can handle the incoming JSON here and trigger any logic you need
-            return Ok(new { status = "success" });
-        }
+        #region ZohoInvoiceWebhooks     
 
         [HttpPost("ZohoCustomerWebhook")]
         public async Task<IActionResult> ZohoCustomerWebhook()
@@ -466,13 +415,17 @@ namespace UTSTalentHelpDesk.Controllers
                 }
 
                 long Id = await SaveZohoWebHookLogs(xxjson);
+
+                DateTime localTime = DateTime.Now;
+                long unixMs = new DateTimeOffset(localTime).ToUnixTimeMilliseconds();
+
                 if (Id > 0)
                 {
                     object[] paramwebhook = new object[]
                     {
                        Id,
                        0,
-                       null,
+                       unixMs,
                        "Customer_Webhook",
                        Convert.ToString(_iConfiguration["ZohoInvoiceOrgID"]),
                        null
@@ -481,9 +434,203 @@ namespace UTSTalentHelpDesk.Controllers
 
                     _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
                 }
+                // Process the incoming webhook data from Zoho
+                // You can handle the incoming JSON here and trigger any logic you need
+
+                ZohoWebhookCustomer customerDetails = JsonConvert.DeserializeObject<ZohoWebhookCustomer>(xxjson);
+
+                long zohoOrganizationID = Convert.ToInt64(_iConfiguration["ZohoInvoiceOrgID"]);
+
+                if (customerDetails != null)
+                {
+                    WebhookContact contact = customerDetails.contact;
+                    
+                    // Save each customer in DB.
+                    object[] param = new object[] {
+
+                            zohoOrganizationID,
+                            contact.contact_id,
+                            contact.contact_name,
+                            contact.contact_name,
+                            contact.company_name,
+                            null,
+                            contact.first_name,
+                            contact.last_name,
+                            contact.email,
+                            contact.phone,
+                            contact.mobile,
+                            null,
+                            contact.facebook,
+                            contact.twitter,
+                            null,
+                            null,
+                            null,
+                            null,
+                            contact.payment_terms,
+                            contact.payment_terms_label,
+                            contact.currency_code,
+                            null,
+                            contact.website,
+                            contact.contact_type,
+                            contact.customer_sub_type,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            contact.source,
+                            null,
+                            null,
+                            contact.status,
+                            null,
+                            null,
+                            true,
+                            null,
+                            Convert.ToInt64(contact.currency_id)
+                        };
+                    string paramString = CommonLogic.ConvertToParamStringWithNull(param);
+                    await _iZohoInvoice.InsertUpdateZohoCustomers(paramString);                   
+
+                    if (contact.contact_persons != null)
+                    {
+                        foreach (var contactPerson in contact.contact_persons)
+                        {
+                            // save each contactperson in table
+                            object[] contactParam = new object[]
+                            {
+                                    contact.contact_id,
+                                    contactPerson.contact_person_id,
+                                    contactPerson.first_name + " " + contactPerson.last_name,
+                                    null,
+                                    contactPerson.salutation,
+                                    contactPerson.first_name,
+                                    contactPerson.last_name,
+                                    contactPerson.email,
+                                    contactPerson.phone,
+                                    contactPerson.mobile,
+                                    contactPerson.skype,
+                                    null,
+                                    contactPerson.department,
+                                    contactPerson.designation,
+                                    null,
+                                    null,
+                                    null,
+                                    null,
+                                    contactPerson.is_primary_contact ? "Yes" : "No"
+                            };
+
+                            string contactParamString = CommonLogic.ConvertToParamStringWithNull(contactParam);
+
+                            await _iZohoInvoice.InsertUpdateZohoContactPerson(contactParamString);
+                        }
+                    }
+                }
+
             }
-            // Process the incoming webhook data from Zoho
-            // You can handle the incoming JSON here and trigger any logic you need
+
+            return Ok(new { status = "success" });
+        }
+
+        [HttpPost("ZohoInvoiceWebhook")]
+        public async Task<IActionResult> ZohoInvoiceWebhook()
+        {
+            using (StreamReader reader = new StreamReader(Request.Body))
+            {
+                string xxjson = await reader.ReadToEndAsync();
+
+                if (string.IsNullOrEmpty(xxjson) || xxjson.Trim() == "{}")
+                {
+                    return Ok(new { status = "success" });
+                }
+
+                long Id = await SaveZohoWebHookLogs(xxjson);
+
+                DateTime localTime = DateTime.Now;
+                long unixMs = new DateTimeOffset(localTime).ToUnixTimeMilliseconds();
+
+                if (Id > 0)
+                {
+                    object[] paramwebhook = new object[]
+                    {
+                       Id,
+                       0,
+                       unixMs,
+                       "Invoice_Webhook",
+                       Convert.ToString(_iConfiguration["ZohoInvoiceOrgID"]),
+                       null
+                    };
+                    string paramasStringwebhook = CommonLogic.ConvertToParamStringWithNull(paramwebhook);
+
+                    _iTicket.saveZohoWebHookEvent(paramasStringwebhook);
+                }
+
+                // Process the incoming webhook data from Zoho
+                // You can handle the incoming JSON here and trigger any logic you need
+
+                ZohoInvoiceWebhook? invoiceData = JsonConvert.DeserializeObject<ZohoInvoiceWebhook>(xxjson);
+                if (invoiceData != null)
+                {
+                    WebhookInvoice dto = invoiceData.invoice;
+
+                    object[] param = new object[]
+                    {
+                       null,
+                       dto.invoice_id,
+                       null,
+                       dto.customer_id,
+                       dto.status,
+                       dto.invoice_number,
+                       null,
+                       dto.due_date,
+                       null,//dto.PaymentTermsId,
+                       dto.currency_code,
+                       dto.exchange_rate,
+                       dto.tax_total,
+                       dto.total,
+                       dto.total,
+                       null,//dto.CreatedBy,
+                       null,//dto.ModifiedBy,
+                       null,//dto.Balance,
+                       dto.billing_address?.address,
+                       null, // shipping address
+                       dto.notes,
+                       dto.terms,
+                       dto.salesperson_id,
+                       dto.salesperson_name,
+                       null, //dto.CompanyId, // UTS_CompanyId
+                       null, //dto.ContactId, // UTS_ContactId
+                       null, //dto.CompanyName,
+                       null, //dto.OrganizationId, // Zoho_OrganizationID
+                       null, //dto.IsUpdated,
+                       true,
+                       null,
+                       null,
+                       null,
+                       dto.custom_field_hash?.cf_number_of_invoice, //dto.CfNumberOfInvoice,
+                       null,
+                       dto.custom_field_hash?.cf_invoice_generator,
+                       null,
+                       null
+                    };
+
+                    string paramasString = CommonLogic.ConvertToParamStringWithNull(param);
+                    _iZohoInvoice.InsertOrUpdateInvoiceAsync(paramasString);                    
+                }
+            }
             return Ok(new { status = "success" });
         }
 

@@ -624,7 +624,10 @@ namespace UTSTalentHelpDesk.Controllers
                        null,
                        dto.custom_field_hash?.cf_invoice_generator,
                        null,
-                       null
+                       null,
+                       null,
+                       null,
+                       dto.invoice_url
                     };
 
                     string paramasString = CommonLogic.ConvertToParamStringWithNull(param);

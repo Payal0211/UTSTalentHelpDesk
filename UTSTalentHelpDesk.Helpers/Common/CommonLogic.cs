@@ -665,6 +665,63 @@ namespace UTSTalentHelpDesk.Helpers.Common
             return ResponseJson;
         }
 
+        /// <summary>
+        /// Get method for zoho invoice
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="requestJson"></param>
+        /// <param name="screctKey"></param>
+        /// <param name="ZohoInvoiceOrganizationid"></param>
+        /// <returns></returns>
+        public static string CoreHttpCallsGetForZohoInvoice(string url, string screctKey = null,
+                                                               string ZohoInvoiceOrganizationid = null)
+        {
+            try
+            {
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
+                if (webRequest != null)
+                {
+                    webRequest.Method = "GET";
+                    webRequest.Timeout = 500000;
+                    webRequest.ContentType = "application/json";
+
+                    if (!string.IsNullOrEmpty(screctKey))
+                    {
+                        webRequest.Headers[HttpRequestHeader.Authorization] = "Zoho-oauthtoken " + screctKey;
+                    }
+
+                    webRequest.Headers["X-com-zoho-invoice-organizationid"] = ZohoInvoiceOrganizationid;
+                    webRequest.Credentials = CredentialCache.DefaultCredentials;                    
+                }
+
+                using (HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse())
+                using (Stream resStream = response.GetResponseStream())
+                using (StreamReader reader = new StreamReader(resStream))
+                {
+                    string ResponseJson = reader.ReadToEnd();
+                    return ResponseJson;
+                }
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response != null)
+                {
+                    using (var errorResponse = (HttpWebResponse)ex.Response)
+                    using (var reader = new StreamReader(errorResponse.GetResponseStream()))
+                    {
+                        string errorText = reader.ReadToEnd();
+                        // Log or inspect the errorText here
+                        return errorResponse.StatusCode.ToString();
+                    }
+                }
+                else
+                {
+                    // No response at all (network error, etc.)
+                    return ex.Message;
+                }
+            }
+        }
+
         #endregion
     }
 }

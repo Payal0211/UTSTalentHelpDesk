@@ -23,6 +23,6 @@ namespace UTSTalentHelpDesk.Repositories.Interfaces
         void saveZohoWebHookEvent(string param);
         Task<TS_sproc_GetToken_Result> GetTokenList(string strparams);
         Task<List<TS_Sproc_Get_Zoho_Tickets_BasedOnUser_Result>> GetZohoTicketsBasedOnUser(string param);
-        TsGenTalentTicket SaveUpdateTicketHistory(TsGenTalentTicket talentTicket);
+        TsGenTalentTicket SaveUpdateTicketHistory(TsGenTalentTicket talentTicket);        
     }
 }

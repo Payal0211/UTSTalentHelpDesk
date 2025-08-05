@@ -96,8 +96,8 @@ namespace UTSTalentHelpDesk.Controllers
                 }
 
                 // Send email to client that the talent has added a leave request
-                EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
-                emailBinder.SendEmailToClientWhenRequestedForLeave(request);
+                //EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                //emailBinder.SendEmailToClientWhenRequestedForLeave(request);
 
                 return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Success" });
             }

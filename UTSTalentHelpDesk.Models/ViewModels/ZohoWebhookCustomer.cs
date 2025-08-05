@@ -66,8 +66,7 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public string phone { get; set; }
         public string company_name { get; set; }
         public bool is_consent_agreed { get; set; }
-        public string tax_treatment_formatted { get; set; }
-        public string outstanding_receivable_amount_bcy_formatted { get; set; }
+        public string tax_treatment_formatted { get; set; }        
         public string crm_owner_id { get; set; }
         public string status { get; set; }
         public string opening_balance_amount_formatted { get; set; }
@@ -95,7 +94,6 @@ namespace UTSTalentHelpDesk.Models.ViewModels
         public bool is_linked_with_zohocrm { get; set; }    
         public string source { get; set; }
         public string created_by_name { get; set; }
-        public int outstanding_receivable_amount_bcy { get; set; }
         public string contact_category { get; set; }
         public bool associated_with_square { get; set; }
         public List<ZohoContactPerson> contact_persons { get; set; }

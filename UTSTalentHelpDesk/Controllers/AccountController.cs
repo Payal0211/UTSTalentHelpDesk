@@ -147,8 +147,8 @@ namespace UTSTalentHelpDesk.Controllers
                         string otp = GenerateOTP();
                         _iAccounts.LoginWithOTP(talentId, otp, false);
 
-                        //EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
-                        //emailBinder.SendOTP(genTalent, otp);
+                        EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                        emailBinder.SendOTP(genTalent, otp);
 
                         return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "Authentication is Done", Details = genTalent });
                     }
@@ -269,8 +269,8 @@ namespace UTSTalentHelpDesk.Controllers
                             }
                             else
                             {
-                                //EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
-                                //emailBinder.SendOTP(genTalent, otp);
+                                EmailBinder emailBinder = new EmailBinder(_iConfiguration, _iEmail);
+                                emailBinder.SendOTP(genTalent, otp);
                             }
                             return StatusCode(StatusCodes.Status200OK, new ResponseObject() { statusCode = StatusCodes.Status200OK, Message = "OTP send successfully", Details = genTalent });
                         }
